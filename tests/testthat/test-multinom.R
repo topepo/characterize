@@ -3,6 +3,8 @@ library(rlang)
 
 
 test_that("multinom", {
+  skip_if_not_installed("nnet")
+
   load(test_path("test_cases.RData"))
 
   expect_snapshot(characterize(mtn_mod))

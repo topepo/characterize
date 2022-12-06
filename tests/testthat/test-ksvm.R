@@ -3,6 +3,8 @@ library(rlang)
 
 
 test_that("kernlab SVM", {
+  skip_if_not_installed("kernlab")
+
   load(test_path("test_cases.RData"))
 
   expect_snapshot(characterize(svm_mod))

@@ -3,6 +3,8 @@ library(rlang)
 
 
 test_that("earth", {
+  skip_if_not_installed("earth")
+
   load(test_path("test_cases.RData"))
 
   # regression

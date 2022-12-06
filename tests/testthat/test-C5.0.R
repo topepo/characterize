@@ -3,6 +3,8 @@ library(rlang)
 
 
 test_that("C5.0", {
+  skip_if_not_installed("C50")
+
   load(test_path("test_cases.RData"))
 
   # single tree
