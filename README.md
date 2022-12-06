@@ -59,6 +59,15 @@ characterize(cart_mod)
 #>   <chr>               <chr>          <dbl>
 #> 1 num_active_features model              2
 #> 2 num_term_nodes      model              3
+
+# Also some low-level functions: 
+.pluck_active_features(cart_mod) %>% 
+  tidyr::unnest(value)
+#> # A tibble: 2 × 2
+#>   statistic       value
+#>   <chr>           <chr>
+#> 1 active_features cyl  
+#> 2 active_features hp
 ```
 
 Objects with at least one method: `bagger`, `bart`, `C5.0`, `cforest`,

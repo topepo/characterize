@@ -50,6 +50,10 @@ cart_mod <- rpart(mpg ~ ., data = mtcars)
 cart_mod
 
 characterize(cart_mod)
+
+# Also some low-level functions: 
+.pluck_active_features(cart_mod) %>% 
+  tidyr::unnest(value)
 ```
 
 Objects with at least one method: `r object_list()`.
