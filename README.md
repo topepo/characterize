@@ -41,6 +41,18 @@ library(characterize)
 library(rpart)
 
 cart_mod <- rpart(mpg ~ ., data = mtcars)
+cart_mod
+#> n= 32 
+#> 
+#> node), split, n, deviance, yval
+#>       * denotes terminal node
+#> 
+#> 1) root 32 1126.04700 20.09062  
+#>   2) cyl>=5 21  198.47240 16.64762  
+#>     4) hp>=192.5 7   28.82857 13.41429 *
+#>     5) hp< 192.5 14   59.87214 18.26429 *
+#>   3) cyl< 5 11  203.38550 26.66364 *
+
 characterize(cart_mod)
 #> # A tibble: 2 × 3
 #>   .metric             .estimator .estimate

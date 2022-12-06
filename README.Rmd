@@ -47,6 +47,8 @@ library(characterize)
 library(rpart)
 
 cart_mod <- rpart(mpg ~ ., data = mtcars)
+cart_mod
+
 characterize(cart_mod)
 ```
 
