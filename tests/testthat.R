@@ -1,4 +1,4 @@
 library(testthat)
 library(characterize)
 
-# test_check("characterize")
+test_check("characterize")
