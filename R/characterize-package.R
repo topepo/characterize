@@ -15,7 +15,7 @@ NULL
 utils::globalVariables(
   c(".estimator", "Conditions", "Model", "committee", "rule", "statistic",
     "value", "rule_vars", "estimate", "trial", "name", "id", ".config",
-    ".extracts", ".metric")
+    ".extracts", ".metric", "object")
 )
 
 # nocov end

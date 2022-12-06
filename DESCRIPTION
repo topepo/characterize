@@ -9,6 +9,7 @@ Authors@R: c(
 Description: Inspect structural characteristics of a fitted model, such as the
     number of active features, the number of terminal notes, and so on. 
 License: MIT + file LICENSE
+Depends: R (>= 3.6.0)
 Imports: 
     dplyr,
     generics,
@@ -23,6 +24,7 @@ Imports:
     utils,
     workflows
 Suggests: 
+    covr,
     Cubist,
     ggplot2,
     knitr,

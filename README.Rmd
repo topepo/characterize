@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN status](https://www.r-pkg.org/badges/version/characterize)](https://CRAN.R-project.org/package=characterize)
+[![Codecov test coverage](https://codecov.io/gh/topepo/characterize/branch/main/graph/badge.svg)](https://app.codecov.io/gh/topepo/characterize?branch=main)
+[![R-CMD-check](https://github.com/topepo/characterize/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/topepo/characterize/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of characterize is to report data driven characteristics of a model fit that describe the model. For example:
@@ -45,15 +47,12 @@ library(characterize)
 library(rpart)
 
 cart_mod <- rpart(mpg ~ ., data = mtcars)
+cart_mod
+
 characterize(cart_mod)
 ```
 
-Objects with at least one method:
-
-```{r methods}
-#| echo: false
-sort(unique(characterize:::.list_pluck_methods()$class))
-```
+Objects with at least one method: `r object_list()`.
 
 ## Code of Conduct
   

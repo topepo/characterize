@@ -9,6 +9,9 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/characterize)](https://CRAN.R-project.org/package=characterize)
+[![Codecov test
+coverage](https://codecov.io/gh/topepo/characterize/branch/main/graph/badge.svg)](https://app.codecov.io/gh/topepo/characterize?branch=main)
+[![R-CMD-check](https://github.com/topepo/characterize/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/topepo/characterize/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of characterize is to report data driven characteristics of a
@@ -38,6 +41,18 @@ library(characterize)
 library(rpart)
 
 cart_mod <- rpart(mpg ~ ., data = mtcars)
+cart_mod
+#> n= 32 
+#> 
+#> node), split, n, deviance, yval
+#>       * denotes terminal node
+#> 
+#> 1) root 32 1126.04700 20.09062  
+#>   2) cyl>=5 21  198.47240 16.64762  
+#>     4) hp>=192.5 7   28.82857 13.41429 *
+#>     5) hp< 192.5 14   59.87214 18.26429 *
+#>   3) cyl< 5 11  203.38550 26.66364 *
+
 characterize(cart_mod)
 #> # A tibble: 2 × 3
 #>   .metric             .estimator .estimate
@@ -46,13 +61,10 @@ characterize(cart_mod)
 #> 2 num_term_nodes      model              3
 ```
 
-Objects with at least one method:
-
-    #>  [1] "bagger"      "bart"        "C5.0"        "cforest"     "cubist"     
-    #>  [6] "earth"       "glmnet"      "ksvm"        "mixo_pls"    "mixo_plsda" 
-    #> [11] "mixo_spls"   "mixo_splsda" "multinom"    "nnet"        "party"      
-    #> [16] "partynode"   "ranger"      "rpart"       "terms"       "xgb.Booster"
-    #> [21] "xrf"
+Objects with at least one method: `bagger`, `bart`, `C5.0`, `cforest`,
+`cubist`, `earth`, `glmnet`, `ksvm`, `mixo_pls`, `mixo_plsda`,
+`mixo_spls`, `mixo_splsda`, `multinom`, `nnet`, `party`, `partynode`,
+`ranger`, `rpart`, `terms`, `xgb.Booster`, `xrf`.
 
 ## Code of Conduct
 
