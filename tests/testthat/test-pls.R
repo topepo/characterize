@@ -3,6 +3,9 @@ library(rlang)
 
 
 test_that("pls via mixOmics", {
+  skip_if_not_installed("plsmod")
+  skip_if_not_installed("mixOmics")
+
   load(test_path("test_cases.RData"))
 
   # regression

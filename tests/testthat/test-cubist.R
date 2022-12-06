@@ -2,6 +2,9 @@ library(testthat)
 library(rlang)
 
 test_that("cubist", {
+  skip_if_not_installed("rules")
+  skip_if_not_installed("Cubist")
+
   load(test_path("test_cases.RData"))
 
   expect_snapshot(characterize(cubist_mod))

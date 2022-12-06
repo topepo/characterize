@@ -3,6 +3,8 @@ library(rlang)
 
 
 test_that("examining an object", {
+  skip_if_not_installed("kernlab")
+
   load(test_path("test_cases.RData"))
   nls_fit <- nls(demand ~ SSasympOrig(Time, A, lrc), data = BOD)
 
