@@ -23,6 +23,7 @@ Imports:
     utils,
     workflows
 Suggests: 
+    covr,
     Cubist,
     ggplot2,
     knitr,

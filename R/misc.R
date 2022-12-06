@@ -65,7 +65,7 @@ list_characteristics <- function() {
 
   info <-
     tibble::tibble(characteristic = gnric_nm, object = mthd_nm) %>%
-    dplyr::filter(!(class %in% c("", "default")) & !(class %in% c("workflow", "model_fit")))
+    dplyr::filter(!(object %in% c("", "default")) & !(object %in% c("workflow", "model_fit")))
   info
 }
 
