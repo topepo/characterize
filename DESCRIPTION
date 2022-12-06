@@ -1,0 +1,45 @@
+Package: characterize
+Title: Characteristics of a Fitted Model
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Max", "Kuhn", , "max@rstudio.com", role = c("cre", "aut"),
+           comment = c(ORCID = "0000-0003-2402-136X")),
+    person("RStudio", role = "cph")
+  )
+Description: Inspect structural characteristics of a fitted model, such as the
+    number of active features, the number of terminal notes, and so on. 
+License: MIT + file LICENSE
+Imports: 
+    dplyr,
+    generics,
+    magrittr,
+    methods,
+    parsnip,
+    purrr,
+    rlang,
+    tibble,
+    tidyr,
+    tune (>= 1.0.1.9001),
+    utils,
+    workflows
+Suggests: 
+    Cubist,
+    ggplot2,
+    knitr,
+    modeldata,
+    partykit,
+    rmarkdown,
+    rpart,
+    rules (>= 1.0.0.9000),
+    spelling,
+    testthat (>= 3.0.0),
+    tidymodels
+Remotes:
+    tidymodels/rules,
+    tidymodels/tune#584
+Config/testthat/edition: 3
+Encoding: UTF-8
+Language: en-US
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.2.9000
+VignetteBuilder: knitr

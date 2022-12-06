@@ -1,0 +1,102 @@
+#' Number of predictors used in the model
+#' @inheritParams characterize
+#' @export
+#' @keywords internal
+#' @name pluck_num_active_features
+.pluck_num_active_features <- function(x, ...) {
+  UseMethod(".pluck_num_active_features")
+}
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.default <- function(x, ...) {
+  vars_used <- .pluck_active_features(x, ...)
+  if (identical(vars_used$statistic, character(0))) {
+    res <- niente
+  } else {
+    res <-
+      tibble::tibble(statistic = "num_active_features",
+                     value = length(vars_used$value[[1]])
+      )
+  }
+  res
+}
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.workflow <- function(x, ...) {
+  x <- workflows::extract_fit_engine(x)
+  .pluck_num_active_features(x, ...)
+}
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.model_fit <- function(x, ...) {
+  x <- parsnip::extract_fit_engine(x, ...)
+  .pluck_num_active_features(x, ...)
+}
+
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.glmnet <- function(x, penalty = 0.001, ...) {
+  vars_used <- .pluck_active_features(x, penalty = penalty)
+  if (identical(vars_used$statistic, character(0))) {
+    res <- niente
+  } else {
+    res <-
+      tibble::tibble(statistic = "num_active_features",
+                     value = length(vars_used$value[[1]])
+      )
+  }
+  res
+}
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.cubist <- function(x, committees = x$committees, ...) {
+  vars_used <- .pluck_active_features(x, committees = committees)
+  if (identical(vars_used$statistic, character(0))) {
+    res <- niente
+  } else {
+    res <-
+      tibble::tibble(statistic = "num_active_features",
+                     value = length(vars_used$value[[1]])
+      )
+  }
+  res
+}
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
+  vars_used <- .pluck_active_features(x, trials = trials)
+  if (identical(vars_used$statistic, character(0))) {
+    res <- niente
+  } else {
+    res <-
+      tibble::tibble(statistic = "num_active_features",
+                     value = length(vars_used$value[[1]])
+      )
+  }
+  res
+}
+
+
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.xrf <- function(x, penalty = 0.001, ...) {
+  rlang::check_installed("rules")
+
+  vars_used <- .pluck_active_features(x, penalty = penalty)
+  if (identical(vars_used$statistic, character(0))) {
+    res <- niente
+  } else {
+    res <-
+      tibble::tibble(statistic = "num_active_features",
+                     value = length(vars_used$value[[1]])
+      )
+  }
+  res
+}

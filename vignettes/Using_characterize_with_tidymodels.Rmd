@@ -1,0 +1,123 @@
+---
+title: "Using characterize with tidymodels"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using_characterize_with_tidymodels}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidymodels)
+library(characterize)
+
+# ------------------------------------------------------------------------------
+
+tidymodels_prefer()
+theme_set(theme_bw())
+options(pillar.advice = FALSE, pillar.min_title_chars = Inf)
+```
+
+
+```{r}
+#| label: ames-setup
+
+data(ames)
+ames <-
+  ames %>%
+  mutate(Sale_Price = log10(Sale_Price))
+
+set.seed(1)
+ames_split <- initial_split(ames)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+set.seed(2)
+ames_rs <- vfold_cv(ames_train)
+```
+
+
+```{r}
+#| label: cart
+
+cart_spec <- 
+  decision_tree(cost_complexity = tune()) %>% 
+  set_mode("regression")
+
+ctrl <- control_grid(save_workflow = TRUE, extract = retain_characteristics)
+
+cart_res <-
+  cart_spec %>%
+  tune_grid(
+    Sale_Price ~ .,
+    resamples = ames_rs,
+    grid = tibble(cost_complexity = 10 ^ seq(-5, -1, length.out = 20)),
+    control = ctrl
+  )
+cart_res
+```
+
+```{r}
+#| label: get-results
+model_char <- collect_characteristics(cart_res)
+model_char
+
+model_char %>% 
+  ggplot(aes(cost_complexity, mean)) + 
+  geom_point() + 
+  geom_line(alpha = 1 / 2) + 
+  facet_wrap(~ .metric, scales = "free_y") + 
+  scale_x_log10() +
+  labs(y = NULL)
+
+```
+
+
+```{r}
+#| label: get-results-and-metrics
+metric_and_char <- collect_characteristics(cart_res, add_metrics = TRUE)
+metric_and_char
+
+metric_and_char %>% 
+  ggplot(aes(cost_complexity, mean)) + 
+  geom_point() + 
+  geom_line(alpha = 1 / 2) + 
+  facet_wrap(~ .metric, scales = "free_y") + 
+  scale_x_log10()+
+  labs(y = NULL)
+```
+
+
+
+```{r}
+#| label: rmse-vs-vars
+rmse_vs_vars <- 
+  metric_and_char %>% 
+  filter(.metric %in% c("rmse", "num_active_features")) %>% 
+  select(.metric, mean, .config, cost_complexity) %>% 
+  pivot_wider(
+    id_cols = c(.config, cost_complexity),
+    names_from = .metric,
+    values_from = mean
+  )
+rmse_vs_vars
+
+rmse_vs_vars %>%
+  ggplot(aes(num_active_features, rmse)) + 
+  geom_point() + 
+  geom_line(alpha = 1 / 2) +
+  geom_hline(yintercept = 0.085, lty = 2, col = "green")
+```
+
+
+```{r}
+#| label: select
+
+rmse_vs_vars %>% 
+  filter(rmse <= .085) %>% 
+  slice_min(num_active_features, n = 1)
+```
+
