@@ -14,6 +14,7 @@
 \alias{.pluck_num_term_nodes.party}
 \alias{.pluck_num_term_nodes.cforest}
 \alias{.pluck_num_term_nodes.bagger}
+\alias{.pluck_num_term_nodes.bart}
 \title{Compute the number of terminal nodes in a tree-based model}
 \usage{
 .pluck_num_term_nodes(x, ...)
@@ -39,6 +40,8 @@
 \method{.pluck_num_term_nodes}{cforest}(x, ...)
 
 \method{.pluck_num_term_nodes}{bagger}(x, ...)
+
+\method{.pluck_num_term_nodes}{bart}(x, ...)
 }
 \arguments{
 \item{x}{An object.}

@@ -116,3 +116,13 @@ ranger_nodes <- function(iter, mod) {
                  value = sum(res$value))
 }
 
+#' @rdname pluck_num_term_nodes
+#' @export
+.pluck_num_term_nodes.bart <- function(x, ...) {
+  tibble::tibble(statistic = "num_term_nodes",
+                 # Row-wise, varcount shows how many times each predictor was
+                 # used in a tree. This is the maximum number of splits so this
+                 # minus 1 is the number of terminal nodes. Sum this across the
+                 # ensemble.
+                 value = sum(sum(apply(x$varcount, 1, sum) - 1)))
+}
