@@ -38,8 +38,10 @@
   rlang::check_installed("rules")
 
   x <- dplyr::filter(x, trial <= trials)
-
   vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
+  if (length(vars_used) == 0) {
+    vars_used <- 0
+  }
 
   tibble::tibble(statistic = "mean_rule_size",
                  value = mean(vars_used, na.rm = TRUE))
@@ -60,6 +62,9 @@
   rlang::check_installed("rules")
   x <- dplyr::filter(x, committee <= committees)
   vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
+  if (length(vars_used) == 0) {
+    vars_used <- 0
+  }
 
   tibble::tibble(statistic = "mean_rule_size",
                  value = mean(vars_used, na.rm = TRUE))
@@ -73,17 +78,20 @@
 
 # ------------------------------------------------------------------------------
 
-
 #' @rdname pluck_mean_rule_size
 #' @export
-.pluck_mean_rule_size.xrf <- function(x, penalty = 0.001, ...) {
-  rlang::check_installed("rules")
-  x <- tidy(x, penalty = penalty)
+.pluck_mean_rule_size.tidy_xrf <- function(x, ...) {
   # Exclude intercept and naked predictor terms
   x <- x[grep("^r[0-9]*_", x$rule_id), ]
   vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
+  if (length(vars_used) == 0) {
+    vars_used <- 0
+  }
+  tibble::tibble(statistic = "mean_rule_size", value = mean(vars_used, na.rm = TRUE))
+}
 
-  tibble::tibble(statistic = "mean_rule_size",
-                 value = mean(vars_used, na.rm = TRUE)
-  )
+#' @rdname pluck_mean_rule_size
+#' @export
+.pluck_mean_rule_size.xrf <- function(x, penalty =  0.001, ...) {
+  .pluck_mean_rule_size(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }

@@ -69,15 +69,15 @@
 
 # ------------------------------------------------------------------------------
 
+#' @rdname pluck_num_rules
+#' @export
+.pluck_num_rules.tidy_xrf <- function(x, ...) {
+  num_rules <- length(grep("^r[0-9]*_", x$rule_id))
+  tibble::tibble(statistic = "num_rules", value = num_rules)
+}
 
 #' @rdname pluck_num_rules
 #' @export
-.pluck_num_rules.xrf <- function(x, penalty = 0.001, ...) {
-  rlang::check_installed("rules")
-  x <- tidy(x, penalty = penalty)
-  num_rules <- length(grep("^r[0-9]*_", x$rule_id))
-
-  tibble::tibble(statistic = "num_rules",
-                 value = num_rules
-  )
+.pluck_num_rules.xrf <- function(x, penalty =  0.001, ...) {
+  .pluck_num_rules(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }

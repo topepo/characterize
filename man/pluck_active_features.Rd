@@ -24,6 +24,7 @@
 \alias{.pluck_active_features.bart}
 \alias{.pluck_active_features.party}
 \alias{.pluck_active_features.cforest}
+\alias{.pluck_active_features.tidy_xrf}
 \alias{.pluck_active_features.xrf}
 \title{Predictors used in the model}
 \usage{
@@ -70,6 +71,8 @@
 \method{.pluck_active_features}{party}(x, ...)
 
 \method{.pluck_active_features}{cforest}(x, ...)
+
+\method{.pluck_active_features}{tidy_xrf}(x, ...)
 
 \method{.pluck_active_features}{xrf}(x, penalty = 0.001, ...)
 

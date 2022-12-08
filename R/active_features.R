@@ -305,17 +305,22 @@ get_party_var_index <- function(x) {
 }
 
 
+# ------------------------------------------------------------------------------
+
 #' @rdname pluck_active_features
 #' @export
-.pluck_active_features.xrf <- function(x, penalty = 0.001, ...) {
-  rlang::check_installed("rules")
-
-  res <- tidy(x, penalty = penalty)
-  vars_used <- purrr::map(res$rule, ~ all.vars(rlang::parse_expr(.x)))
+.pluck_active_features.tidy_xrf <- function(x, ...) {
+  vars_used <- purrr::map(x$rule, ~ all.vars(rlang::parse_expr(.x)))
 
   tibble::tibble(statistic = "active_features",
                  value = list(sort(unique(unlist(vars_used))))
   )
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.xrf <- function(x, penalty = 0.001, ...) {
+  .pluck_active_features(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }
 
 

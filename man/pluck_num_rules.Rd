@@ -10,6 +10,7 @@
 \alias{.pluck_num_rules.C5.0}
 \alias{.pluck_num_rules.tidy_cubist}
 \alias{.pluck_num_rules.cubist}
+\alias{.pluck_num_rules.tidy_xrf}
 \alias{.pluck_num_rules.xrf}
 \title{Compute the number of rules in a rule-based model}
 \usage{
@@ -28,6 +29,8 @@
 \method{.pluck_num_rules}{tidy_cubist}(x, committees = max(x$committee), ...)
 
 \method{.pluck_num_rules}{cubist}(x, committees = x$committees, ...)
+
+\method{.pluck_num_rules}{tidy_xrf}(x, ...)
 
 \method{.pluck_num_rules}{xrf}(x, penalty = 0.001, ...)
 }
