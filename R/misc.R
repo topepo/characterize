@@ -65,7 +65,9 @@ list_characteristics <- function() {
 
   info <-
     tibble::tibble(characteristic = gnric_nm, object = mthd_nm) %>%
-    dplyr::filter(!(object %in% c("", "default")) & !(object %in% c("workflow", "model_fit")))
+    dplyr::filter(!(object %in% c("", "default")) & !(object %in% c("workflow", "model_fit"))) %>%
+    # tidy_cubist is an intermediary method; there are no objects that get that class
+    dplyr::filter(object != "tidy_cubist")
   info
 }
 

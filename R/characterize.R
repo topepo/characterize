@@ -79,9 +79,22 @@ characterize.glmnet <- function(x, penalty = 0.001, ...) {
     yardstick_like()
 }
 
+# ------------------------------------------------------------------------------
+
+# To avoid re-running the tidy method many times
+make_tidy_cubist <- function(x, ...) {
+  res <- tidy(x, ...)
+  class(res) <- c("tidy_cubist", class(res))
+  res
+}
+
 #' @rdname characterize
 #' @export
-characterize.cubist <- function(x, committees = x$committees, ...) {
+characterize.cubist <- function(x, committees = NULL, ...) {
+  if (is.null(committees)) {
+    committees <- x$committees
+  }
+  x <- make_tidy_cubist(x)
   dplyr::bind_rows(
     .pluck_num_active_features(x, committees = committees),
     .pluck_num_parameters(x, committees = committees),
@@ -90,6 +103,8 @@ characterize.cubist <- function(x, committees = x$committees, ...) {
   ) %>%
     yardstick_like()
 }
+
+
 
 #' @rdname characterize
 #' @export

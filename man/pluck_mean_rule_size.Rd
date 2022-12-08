@@ -7,6 +7,7 @@
 \alias{.pluck_mean_rule_size.workflow}
 \alias{.pluck_mean_rule_size.model_fit}
 \alias{.pluck_mean_rule_size.C5.0}
+\alias{.pluck_mean_rule_size.tidy_cubist}
 \alias{.pluck_mean_rule_size.cubist}
 \alias{.pluck_mean_rule_size.xrf}
 \title{Compute the mean number of predictor in rules in a rule-based model}
@@ -20,6 +21,8 @@
 \method{.pluck_mean_rule_size}{model_fit}(x, ...)
 
 \method{.pluck_mean_rule_size}{C5.0}(x, trials = x$trials["Actual"], ...)
+
+\method{.pluck_mean_rule_size}{tidy_cubist}(x, committees = max(x$committee), ...)
 
 \method{.pluck_mean_rule_size}{cubist}(x, committees = x$committees, ...)
 

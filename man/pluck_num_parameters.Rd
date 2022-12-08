@@ -6,6 +6,7 @@
 \alias{.pluck_num_parameters.default}
 \alias{.pluck_num_parameters.workflow}
 \alias{.pluck_num_parameters.model_fit}
+\alias{.pluck_num_parameters.tidy_cubist}
 \alias{.pluck_num_parameters.cubist}
 \alias{.pluck_num_parameters.multinom}
 \alias{.pluck_num_parameters.nnet}
@@ -26,6 +27,8 @@
 \method{.pluck_num_parameters}{workflow}(x, ...)
 
 \method{.pluck_num_parameters}{model_fit}(x, ...)
+
+\method{.pluck_num_parameters}{tidy_cubist}(x, committees = max(x$committee), ...)
 
 \method{.pluck_num_parameters}{cubist}(x, committees = x$committees, ...)
 

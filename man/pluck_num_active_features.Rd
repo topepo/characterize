@@ -7,6 +7,7 @@
 \alias{.pluck_num_active_features.workflow}
 \alias{.pluck_num_active_features.model_fit}
 \alias{.pluck_num_active_features.glmnet}
+\alias{.pluck_num_active_features.tidy_cubist}
 \alias{.pluck_num_active_features.cubist}
 \alias{.pluck_num_active_features.C5.0}
 \alias{.pluck_num_active_features.xrf}
@@ -21,6 +22,8 @@
 \method{.pluck_num_active_features}{model_fit}(x, ...)
 
 \method{.pluck_num_active_features}{glmnet}(x, penalty = 0.001, ...)
+
+\method{.pluck_num_active_features}{tidy_cubist}(x, committees = max(x$committee), ...)
 
 \method{.pluck_num_active_features}{cubist}(x, committees = x$committees, ...)
 

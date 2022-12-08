@@ -47,18 +47,28 @@
                  value = mean(vars_used, na.rm = TRUE))
 }
 
+# ------------------------------------------------------------------------------
+
+
 #' @rdname pluck_mean_rule_size
 #' @export
-.pluck_mean_rule_size.cubist <- function(x, committees = x$committees, ...) {
+.pluck_mean_rule_size.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   rlang::check_installed("rules")
-  x <-
-    tidy(x) %>%
-    dplyr::filter(committee <= committees)
+  x <- dplyr::filter(x, committee <= committees)
   vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
 
   tibble::tibble(statistic = "mean_rule_size",
                  value = mean(vars_used, na.rm = TRUE))
 }
+
+#' @rdname pluck_mean_rule_size
+#' @export
+.pluck_mean_rule_size.cubist <- function(x, committees = x$committees, ...) {
+  .pluck_mean_rule_size(make_tidy_cubist(x), committees = committees)
+}
+
+# ------------------------------------------------------------------------------
+
 
 #' @rdname pluck_mean_rule_size
 #' @export

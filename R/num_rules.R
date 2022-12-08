@@ -48,16 +48,23 @@
 
 #' @rdname pluck_num_rules
 #' @export
-.pluck_num_rules.cubist <- function(x, committees = x$committees, ...) {
+.pluck_num_rules.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   rlang::check_installed("rules")
-  x <-
-    tidy(x) %>%
-    dplyr::filter(committee <= committees)
+  x <- dplyr::filter(x, committee <= committees)
 
   tibble::tibble(statistic = "num_rules",
                  value = nrow(x)
   )
 }
+
+#' @rdname pluck_num_rules
+#' @export
+.pluck_num_rules.cubist <- function(x, committees = x$committees, ...) {
+  .pluck_num_rules(make_tidy_cubist(x), committees = committees)
+}
+
+# ------------------------------------------------------------------------------
+
 
 #' @rdname pluck_num_rules
 #' @export

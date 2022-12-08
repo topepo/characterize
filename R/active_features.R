@@ -117,9 +117,11 @@ has_terms <- function(x) {
 
 cubist_vars <- function(committees, x) {
   rlang::check_installed("rules")
+  if (!inherits(x, "tidy_cubist")) {
+    x <- make_tidy_cubist(x)
+  }
   x <-
-    tidy(x) %>%
-    dplyr::filter(committee <= committees) %>%
+    dplyr::filter(x, committee <= committees) %>%
     dplyr::mutate(
       rule_vars = purrr::map(rule, get_rule_vars)
     ) %>%
@@ -143,14 +145,19 @@ get_rule_vars <- function(x) {
   res
 }
 
-
 #' @rdname pluck_active_features
 #' @export
-.pluck_active_features.cubist <- function(x, committees = x$committees, ...) {
+.pluck_active_features.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   terms <- cubist_vars(committees, x)
   tibble::tibble(statistic = "active_features",
                  value = list(terms)
   )
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.cubist <- function(x, committees = x$committees, ...) {
+  .pluck_active_features(make_tidy_cubist(x), committees = committees)
 }
 
 # ------------------------------------------------------------------------------

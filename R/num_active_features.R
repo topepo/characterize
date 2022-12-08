@@ -54,7 +54,7 @@
 
 #' @rdname pluck_num_active_features
 #' @export
-.pluck_num_active_features.cubist <- function(x, committees = x$committees, ...) {
+.pluck_num_active_features.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   vars_used <- .pluck_active_features(x, committees = committees)
   if (identical(vars_used$statistic, character(0))) {
     res <- niente
@@ -66,6 +66,13 @@
   }
   res
 }
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.cubist <- function(x, committees = x$committees, ...) {
+  .pluck_num_active_features(make_tidy_cubist(x), committees = committees)
+}
+
 
 #' @rdname pluck_num_active_features
 #' @export
