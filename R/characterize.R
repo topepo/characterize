@@ -104,11 +104,22 @@ characterize.cubist <- function(x, committees = NULL, ...) {
     yardstick_like()
 }
 
+# ------------------------------------------------------------------------------
 
+# To avoid re-running the tidy method many times
+make_tidy_c5 <- function(x, ...) {
+  res <- tidy(x, ...)
+  class(res) <- c("tidy_C50", class(res))
+  res
+}
 
 #' @rdname characterize
 #' @export
-characterize.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
+characterize.C5.0 <- function(x, trials = NULL, ...) {
+  if (is.null(trials)) {
+    trials <- x$trials["Actual"]
+  }
+  x <- make_tidy_c5(x)
   dplyr::bind_rows(
     .pluck_num_active_features(x, trials = trials),
     .pluck_num_rules(x, trials = trials),

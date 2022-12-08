@@ -76,7 +76,7 @@
 
 #' @rdname pluck_num_active_features
 #' @export
-.pluck_num_active_features.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
+.pluck_num_active_features.tidy_C50 <- function(x, trials = max(x$trial), ...) {
   vars_used <- .pluck_active_features(x, trials = trials)
   if (identical(vars_used$statistic, character(0))) {
     res <- niente
@@ -89,6 +89,11 @@
   res
 }
 
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  .pluck_num_active_features(make_tidy_c5(x), trials = trials)
+}
 
 
 #' @rdname pluck_num_active_features

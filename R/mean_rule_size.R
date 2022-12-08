@@ -31,20 +31,24 @@
 
 #' @rdname pluck_mean_rule_size
 #' @export
-.pluck_mean_rule_size.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
-  if (all(x$rules == "")) { #<- a tree-based model
+.pluck_mean_rule_size.tidy_C50 <- function(x, trials = max(x$trial), ...) {
+  if (all(names(x) != "rule_num")) { #<- a tree-based model
     return(niente)
   }
   rlang::check_installed("rules")
 
-  x <-
-    tidy(x) %>%
-    dplyr::filter(trial <= trials)
+  x <- dplyr::filter(x, trial <= trials)
 
-    vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
+  vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
 
   tibble::tibble(statistic = "mean_rule_size",
                  value = mean(vars_used, na.rm = TRUE))
+}
+
+#' @rdname pluck_mean_rule_size
+#' @export
+.pluck_mean_rule_size.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  .pluck_mean_rule_size(make_tidy_c5(x), trials = trials)
 }
 
 # ------------------------------------------------------------------------------

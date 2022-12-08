@@ -13,6 +13,7 @@
 \alias{.pluck_active_features.glmnet}
 \alias{.pluck_active_features.tidy_cubist}
 \alias{.pluck_active_features.cubist}
+\alias{.pluck_active_features.tidy_C50}
 \alias{.pluck_active_features.C5.0}
 \alias{.pluck_active_features.earth}
 \alias{.pluck_active_features.mixo_spls}
@@ -47,6 +48,8 @@
 \method{.pluck_active_features}{tidy_cubist}(x, committees = max(x$committee), ...)
 
 \method{.pluck_active_features}{cubist}(x, committees = x$committees, ...)
+
+\method{.pluck_active_features}{tidy_C50}(x, trials = max(x$trial), ...)
 
 \method{.pluck_active_features}{C5.0}(x, trials = x$trials["Actual"], ...)
 

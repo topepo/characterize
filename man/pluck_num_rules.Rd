@@ -6,6 +6,7 @@
 \alias{.pluck_num_rules.default}
 \alias{.pluck_num_rules.workflow}
 \alias{.pluck_num_rules.model_fit}
+\alias{.pluck_num_rules.tidy_C50}
 \alias{.pluck_num_rules.C5.0}
 \alias{.pluck_num_rules.tidy_cubist}
 \alias{.pluck_num_rules.cubist}
@@ -19,6 +20,8 @@
 \method{.pluck_num_rules}{workflow}(x, ...)
 
 \method{.pluck_num_rules}{model_fit}(x, ...)
+
+\method{.pluck_num_rules}{tidy_C50}(x, trials = max(x$trial), ...)
 
 \method{.pluck_num_rules}{C5.0}(x, trials = x$trials["Actual"], ...)
 

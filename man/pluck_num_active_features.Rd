@@ -9,6 +9,7 @@
 \alias{.pluck_num_active_features.glmnet}
 \alias{.pluck_num_active_features.tidy_cubist}
 \alias{.pluck_num_active_features.cubist}
+\alias{.pluck_num_active_features.tidy_C50}
 \alias{.pluck_num_active_features.C5.0}
 \alias{.pluck_num_active_features.xrf}
 \title{Number of predictors used in the model}
@@ -26,6 +27,8 @@
 \method{.pluck_num_active_features}{tidy_cubist}(x, committees = max(x$committee), ...)
 
 \method{.pluck_num_active_features}{cubist}(x, committees = x$committees, ...)
+
+\method{.pluck_num_active_features}{tidy_C50}(x, trials = max(x$trial), ...)
 
 \method{.pluck_num_active_features}{C5.0}(x, trials = x$trials["Actual"], ...)
 

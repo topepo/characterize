@@ -6,6 +6,7 @@
 \alias{.pluck_mean_rule_size.default}
 \alias{.pluck_mean_rule_size.workflow}
 \alias{.pluck_mean_rule_size.model_fit}
+\alias{.pluck_mean_rule_size.tidy_C50}
 \alias{.pluck_mean_rule_size.C5.0}
 \alias{.pluck_mean_rule_size.tidy_cubist}
 \alias{.pluck_mean_rule_size.cubist}
@@ -19,6 +20,8 @@
 \method{.pluck_mean_rule_size}{workflow}(x, ...)
 
 \method{.pluck_mean_rule_size}{model_fit}(x, ...)
+
+\method{.pluck_mean_rule_size}{tidy_C50}(x, trials = max(x$trial), ...)
 
 \method{.pluck_mean_rule_size}{C5.0}(x, trials = x$trials["Actual"], ...)
 

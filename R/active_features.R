@@ -165,8 +165,11 @@ get_rule_vars <- function(x) {
 
 c5_vars <- function(iter, x) {
   rlang::check_installed("rules")
+  if (!inherits(x, "tidy_C50")) {
+    x <- make_tidy_c5(x)
+  }
   x <-
-    tidy(x) %>%
+    x %>%
     dplyr::filter(trial <= iter) %>%
     dplyr::mutate(
       rule_vars = purrr::map(rule, get_rule_vars)
@@ -178,15 +181,19 @@ c5_vars <- function(iter, x) {
   res
 }
 
-
 #' @rdname pluck_active_features
 #' @export
-.pluck_active_features.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
+.pluck_active_features.tidy_C50 <- function(x, trials = max(x$trial), ...) {
   terms <- c5_vars(trials, x)
-
   tibble::tibble(statistic = "active_features",
                  value = list(terms)
   )
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  .pluck_active_features(make_tidy_c5(x), trials = trials)
 }
 
 # ------------------------------------------------------------------------------

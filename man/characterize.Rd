@@ -24,7 +24,7 @@ characterize(x, ...)
 
 \method{characterize}{cubist}(x, committees = NULL, ...)
 
-\method{characterize}{C5.0}(x, trials = x$trials["Actual"], ...)
+\method{characterize}{C5.0}(x, trials = NULL, ...)
 
 \method{characterize}{xgb.Booster}(x, nrounds = x$niter, ...)
 
