@@ -116,10 +116,11 @@ has_terms <- function(x) {
 # ------------------------------------------------------------------------------
 
 cubist_vars <- function(committees, x) {
-  rlang::check_installed("rules")
+  if (!inherits(x, "tidy_cubist")) {
+    x <- make_tidy_cubist(x)
+  }
   x <-
-    tidy(x) %>%
-    dplyr::filter(committee <= committees) %>%
+    dplyr::filter(x, committee <= committees) %>%
     dplyr::mutate(
       rule_vars = purrr::map(rule, get_rule_vars)
     ) %>%
@@ -143,23 +144,30 @@ get_rule_vars <- function(x) {
   res
 }
 
-
 #' @rdname pluck_active_features
 #' @export
-.pluck_active_features.cubist <- function(x, committees = x$committees, ...) {
+.pluck_active_features.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   terms <- cubist_vars(committees, x)
   tibble::tibble(statistic = "active_features",
                  value = list(terms)
   )
 }
 
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.cubist <- function(x, committees = x$committees, ...) {
+  .pluck_active_features(make_tidy_cubist(x), committees = committees)
+}
+
 # ------------------------------------------------------------------------------
 
 
 c5_vars <- function(iter, x) {
-  rlang::check_installed("rules")
+  if (!inherits(x, "tidy_C50")) {
+    x <- make_tidy_c5(x)
+  }
   x <-
-    tidy(x) %>%
+    x %>%
     dplyr::filter(trial <= iter) %>%
     dplyr::mutate(
       rule_vars = purrr::map(rule, get_rule_vars)
@@ -171,15 +179,19 @@ c5_vars <- function(iter, x) {
   res
 }
 
-
 #' @rdname pluck_active_features
 #' @export
-.pluck_active_features.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
+.pluck_active_features.tidy_C50 <- function(x, trials = max(x$trial), ...) {
   terms <- c5_vars(trials, x)
-
   tibble::tibble(statistic = "active_features",
                  value = list(terms)
   )
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  .pluck_active_features(make_tidy_c5(x), trials = trials)
 }
 
 # ------------------------------------------------------------------------------
@@ -291,17 +303,22 @@ get_party_var_index <- function(x) {
 }
 
 
+# ------------------------------------------------------------------------------
+
 #' @rdname pluck_active_features
 #' @export
-.pluck_active_features.xrf <- function(x, penalty = 0.001, ...) {
-  rlang::check_installed("rules")
-
-  res <- tidy(x, penalty = penalty)
-  vars_used <- purrr::map(res$rule, ~ all.vars(rlang::parse_expr(.x)))
+.pluck_active_features.tidy_xrf <- function(x, ...) {
+  vars_used <- purrr::map(x$rule, ~ all.vars(rlang::parse_expr(.x)))
 
   tibble::tibble(statistic = "active_features",
                  value = list(sort(unique(unlist(vars_used))))
   )
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.xrf <- function(x, penalty = 0.001, ...) {
+  .pluck_active_features(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }
 
 

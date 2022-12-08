@@ -31,42 +31,49 @@
 
 #' @rdname pluck_num_rules
 #' @export
-.pluck_num_rules.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
-  if (all(x$rules == "")) { #<- a tree-based model
+.pluck_num_rules.tidy_C50 <- function(x, trials = max(x$trial), ...) {
+  if (all(names(x) != "rule_num")) { #<- a tree-based model
     return(niente)
   }
-  rlang::check_installed("rules")
 
-  x <-
-    tidy(x) %>%
-    dplyr::filter(trial <= trials)
+  x <- dplyr::filter(x, trial <= trials)
 
   tibble::tibble(statistic = "num_rules",
-                 value = nrow(x)
-  )
+                 value = nrow(x))
+}
+
+#' @rdname pluck_num_rules
+#' @export
+.pluck_num_rules.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  .pluck_num_rules(make_tidy_c5(x), trials = trials)
+}
+
+
+#' @rdname pluck_num_rules
+#' @export
+.pluck_num_rules.tidy_cubist <- function(x, committees = max(x$committee), ...) {
+  x <- dplyr::filter(x, committee <= committees)
+
+  tibble::tibble(statistic = "num_rules", value = nrow(x))
 }
 
 #' @rdname pluck_num_rules
 #' @export
 .pluck_num_rules.cubist <- function(x, committees = x$committees, ...) {
-  rlang::check_installed("rules")
-  x <-
-    tidy(x) %>%
-    dplyr::filter(committee <= committees)
+  .pluck_num_rules(make_tidy_cubist(x), committees = committees)
+}
 
-  tibble::tibble(statistic = "num_rules",
-                 value = nrow(x)
-  )
+# ------------------------------------------------------------------------------
+
+#' @rdname pluck_num_rules
+#' @export
+.pluck_num_rules.tidy_xrf <- function(x, ...) {
+  num_rules <- length(grep("^r[0-9]*_", x$rule_id))
+  tibble::tibble(statistic = "num_rules", value = num_rules)
 }
 
 #' @rdname pluck_num_rules
 #' @export
-.pluck_num_rules.xrf <- function(x, penalty = 0.001, ...) {
-  rlang::check_installed("rules")
-  x <- tidy(x, penalty = penalty)
-  num_rules <- length(grep("^r[0-9]*_", x$rule_id))
-
-  tibble::tibble(statistic = "num_rules",
-                 value = num_rules
-  )
+.pluck_num_rules.xrf <- function(x, penalty =  0.001, ...) {
+  .pluck_num_rules(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }

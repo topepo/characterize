@@ -6,6 +6,7 @@
 \alias{.pluck_num_parameters.default}
 \alias{.pluck_num_parameters.workflow}
 \alias{.pluck_num_parameters.model_fit}
+\alias{.pluck_num_parameters.tidy_cubist}
 \alias{.pluck_num_parameters.cubist}
 \alias{.pluck_num_parameters.multinom}
 \alias{.pluck_num_parameters.nnet}
@@ -15,6 +16,7 @@
 \alias{.pluck_num_parameters.mixo_pls}
 \alias{.pluck_num_parameters.mixo_splsda}
 \alias{.pluck_num_parameters.mixo_plsda}
+\alias{.pluck_num_parameters.tidy_xrf}
 \alias{.pluck_num_parameters.xrf}
 \alias{.pluck_num_parameters.bagger}
 \title{Compute the number of estimated model parameters}
@@ -26,6 +28,8 @@
 \method{.pluck_num_parameters}{workflow}(x, ...)
 
 \method{.pluck_num_parameters}{model_fit}(x, ...)
+
+\method{.pluck_num_parameters}{tidy_cubist}(x, committees = max(x$committee), ...)
 
 \method{.pluck_num_parameters}{cubist}(x, committees = x$committees, ...)
 
@@ -44,6 +48,8 @@
 \method{.pluck_num_parameters}{mixo_splsda}(x, ...)
 
 \method{.pluck_num_parameters}{mixo_plsda}(x, ...)
+
+\method{.pluck_num_parameters}{tidy_xrf}(x, ...)
 
 \method{.pluck_num_parameters}{xrf}(x, penalty = 0.001, ...)
 

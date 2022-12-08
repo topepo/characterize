@@ -79,9 +79,24 @@ characterize.glmnet <- function(x, penalty = 0.001, ...) {
     yardstick_like()
 }
 
+# ------------------------------------------------------------------------------
+
+# To avoid re-running the tidy method many times
+make_tidy_cubist <- function(x, ...) {
+  rlang::check_installed("rules")
+
+  res <- tidy(x, ...)
+  class(res) <- c("tidy_cubist", class(res))
+  res
+}
+
 #' @rdname characterize
 #' @export
-characterize.cubist <- function(x, committees = x$committees, ...) {
+characterize.cubist <- function(x, committees = NULL, ...) {
+  if (is.null(committees)) {
+    committees <- x$committees
+  }
+  x <- make_tidy_cubist(x)
   dplyr::bind_rows(
     .pluck_num_active_features(x, committees = committees),
     .pluck_num_parameters(x, committees = committees),
@@ -91,9 +106,24 @@ characterize.cubist <- function(x, committees = x$committees, ...) {
     yardstick_like()
 }
 
+# ------------------------------------------------------------------------------
+
+# To avoid re-running the tidy method many times
+make_tidy_c5 <- function(x, ...) {
+  rlang::check_installed("rules")
+
+  res <- tidy(x, ...)
+  class(res) <- c("tidy_C50", class(res))
+  res
+}
+
 #' @rdname characterize
 #' @export
-characterize.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
+characterize.C5.0 <- function(x, trials = NULL, ...) {
+  if (is.null(trials)) {
+    trials <- x$trials["Actual"]
+  }
+  x <- make_tidy_c5(x)
   dplyr::bind_rows(
     .pluck_num_active_features(x, trials = trials),
     .pluck_num_rules(x, trials = trials),
@@ -112,14 +142,27 @@ characterize.xgb.Booster <- function(x, nrounds = x$niter, ...) {
     yardstick_like()
 }
 
+# ------------------------------------------------------------------------------
+
+# To avoid re-running the tidy method many times
+make_tidy_xrf <- function(x, penalty = 0.001, ...) {
+  rlang::check_installed("rules")
+
+  res <- tidy(x, penalty = penalty, ...)
+  class(res) <- c("tidy_xrf", class(res))
+  res
+}
+
 #' @rdname characterize
 #' @export
 characterize.xrf <- function(x, penalty = 0.001, ...) {
+  x <- make_tidy_xrf(x, penalty = penalty)
+
   dplyr::bind_rows(
-    .pluck_num_active_features(x, penalty = penalty),
-    .pluck_num_parameters(x, penalty = penalty),
-    .pluck_num_rules(x, penalty = penalty),
-    .pluck_mean_rule_size(x, penalty = penalty)
+    .pluck_num_active_features(x),
+    .pluck_num_parameters(x),
+    .pluck_num_rules(x),
+    .pluck_mean_rule_size(x)
   ) %>%
     yardstick_like()
 }

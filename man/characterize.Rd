@@ -22,9 +22,9 @@ characterize(x, ...)
 
 \method{characterize}{glmnet}(x, penalty = 0.001, ...)
 
-\method{characterize}{cubist}(x, committees = x$committees, ...)
+\method{characterize}{cubist}(x, committees = NULL, ...)
 
-\method{characterize}{C5.0}(x, trials = x$trials["Actual"], ...)
+\method{characterize}{C5.0}(x, trials = NULL, ...)
 
 \method{characterize}{xgb.Booster}(x, nrounds = x$niter, ...)
 

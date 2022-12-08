@@ -11,7 +11,9 @@
 \alias{.pluck_active_features.ranger}
 \alias{.pluck_active_features.xgb.Booster}
 \alias{.pluck_active_features.glmnet}
+\alias{.pluck_active_features.tidy_cubist}
 \alias{.pluck_active_features.cubist}
+\alias{.pluck_active_features.tidy_C50}
 \alias{.pluck_active_features.C5.0}
 \alias{.pluck_active_features.earth}
 \alias{.pluck_active_features.mixo_spls}
@@ -22,6 +24,7 @@
 \alias{.pluck_active_features.bart}
 \alias{.pluck_active_features.party}
 \alias{.pluck_active_features.cforest}
+\alias{.pluck_active_features.tidy_xrf}
 \alias{.pluck_active_features.xrf}
 \title{Predictors used in the model}
 \usage{
@@ -43,7 +46,11 @@
 
 \method{.pluck_active_features}{glmnet}(x, penalty = 0.001, ...)
 
+\method{.pluck_active_features}{tidy_cubist}(x, committees = max(x$committee), ...)
+
 \method{.pluck_active_features}{cubist}(x, committees = x$committees, ...)
+
+\method{.pluck_active_features}{tidy_C50}(x, trials = max(x$trial), ...)
 
 \method{.pluck_active_features}{C5.0}(x, trials = x$trials["Actual"], ...)
 
@@ -64,6 +71,8 @@
 \method{.pluck_active_features}{party}(x, ...)
 
 \method{.pluck_active_features}{cforest}(x, ...)
+
+\method{.pluck_active_features}{tidy_xrf}(x, ...)
 
 \method{.pluck_active_features}{xrf}(x, penalty = 0.001, ...)
 

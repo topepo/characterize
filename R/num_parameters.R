@@ -31,11 +31,9 @@
 
 #' @rdname pluck_num_parameters
 #' @export
-.pluck_num_parameters.cubist <- function(x, committees = x$committees, ...) {
-  rlang::check_installed("rules")
+.pluck_num_parameters.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   x <-
-    tidy(x)  %>%
-    dplyr::filter(committee <= committees) %>%
+    dplyr::filter(x, committee <= committees) %>%
     dplyr::mutate(num_param = purrr::map_int(estimate, nrow))
 
 
@@ -43,6 +41,16 @@
                  value = sum(x$num_param)
   )
 }
+
+#' @rdname pluck_num_parameters
+#' @export
+.pluck_num_parameters.cubist <- function(x, committees = x$committees, ...) {
+  .pluck_num_parameters(make_tidy_cubist(x), committees = committees)
+}
+
+# ------------------------------------------------------------------------------
+
+
 
 #' @rdname pluck_num_parameters
 #' @export
@@ -113,18 +121,22 @@ count_pls_loadings <- function(x, ...) {
 #' @export
 .pluck_num_parameters.mixo_plsda <- count_pls_loadings
 
+# ------------------------------------------------------------------------------
 
 #' @rdname pluck_num_parameters
 #' @export
-.pluck_num_parameters.xrf <- function(x, penalty = 0.001, ...) {
-  rlang::check_installed("rules")
-
-  res <- tidy(x, penalty = penalty)
-
+.pluck_num_parameters.tidy_xrf <- function(x, ...) {
   tibble::tibble(statistic = "num_parameters",
-                 value = nrow(res)
-  )
+                 value = nrow(x))
 }
+
+#' @rdname pluck_num_parameters
+#' @export
+.pluck_num_parameters.xrf <- function(x, penalty =  0.001, ...) {
+  .pluck_num_parameters(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
+}
+
+# ------------------------------------------------------------------------------
 
 #' @rdname pluck_num_parameters
 #' @export

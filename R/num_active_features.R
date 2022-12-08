@@ -54,7 +54,7 @@
 
 #' @rdname pluck_num_active_features
 #' @export
-.pluck_num_active_features.cubist <- function(x, committees = x$committees, ...) {
+.pluck_num_active_features.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   vars_used <- .pluck_active_features(x, committees = committees)
   if (identical(vars_used$statistic, character(0))) {
     res <- niente
@@ -69,7 +69,14 @@
 
 #' @rdname pluck_num_active_features
 #' @export
-.pluck_num_active_features.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
+.pluck_num_active_features.cubist <- function(x, committees = x$committees, ...) {
+  .pluck_num_active_features(make_tidy_cubist(x), committees = committees)
+}
+
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.tidy_C50 <- function(x, trials = max(x$trial), ...) {
   vars_used <- .pluck_active_features(x, trials = trials)
   if (identical(vars_used$statistic, character(0))) {
     res <- niente
@@ -82,14 +89,18 @@
   res
 }
 
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  .pluck_num_active_features(make_tidy_c5(x), trials = trials)
+}
 
+# ------------------------------------------------------------------------------
 
 #' @rdname pluck_num_active_features
 #' @export
-.pluck_num_active_features.xrf <- function(x, penalty = 0.001, ...) {
-  rlang::check_installed("rules")
-
-  vars_used <- .pluck_active_features(x, penalty = penalty)
+.pluck_num_active_features.tidy_xrf <- function(x, ...) {
+  vars_used <- .pluck_active_features(x)
   if (identical(vars_used$statistic, character(0))) {
     res <- niente
   } else {
@@ -99,4 +110,10 @@
       )
   }
   res
+}
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.xrf <- function(x, penalty =  0.001, ...) {
+  .pluck_num_active_features(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }
