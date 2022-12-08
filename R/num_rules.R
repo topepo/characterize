@@ -35,7 +35,6 @@
   if (all(names(x) != "rule_num")) { #<- a tree-based model
     return(niente)
   }
-  rlang::check_installed("rules")
 
   x <- dplyr::filter(x, trial <= trials)
 
@@ -53,12 +52,9 @@
 #' @rdname pluck_num_rules
 #' @export
 .pluck_num_rules.tidy_cubist <- function(x, committees = max(x$committee), ...) {
-  rlang::check_installed("rules")
   x <- dplyr::filter(x, committee <= committees)
 
-  tibble::tibble(statistic = "num_rules",
-                 value = nrow(x)
-  )
+  tibble::tibble(statistic = "num_rules", value = nrow(x))
 }
 
 #' @rdname pluck_num_rules

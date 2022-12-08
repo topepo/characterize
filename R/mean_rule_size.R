@@ -35,8 +35,6 @@
   if (all(names(x) != "rule_num")) { #<- a tree-based model
     return(niente)
   }
-  rlang::check_installed("rules")
-
   x <- dplyr::filter(x, trial <= trials)
   vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
   if (length(vars_used) == 0) {
@@ -59,7 +57,6 @@
 #' @rdname pluck_mean_rule_size
 #' @export
 .pluck_mean_rule_size.tidy_cubist <- function(x, committees = max(x$committee), ...) {
-  rlang::check_installed("rules")
   x <- dplyr::filter(x, committee <= committees)
   vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
   if (length(vars_used) == 0) {

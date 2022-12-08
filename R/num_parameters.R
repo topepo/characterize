@@ -32,7 +32,6 @@
 #' @rdname pluck_num_parameters
 #' @export
 .pluck_num_parameters.tidy_cubist <- function(x, committees = max(x$committee), ...) {
-  rlang::check_installed("rules")
   x <-
     dplyr::filter(x, committee <= committees) %>%
     dplyr::mutate(num_param = purrr::map_int(estimate, nrow))

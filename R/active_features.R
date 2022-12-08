@@ -116,7 +116,6 @@ has_terms <- function(x) {
 # ------------------------------------------------------------------------------
 
 cubist_vars <- function(committees, x) {
-  rlang::check_installed("rules")
   if (!inherits(x, "tidy_cubist")) {
     x <- make_tidy_cubist(x)
   }
@@ -164,7 +163,6 @@ get_rule_vars <- function(x) {
 
 
 c5_vars <- function(iter, x) {
-  rlang::check_installed("rules")
   if (!inherits(x, "tidy_C50")) {
     x <- make_tidy_c5(x)
   }
