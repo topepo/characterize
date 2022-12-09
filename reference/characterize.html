@@ -74,14 +74,29 @@ model that often reflect complexity of the model.</p>
 <span><span class="co"># S3 method for cubist</span></span>
 <span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, committees <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for tidy_cubist</span></span>
+<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, committees <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for cubist</span></span>
+<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, committees <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for tidy_C50</span></span>
+<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, trials <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">trial</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S3 method for C5.0</span></span>
-<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, trials <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, trials <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">trials</span><span class="op">[</span><span class="st">"Actual"</span><span class="op">]</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for xgb.Booster</span></span>
 <span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, nrounds <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">niter</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for tidy_xrf</span></span>
+<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, penalty <span class="op">=</span> <span class="fl">0.001</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S3 method for xrf</span></span>
-<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, penalty <span class="op">=</span> <span class="fl">0.001</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, penalty <span class="op">=</span> <span class="fl">0.001</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lgb.Booster</span></span>
+<span><span class="fu">characterize</span><span class="op">(</span><span class="va">x</span>, trees <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -103,7 +118,7 @@ regularization/penalty of the model.</p></dd>
 <dd><p>The number of Cubist committees to use in the examination.</p></dd>
 
 
-<dt>trials, nrounds</dt>
+<dt>trials, nrounds, trees</dt>
 <dd><p>The number of boosting to use in the examination.</p></dd>
 
 </dl></div>

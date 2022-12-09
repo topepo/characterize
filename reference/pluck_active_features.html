@@ -120,7 +120,13 @@
 <span><span class="fu">.pluck_active_features</span><span class="op">(</span><span class="va">x</span>, penalty <span class="op">=</span> <span class="fl">0.001</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for bagger</span></span>
-<span><span class="fu">.pluck_active_features</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">.pluck_active_features</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lgb_trees</span></span>
+<span><span class="fu">.pluck_active_features</span><span class="op">(</span><span class="va">x</span>, trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">trees</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lgb.Booster</span></span>
+<span><span class="fu">.pluck_active_features</span><span class="op">(</span><span class="va">x</span>, trees <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">params</span><span class="op">$</span><span class="va">num_iterations</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -142,7 +148,7 @@ regularization/penalty of the model.</p></dd>
 <dd><p>The number of Cubist committees to use in the examination.</p></dd>
 
 
-<dt>trials, nrounds</dt>
+<dt>trials, nrounds, trees</dt>
 <dd><p>The number of boosting to use in the examination.</p></dd>
 
 </dl></div>

@@ -111,7 +111,13 @@ the same object. If the model does not allow for this, the results of
 <span><span class="fu">multi_characterize</span><span class="op">(</span><span class="va">object</span>, nrounds <span class="op">=</span> <span class="va">object</span><span class="op">$</span><span class="va">niter</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for xrf</span></span>
-<span><span class="fu">multi_characterize</span><span class="op">(</span><span class="va">object</span>, penalty <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">multi_characterize</span><span class="op">(</span><span class="va">object</span>, penalty <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lgb_trees</span></span>
+<span><span class="fu">multi_characterize</span><span class="op">(</span><span class="va">object</span>, trees <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for lgb.Booster</span></span>
+<span><span class="fu">multi_characterize</span><span class="op">(</span><span class="va">object</span>, trees <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -125,15 +131,15 @@ the same object. If the model does not allow for this, the results of
 
 
 <dt>penalty</dt>
-<dd><p>A numeric vector of penalty values (a.k.a. <code>lambda</code> for some
-models).</p></dd>
+<dd><p>A numeric parameter value for the amount of
+regularization/penalty of the model.</p></dd>
 
 
 <dt>committees</dt>
 <dd><p>The number of Cubist committees to use in the examination.</p></dd>
 
 
-<dt>trials, nrounds</dt>
+<dt>trials, nrounds, trees</dt>
 <dd><p>The number of boosting to use in the examination.</p></dd>
 
 </dl></div>
