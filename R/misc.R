@@ -67,7 +67,8 @@ list_characteristics <- function() {
     tibble::tibble(characteristic = gnric_nm, object = mthd_nm) %>%
     dplyr::filter(!(object %in% c("", "default")) & !(object %in% c("workflow", "model_fit"))) %>%
     # tidy_* are intermediary methods; there are no objects that get these classes
-    dplyr::filter(!grepl("^tidy_", object))
+    dplyr::filter(!grepl("^tidy_", object)) %>%
+    dplyr::filter(!grepl("^lgb_tree", object))
   info
 }
 
