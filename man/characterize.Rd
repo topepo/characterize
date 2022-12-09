@@ -54,7 +54,7 @@ regularization/penalty of the model.}
 
 \item{committees}{The number of Cubist committees to use in the examination.}
 
-\item{trials, nrounds}{The number of boosting to use in the examination.}
+\item{trials, nrounds, trees}{The number of boosting to use in the examination.}
 }
 \value{
 A tibble with columns \code{.metric}, \code{.estimator}, and \code{.estimate}. If

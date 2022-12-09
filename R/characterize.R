@@ -10,7 +10,7 @@
 #' @param penalty A numeric parameter value for the amount of
 #' regularization/penalty of the model.
 #' @param committees The number of Cubist committees to use in the examination.
-#' @param trials,nrounds The number of boosting to use in the examination.
+#' @param trials,nrounds,trees The number of boosting to use in the examination.
 #' @param ... Not currently used.
 #' @details
 #' For a list of object types supported, see [list_characteristics()].
@@ -112,11 +112,13 @@ characterize.tidy_cubist <- function(x, committees = NULL, ...) {
   if (is.null(committees)) {
     committees <- max(x$committee)
   }
+  x <- dplyr::filter(x, committee <= !!committees)
 
   dplyr::bind_rows(
-    .pluck_num_active_features(x, committees = !!committees),
-    .pluck_num_rules(x, committees = !!committees),
-    .pluck_mean_rule_size(x, committees = !!committees)
+    .pluck_num_active_features(x, committees = committees),
+    .pluck_num_parameters(x, committees = committees),
+    .pluck_num_rules(x, committees = committees),
+    .pluck_mean_rule_size(x, committees = committees)
   ) %>%
     yardstick_like()
 }
@@ -127,7 +129,7 @@ characterize.cubist <- function(x, committees = NULL, ...) {
   if (is.null(committees)) {
     committees <- x$committees
   }
-  characterize(make_tidy_cubist(x), committees = !!committees)
+  characterize(make_tidy_cubist(x), committees = committees)
 }
 
 # ------------------------------------------------------------------------------
@@ -148,9 +150,9 @@ make_tidy_c5 <- function(x, ...) {
 characterize.tidy_C50 <- function(x, trials = max(x$trial), ...) {
   x <- dplyr::filter(x, trial <= !!trials)
   dplyr::bind_rows(
-    .pluck_num_active_features(x, trials = !!trials),
-    .pluck_num_rules(x, trials = !!trials),
-    .pluck_mean_rule_size(x, trials = !!trials)
+    .pluck_num_active_features(x, trials = trials),
+    .pluck_num_rules(x, trials = trials),
+    .pluck_mean_rule_size(x, trials = trials)
   ) %>%
     yardstick_like()
 }
@@ -158,7 +160,7 @@ characterize.tidy_C50 <- function(x, trials = max(x$trial), ...) {
 #' @rdname characterize
 #' @export
 characterize.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
-  characterize(make_tidy_c5(x), trials = !!trials)
+  characterize(make_tidy_c5(x), trials = trials)
 }
 
 # ------------------------------------------------------------------------------
@@ -189,9 +191,9 @@ make_tidy_xrf <- function(x, penalty = 0.001, ...) {
 #' @export
 characterize.tidy_xrf <- function(x, penalty = 0.001, ...) {
   dplyr::bind_rows(
-    .pluck_num_active_features(x, penalty = !!penalty),
-    .pluck_num_rules(x, penalty = !!penalty),
-    .pluck_mean_rule_size(x, penalty = !!penalty)
+    .pluck_num_active_features(x, penalty = penalty),
+    .pluck_num_rules(x, penalty = penalty),
+    .pluck_mean_rule_size(x, penalty = penalty)
   ) %>%
     yardstick_like()
 }
@@ -199,7 +201,7 @@ characterize.tidy_xrf <- function(x, penalty = 0.001, ...) {
 #' @rdname characterize
 #' @export
 characterize.xrf <- function(x, penalty = 0.001, ...) {
-  characterize(make_tidy_xrf(x), penalty = !!penalty)
+  characterize(make_tidy_xrf(x), penalty = penalty)
 }
 
 # ------------------------------------------------------------------------------

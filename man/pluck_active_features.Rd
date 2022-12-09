@@ -94,7 +94,7 @@ regularization/penalty of the model.}
 
 \item{committees}{The number of Cubist committees to use in the examination.}
 
-\item{trials, nrounds}{The number of boosting to use in the examination.}
+\item{trials, nrounds, trees}{The number of boosting to use in the examination.}
 }
 \description{
 Predictors used in the model

@@ -19,8 +19,6 @@
 #' @inheritParams characterize
 #' @param object A `model_fit` object.
 #' @param ... Optional arguments (not currently used)
-#' @param penalty A numeric vector of penalty values (a.k.a. `lambda` for some
-#' models).
 #' @return A tibble of characterized results (`results`) with extra columns for the
 #' sub-model parameter. If there is no specific `multi_characterize()` method, there
 #' are not parameter columns and the `results` column has the results of
@@ -208,7 +206,7 @@ multi_characterize.xrf <- function(object, penalty = NULL, ...) {
 #' @export
 multi_characterize.lgb_trees <- function(object, trees = NULL, ...) {
   if (is.null(trees)) {
-    trees <- max(x$trees)
+    trees <- max(object$trees)
   }
   res <-
     tibble::tibble(trees = trees) %>%
