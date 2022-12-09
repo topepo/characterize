@@ -26,6 +26,8 @@
 \alias{.pluck_active_features.cforest}
 \alias{.pluck_active_features.tidy_xrf}
 \alias{.pluck_active_features.xrf}
+\alias{.pluck_active_features.lgb_trees}
+\alias{.pluck_active_features.lgb.Booster}
 \title{Predictors used in the model}
 \usage{
 .pluck_active_features(x, ...)
@@ -77,6 +79,10 @@
 \method{.pluck_active_features}{xrf}(x, penalty = 0.001, ...)
 
 \method{.pluck_active_features}{bagger}(x, ...)
+
+\method{.pluck_active_features}{lgb_trees}(x, trees = max(x$trees), ...)
+
+\method{.pluck_active_features}{lgb.Booster}(x, trees = x$params$num_iterations, ...)
 }
 \arguments{
 \item{x}{An object.}
@@ -88,7 +94,7 @@ regularization/penalty of the model.}
 
 \item{committees}{The number of Cubist committees to use in the examination.}
 
-\item{trials, nrounds}{The number of boosting to use in the examination.}
+\item{trials, nrounds, trees}{The number of boosting to use in the examination.}
 }
 \description{
 Predictors used in the model

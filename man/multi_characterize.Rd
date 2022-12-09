@@ -17,6 +17,8 @@
 \alias{multi_characterize.C5.0}
 \alias{multi_characterize.xgb.Booster}
 \alias{multi_characterize.xrf}
+\alias{multi_characterize.lgb_trees}
+\alias{multi_characterize.lgb.Booster}
 \title{Model characterizations across multiple configurations}
 \usage{
 multi_characterize(object, ...)
@@ -50,18 +52,22 @@ multi_characterize(object, ...)
 \method{multi_characterize}{xgb.Booster}(object, nrounds = object$niter, ...)
 
 \method{multi_characterize}{xrf}(object, penalty = NULL, ...)
+
+\method{multi_characterize}{lgb_trees}(object, trees = NULL, ...)
+
+\method{multi_characterize}{lgb.Booster}(object, trees = NULL, ...)
 }
 \arguments{
 \item{object}{A \code{model_fit} object.}
 
 \item{...}{Optional arguments (not currently used)}
 
-\item{penalty}{A numeric vector of penalty values (a.k.a. \code{lambda} for some
-models).}
+\item{penalty}{A numeric parameter value for the amount of
+regularization/penalty of the model.}
 
 \item{committees}{The number of Cubist committees to use in the examination.}
 
-\item{trials, nrounds}{The number of boosting to use in the examination.}
+\item{trials, nrounds, trees}{The number of boosting to use in the examination.}
 }
 \value{
 A tibble of characterized results (\code{results}) with extra columns for the

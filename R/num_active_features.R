@@ -117,3 +117,27 @@
 .pluck_num_active_features.xrf <- function(x, penalty =  0.001, ...) {
   .pluck_num_active_features(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }
+
+# ------------------------------------------------------------------------------
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.lgb_trees <-
+  function(x, trees = max(x$num_iterations), ...) {
+    vars_used <- .pluck_active_features(x, trees = trees)
+    if (identical(vars_used$statistic, character(0))) {
+      res <- niente
+    } else {
+      res <-
+        tibble::tibble(statistic = "num_active_features",
+                       value = length(vars_used$value[[1]]))
+    }
+    res
+  }
+
+#' @rdname pluck_num_active_features
+#' @export
+.pluck_num_active_features.lgb.Booster <-
+  function(x, trees = x$params$num_iterations, ...) {
+    .pluck_num_active_features(lgb_trees(x), trees = trees)
+  }

@@ -10,7 +10,7 @@
 #' @param penalty A numeric parameter value for the amount of
 #' regularization/penalty of the model.
 #' @param committees The number of Cubist committees to use in the examination.
-#' @param trials,nrounds The number of boosting to use in the examination.
+#' @param trials,nrounds,trees The number of boosting to use in the examination.
 #' @param ... Not currently used.
 #' @details
 #' For a list of object types supported, see [list_characteristics()].
@@ -106,6 +106,32 @@ characterize.cubist <- function(x, committees = NULL, ...) {
     yardstick_like()
 }
 
+#' @rdname characterize
+#' @export
+characterize.tidy_cubist <- function(x, committees = NULL, ...) {
+  if (is.null(committees)) {
+    committees <- max(x$committee)
+  }
+  x <- dplyr::filter(x, committee <= !!committees)
+
+  dplyr::bind_rows(
+    .pluck_num_active_features(x, committees = committees),
+    .pluck_num_parameters(x, committees = committees),
+    .pluck_num_rules(x, committees = committees),
+    .pluck_mean_rule_size(x, committees = committees)
+  ) %>%
+    yardstick_like()
+}
+
+#' @rdname characterize
+#' @export
+characterize.cubist <- function(x, committees = NULL, ...) {
+  if (is.null(committees)) {
+    committees <- x$committees
+  }
+  characterize(make_tidy_cubist(x), committees = committees)
+}
+
 # ------------------------------------------------------------------------------
 
 # To avoid re-running the tidy method many times
@@ -117,13 +143,12 @@ make_tidy_c5 <- function(x, ...) {
   res
 }
 
+# ------------------------------------------------------------------------------
+
 #' @rdname characterize
 #' @export
-characterize.C5.0 <- function(x, trials = NULL, ...) {
-  if (is.null(trials)) {
-    trials <- x$trials["Actual"]
-  }
-  x <- make_tidy_c5(x)
+characterize.tidy_C50 <- function(x, trials = max(x$trial), ...) {
+  x <- dplyr::filter(x, trial <= !!trials)
   dplyr::bind_rows(
     .pluck_num_active_features(x, trials = trials),
     .pluck_num_rules(x, trials = trials),
@@ -131,6 +156,15 @@ characterize.C5.0 <- function(x, trials = NULL, ...) {
   ) %>%
     yardstick_like()
 }
+
+#' @rdname characterize
+#' @export
+characterize.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  characterize(make_tidy_c5(x), trials = trials)
+}
+
+# ------------------------------------------------------------------------------
+
 
 #' @rdname characterize
 #' @export
@@ -155,14 +189,48 @@ make_tidy_xrf <- function(x, penalty = 0.001, ...) {
 
 #' @rdname characterize
 #' @export
-characterize.xrf <- function(x, penalty = 0.001, ...) {
-  x <- make_tidy_xrf(x, penalty = penalty)
-
+characterize.tidy_xrf <- function(x, penalty = 0.001, ...) {
   dplyr::bind_rows(
-    .pluck_num_active_features(x),
-    .pluck_num_parameters(x),
-    .pluck_num_rules(x),
-    .pluck_mean_rule_size(x)
+    .pluck_num_active_features(x, penalty = penalty),
+    .pluck_num_rules(x, penalty = penalty),
+    .pluck_mean_rule_size(x, penalty = penalty)
+  ) %>%
+    yardstick_like()
+}
+
+#' @rdname characterize
+#' @export
+characterize.xrf <- function(x, penalty = 0.001, ...) {
+  characterize(make_tidy_xrf(x), penalty = penalty)
+}
+
+# ------------------------------------------------------------------------------
+
+# This is expensive so do it as few times as possible. Give the results a class
+# and S3 dispatch on that.
+lgb_trees <- function(x) {
+  rlang::is_installed("lightgbm")
+  cl <- rlang::call2("lgb.model.dt.tree", .ns = "lightgbm", model = rlang::expr(x))
+  dat <- rlang::eval_tidy(cl)
+  # error trap for saved model
+  res <-
+    tibble::as_tibble(dat) %>%
+    dplyr::mutate(trees = tree_index + 1)
+  class(res) <- c("lgb_trees", class(res))
+  res
+}
+
+
+#' @rdname characterize
+#' @export
+characterize.lgb.Booster <- function(x, trees = NULL, ...) {
+  if (is.null(trees)) {
+    trees <- x$params$num_iterations
+  }
+  x <- lgb_trees(x)
+  dplyr::bind_rows(
+    .pluck_num_active_features(x, trees = trees),
+    .pluck_num_term_nodes(x, trees = trees)
   ) %>%
     yardstick_like()
 }

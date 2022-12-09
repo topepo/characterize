@@ -335,3 +335,21 @@ get_party_var_index <- function(x) {
 }
 
 
+# ------------------------------------------------------------------------------
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.lgb_trees <- function(x, trees = max(x$trees), ...) {
+  dat <- dplyr::filter(x, trees <= !!trees)
+
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(dat$split_feature))))
+}
+
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.lgb.Booster <- function(x, trees = x$params$num_iterations, ...) {
+  .pluck_active_features(lgb_trees(x), trees = trees)
+}
+

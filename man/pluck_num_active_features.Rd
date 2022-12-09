@@ -13,6 +13,8 @@
 \alias{.pluck_num_active_features.C5.0}
 \alias{.pluck_num_active_features.tidy_xrf}
 \alias{.pluck_num_active_features.xrf}
+\alias{.pluck_num_active_features.lgb_trees}
+\alias{.pluck_num_active_features.lgb.Booster}
 \title{Number of predictors used in the model}
 \usage{
 .pluck_num_active_features(x, ...)
@@ -36,6 +38,10 @@
 \method{.pluck_num_active_features}{tidy_xrf}(x, ...)
 
 \method{.pluck_num_active_features}{xrf}(x, penalty = 0.001, ...)
+
+\method{.pluck_num_active_features}{lgb_trees}(x, trees = max(x$num_iterations), ...)
+
+\method{.pluck_num_active_features}{lgb.Booster}(x, trees = x$params$num_iterations, ...)
 }
 \arguments{
 \item{x}{An object.}
