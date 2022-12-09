@@ -7,8 +7,11 @@
 \alias{characterize.workflow}
 \alias{characterize.glmnet}
 \alias{characterize.cubist}
+\alias{characterize.tidy_cubist}
+\alias{characterize.tidy_C50}
 \alias{characterize.C5.0}
 \alias{characterize.xgb.Booster}
+\alias{characterize.tidy_xrf}
 \alias{characterize.xrf}
 \alias{characterize.lgb.Booster}
 \title{Compute model characteristics}
@@ -25,9 +28,17 @@ characterize(x, ...)
 
 \method{characterize}{cubist}(x, committees = NULL, ...)
 
-\method{characterize}{C5.0}(x, trials = NULL, ...)
+\method{characterize}{tidy_cubist}(x, committees = NULL, ...)
+
+\method{characterize}{cubist}(x, committees = NULL, ...)
+
+\method{characterize}{tidy_C50}(x, trials = max(x$trial), ...)
+
+\method{characterize}{C5.0}(x, trials = x$trials["Actual"], ...)
 
 \method{characterize}{xgb.Booster}(x, nrounds = x$niter, ...)
+
+\method{characterize}{tidy_xrf}(x, penalty = 0.001, ...)
 
 \method{characterize}{xrf}(x, penalty = 0.001, ...)
 

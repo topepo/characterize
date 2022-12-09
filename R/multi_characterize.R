@@ -160,6 +160,8 @@ multi_characterize.cubist <- function(object, committees = object$committees, ..
   res
 }
 
+# ------------------------------------------------------------------------------
+
 # TODO do this for tidy_{x} as well (as done with lgb)
 #' @rdname multi_characterize
 #' @export
@@ -171,6 +173,8 @@ multi_characterize.C5.0 <- function(object, trials = object$trials["Actual"], ..
   res
 }
 
+# ------------------------------------------------------------------------------
+
 #' @rdname multi_characterize
 #' @export
 multi_characterize.xgb.Booster <- function(object, nrounds = object$niter, ...) {
@@ -179,6 +183,9 @@ multi_characterize.xgb.Booster <- function(object, nrounds = object$niter, ...) 
     dplyr::mutate(results = purrr::map(nrounds, ~ characterize(object, nrounds = .x)))
   res
 }
+
+# ------------------------------------------------------------------------------
+
 
 # TODO earth
 
@@ -216,9 +223,6 @@ multi_characterize.lgb.Booster <- function(object, trees = NULL, ...) {
   if (is.null(trees)) {
     trees <- object$params$num_iterations
   }
-  res <-
-    tibble::tibble(trees = trees) %>%
-    dplyr::mutate(results = purrr::map(trees, ~ characterize(object, trees = .x)))
-  res
+  multi_characterize(lgb_trees(object), trees = trees)
 }
 
