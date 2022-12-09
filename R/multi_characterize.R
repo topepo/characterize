@@ -61,7 +61,7 @@
 #' }
 #' @export
 multi_characterize <- function(object, ...) {
-  if (inherits(object$fit, "try-error")) {
+  if (inherits(object, "try-error")) {
     rlang::warn("Model fit failed; cannot make predictions.")
     return(NULL)
   }
@@ -86,6 +86,10 @@ multi_characterize.workflow <- function(object, ...) {
 #' @rdname multi_characterize
 #' @export
 multi_characterize.model_fit <- function(object, ...) {
+  if (inherits(object$fit, "try-error")) {
+    rlang::warn("Model fit failed; cannot make predictions.")
+    return(NULL)
+  }
   multi_characterize(object$fit, ...)
 }
 
@@ -156,6 +160,7 @@ multi_characterize.cubist <- function(object, committees = object$committees, ..
   res
 }
 
+# TODO do this for tidy_{x} as well (as done with lgb)
 #' @rdname multi_characterize
 #' @export
 multi_characterize.C5.0 <- function(object, trials = object$trials["Actual"], ...) {
@@ -187,6 +192,33 @@ multi_characterize.xrf <- function(object, penalty = NULL, ...) {
   res <-
     tibble::tibble(penalty = penalty) %>%
     dplyr::mutate(results = purrr::map(penalty, ~ characterize(object, penalty = .x)))
+  res
+}
+
+# ------------------------------------------------------------------------------
+
+#' @rdname multi_characterize
+#' @export
+multi_characterize.lgb_trees <- function(object, trees = NULL, ...) {
+  if (is.null(trees)) {
+    trees <- max(x$trees)
+  }
+  res <-
+    tibble::tibble(trees = trees) %>%
+    dplyr::mutate(results = purrr::map(trees, ~ characterize(object, trees = .x)))
+  res
+}
+
+
+#' @rdname multi_characterize
+#' @export
+multi_characterize.lgb.Booster <- function(object, trees = NULL, ...) {
+  if (is.null(trees)) {
+    trees <- object$params$num_iterations
+  }
+  res <-
+    tibble::tibble(trees = trees) %>%
+    dplyr::mutate(results = purrr::map(trees, ~ characterize(object, trees = .x)))
   res
 }
 

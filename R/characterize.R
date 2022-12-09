@@ -166,3 +166,34 @@ characterize.xrf <- function(x, penalty = 0.001, ...) {
   ) %>%
     yardstick_like()
 }
+
+# ------------------------------------------------------------------------------
+
+# This is expensive so do it as few times as possible. Give the results a class
+# and S3 dispatch on that.
+lgb_trees <- function(x) {
+  rlang::is_installed("lightgbm")
+  cl <- rlang::call2("lgb.model.dt.tree", .ns = "lightgbm", model = rlang::expr(x))
+  dat <- rlang::eval_tidy(cl)
+  # error trap for saved model
+  res <-
+    tibble::as_tibble(dat) %>%
+    dplyr::mutate(trees = tree_index + 1)
+  class(res) <- c("lgb_trees", class(res))
+  res
+}
+
+
+#' @rdname characterize
+#' @export
+characterize.lgb.Booster <- function(x, trees = NULL, ...) {
+  if (is.null(trees)) {
+    trees <- x$params$num_iterations
+  }
+  x <- lgb_trees(x)
+  dplyr::bind_rows(
+    .pluck_num_active_features(x, trees = trees),
+    .pluck_num_term_nodes(x, trees = trees)
+  ) %>%
+    yardstick_like()
+}

@@ -126,3 +126,22 @@ ranger_nodes <- function(iter, mod) {
                  # ensemble.
                  value = sum(sum(apply(x$varcount, 1, sum) - 1)))
 }
+
+# ------------------------------------------------------------------------------
+
+#' @rdname pluck_num_term_nodes
+#' @export
+.pluck_num_term_nodes.lgb_trees <- function(x, trees = max(x$trees), ...) {
+  dat <- dplyr::filter(x, trees <= !!trees)
+
+  tibble::tibble(statistic = "num_term_nodes",
+                 value = sum(!is.na(dat$leaf_count), na.rm = TRUE))
+}
+
+
+#' @rdname pluck_num_term_nodes
+#' @export
+.pluck_num_term_nodes.lgb.Booster <- function(x, trees = x$params$num_iterations, ...) {
+  .pluck_num_term_nodes(lgb_trees(x), trees = trees)
+}
+

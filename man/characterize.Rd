@@ -10,6 +10,7 @@
 \alias{characterize.C5.0}
 \alias{characterize.xgb.Booster}
 \alias{characterize.xrf}
+\alias{characterize.lgb.Booster}
 \title{Compute model characteristics}
 \usage{
 characterize(x, ...)
@@ -29,6 +30,8 @@ characterize(x, ...)
 \method{characterize}{xgb.Booster}(x, nrounds = x$niter, ...)
 
 \method{characterize}{xrf}(x, penalty = 0.001, ...)
+
+\method{characterize}{lgb.Booster}(x, trees = NULL, ...)
 }
 \arguments{
 \item{x}{An object.}
