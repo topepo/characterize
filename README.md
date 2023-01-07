@@ -70,10 +70,11 @@ characterize(cart_mod)
 #> 2 active_features hp
 ```
 
-Objects with at least one method: `bagger`, `bart`, `C5.0`, `cforest`,
-`cubist`, `earth`, `glmnet`, `ksvm`, `mixo_pls`, `mixo_plsda`,
-`mixo_spls`, `mixo_splsda`, `multinom`, `nnet`, `party`, `partynode`,
-`ranger`, `rpart`, `terms`, `xgb.Booster`, `xrf`.
+Objects with at least one method: `bagger`, `bart`, `brulee_mlp`,
+`C5.0`, `cforest`, `cubist`, `earth`, `glmnet`, `ksvm`, `lgb.Booster`,
+`mixo_pls`, `mixo_plsda`, `mixo_spls`, `mixo_splsda`, `multinom`,
+`nnet`, `party`, `partynode`, `ranger`, `rpart`, `terms`, `xgb.Booster`,
+`xrf`.
 
 ## Code of Conduct
 

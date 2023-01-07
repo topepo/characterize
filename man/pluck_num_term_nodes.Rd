@@ -7,6 +7,7 @@
 \alias{.pluck_num_term_nodes.workflow}
 \alias{.pluck_num_term_nodes.model_fit}
 \alias{.pluck_num_term_nodes.rpart}
+\alias{.pluck_num_term_nodes.tidy_C50}
 \alias{.pluck_num_term_nodes.C5.0}
 \alias{.pluck_num_term_nodes.ranger}
 \alias{.pluck_num_term_nodes.xgb.Booster}
@@ -29,7 +30,9 @@
 
 \method{.pluck_num_term_nodes}{rpart}(x, ...)
 
-\method{.pluck_num_term_nodes}{C5.0}(x, ...)
+\method{.pluck_num_term_nodes}{tidy_C50}(x, trials = max(x$trial), ...)
+
+\method{.pluck_num_term_nodes}{C5.0}(x, trials = x$trials["Actual"], ...)
 
 \method{.pluck_num_term_nodes}{ranger}(x, ...)
 
@@ -53,6 +56,8 @@
 \item{x}{An object.}
 
 \item{...}{Not currently used.}
+
+\item{trials, nrounds, trees}{The number of boosting to use in the examination.}
 }
 \description{
 Compute the number of terminal nodes in a tree-based model

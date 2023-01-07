@@ -115,6 +115,15 @@ c5_boost_mod <-
 
 exp_act_feat_c5_boost <- sum(C50::C5imp(c5_boost_mod$fit, metric = "splits")$Overall > 0)
 
+
+c5_rules_boost_mod <-
+  boost_tree() %>%
+  set_mode("classification") %>%
+  set_engine("C5.0", rules = TRUE) %>%
+  fit(class ~ ., data = cls_dat)
+
+exp_act_feat_c5_rules_boost <- sum(C50::C5imp(c5_rules_boost_mod$fit, metric = "splits")$Overall > 0)
+
 # ------------------------------------------------------------------------------
 
 xgb_mod <-

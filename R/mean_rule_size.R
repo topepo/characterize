@@ -1,4 +1,4 @@
-#' Compute the mean number of predictor in rules in a rule-based model
+#' Compute the mean number of conditional statements in rules
 #' @inheritParams characterize
 #' @keywords internal
 #' @name pluck_mean_rule_size
@@ -29,20 +29,19 @@
 
 # ------------------------------------------------------------------------------
 
+rule_size <- function(x) {
+  amp_ind <- gregexpr("&", x, fixed = TRUE)
+  num_amp <- purrr::map_int(amp_ind, ~ sum(.x > 0)) + 1L
+  num_amp
+}
+
 #' @rdname pluck_mean_rule_size
 #' @export
 .pluck_mean_rule_size.tidy_C50 <- function(x, trials = max(x$trial), ...) {
-  if (all(names(x) != "rule_num")) { #<- a tree-based model
-    return(niente)
-  }
   x <- dplyr::filter(x, trial <= trials)
-  vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
-  if (length(vars_used) == 0) {
-    vars_used <- 0
-  }
-
+  rules <- rule_size(x$rule)
   tibble::tibble(statistic = "mean_rule_size",
-                 value = mean(vars_used, na.rm = TRUE))
+                 value = mean(rules, na.rm = TRUE))
 }
 
 #' @rdname pluck_mean_rule_size
@@ -58,13 +57,10 @@
 #' @export
 .pluck_mean_rule_size.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   x <- dplyr::filter(x, committee <= committees)
-  vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
-  if (length(vars_used) == 0) {
-    vars_used <- 0
-  }
+  rules <- rule_size(x$rule)
 
   tibble::tibble(statistic = "mean_rule_size",
-                 value = mean(vars_used, na.rm = TRUE))
+                 value = mean(rules, na.rm = TRUE))
 }
 
 #' @rdname pluck_mean_rule_size
@@ -80,11 +76,8 @@
 .pluck_mean_rule_size.tidy_xrf <- function(x, ...) {
   # Exclude intercept and naked predictor terms
   x <- x[grep("^r[0-9]*_", x$rule_id), ]
-  vars_used <- purrr::map_int(x$rule, ~ length(all.vars(rlang::parse_expr(.x))))
-  if (length(vars_used) == 0) {
-    vars_used <- 0
-  }
-  tibble::tibble(statistic = "mean_rule_size", value = mean(vars_used, na.rm = TRUE))
+  rules <- rule_size(x$rule)
+  tibble::tibble(statistic = "mean_rule_size", value = mean(rules, na.rm = TRUE))
 }
 
 #' @rdname pluck_mean_rule_size

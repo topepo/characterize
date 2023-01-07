@@ -12,7 +12,7 @@
 \alias{.pluck_mean_rule_size.cubist}
 \alias{.pluck_mean_rule_size.tidy_xrf}
 \alias{.pluck_mean_rule_size.xrf}
-\title{Compute the mean number of predictor in rules in a rule-based model}
+\title{Compute the mean number of conditional statements in rules}
 \usage{
 .pluck_mean_rule_size(x, ...)
 
@@ -45,6 +45,6 @@
 regularization/penalty of the model.}
 }
 \description{
-Compute the mean number of predictor in rules in a rule-based model
+Compute the mean number of conditional statements in rules
 }
 \keyword{internal}

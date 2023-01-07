@@ -147,12 +147,13 @@ make_tidy_c5 <- function(x, ...) {
 
 #' @rdname characterize
 #' @export
-characterize.tidy_C50 <- function(x, trials = max(x$trial), ...) {
+characterize.tidy_C50 <- function(x, trials = max(x$trials), ...) {
   x <- dplyr::filter(x, trial <= !!trials)
   dplyr::bind_rows(
     .pluck_num_active_features(x, trials = trials),
     .pluck_num_rules(x, trials = trials),
-    .pluck_mean_rule_size(x, trials = trials)
+    .pluck_mean_rule_size(x, trials = trials),
+    .pluck_num_term_nodes(x, trials = trials)
   ) %>%
     yardstick_like()
 }

@@ -32,7 +32,7 @@ characterize(x, ...)
 
 \method{characterize}{cubist}(x, committees = NULL, ...)
 
-\method{characterize}{tidy_C50}(x, trials = max(x$trial), ...)
+\method{characterize}{tidy_C50}(x, trials = max(x$trials), ...)
 
 \method{characterize}{C5.0}(x, trials = x$trials["Actual"], ...)
 

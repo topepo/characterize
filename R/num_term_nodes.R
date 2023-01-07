@@ -37,15 +37,23 @@
   )
 }
 
+
 #' @rdname pluck_num_term_nodes
 #' @export
-.pluck_num_term_nodes.C5.0 <- function(x, ...) {
-  if (all(x$tree == "")) { #<- a rule-based model
+.pluck_num_term_nodes.tidy_C50 <- function(x, trials = max(x$trial), ...) {
+  if (any(names(x) == "rule_num")) { #<- a rule-based model
     return(niente)
   }
+  x <- x[x$trial <= trials,]
   tibble::tibble(statistic = "num_term_nodes",
-                 value = sum(x$size)
+                 value = nrow(x)
   )
+}
+
+#' @rdname pluck_num_term_nodes
+#' @export
+.pluck_num_term_nodes.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  .pluck_num_term_nodes(make_tidy_c5(x), trials = trials)
 }
 
 #' @rdname pluck_num_term_nodes

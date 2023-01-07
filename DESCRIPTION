@@ -32,7 +32,7 @@ Suggests:
     partykit,
     rmarkdown,
     rpart,
-    rules (>= 1.0.0.9000),
+    rules (>= 1.0.0.9001),
     spelling,
     testthat (>= 3.0.0),
     tidymodels
