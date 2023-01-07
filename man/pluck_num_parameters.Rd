@@ -10,6 +10,7 @@
 \alias{.pluck_num_parameters.cubist}
 \alias{.pluck_num_parameters.multinom}
 \alias{.pluck_num_parameters.nnet}
+\alias{.pluck_num_parameters.brulee_mlp}
 \alias{.pluck_num_parameters.glmnet}
 \alias{.pluck_num_parameters.earth}
 \alias{.pluck_num_parameters.mixo_spls}
@@ -36,6 +37,8 @@
 \method{.pluck_num_parameters}{multinom}(x, ...)
 
 \method{.pluck_num_parameters}{nnet}(x, ...)
+
+\method{.pluck_num_parameters}{brulee_mlp}(x, ...)
 
 \method{.pluck_num_parameters}{glmnet}(x, penalty = 0.001, ...)
 

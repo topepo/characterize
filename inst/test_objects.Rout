@@ -1,7 +1,7 @@
 
 R version 4.2.0 (2022-04-22) -- "Vigorous Calisthenics"
 Copyright (C) 2022 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin17.0 (64-bit)
+Platform: aarch64-apple-darwin20 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -23,13 +23,13 @@ Loading required package: lattice
 > 
 > library(tidymodels)
 ── Attaching packages ────────────────────────────────────── tidymodels 1.0.0 ──
-✔ broom        1.0.1          ✔ rsample      1.1.0     
+✔ broom        1.0.1          ✔ rsample      1.1.1     
 ✔ dials        1.1.0          ✔ tibble       3.1.8     
 ✔ dplyr        1.0.10         ✔ tidyr        1.2.1     
-✔ infer        1.0.3          ✔ tune         1.0.1.9001
+✔ infer        1.0.4          ✔ tune         1.0.1.9001
 ✔ modeldata    1.0.1          ✔ workflows    1.1.2     
 ✔ parsnip      1.0.3          ✔ workflowsets 1.0.0     
-✔ purrr        0.3.5          ✔ yardstick    1.1.0.9000
+✔ purrr        1.0.0          ✔ yardstick    1.1.0.9000
 ✔ recipes      1.0.3          
 ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
 ✖ purrr::discard()         masks scales::discard()
@@ -61,6 +61,7 @@ The following object is masked from ‘package:dials’:
 
 > library(bonsai)
 > library(plsmod)
+> library(brulee)
 > library(butcher)
 > library(rlang)
 
@@ -68,8 +69,8 @@ Attaching package: ‘rlang’
 
 The following objects are masked from ‘package:purrr’:
 
-    %@%, as_function, flatten, flatten_chr, flatten_dbl, flatten_int,
-    flatten_lgl, flatten_raw, invoke, splice
+    %@%, flatten, flatten_chr, flatten_dbl, flatten_int, flatten_lgl,
+    flatten_raw, invoke, splice
 
 > 
 > tidymodels_prefer()
@@ -199,8 +200,6 @@ The following objects are masked from ‘package:purrr’:
 > 
 > # ------------------------------------------------------------------------------
 > 
-> # TODO add a brulee model
-> 
 > nnet_mod <-
 +   mlp() %>%
 +   set_mode("classification") %>%
@@ -215,6 +214,17 @@ The following objects are masked from ‘package:purrr’:
 +   butcher()
 > 
 > exp_param_mtn <- length(coef(mtn_mod$fit))
+> 
+> # ------------------------------------------------------------------------------
+> 
+> brulee_mlp_mod <-
++   mlp() %>%
++   set_mode("classification") %>%
++   set_engine("brulee") %>%
++   fit(class ~ ., data = cls_dat) %>%
++   butcher()
+> 
+> exp_param_brulee_mlp <- length(unlist(brulee_mlp_mod$fit$estimates[[1]]))
 > 
 > # ------------------------------------------------------------------------------
 > 
@@ -409,33 +419,38 @@ Warning messages:
 ─ Session info ───────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.2.0 (2022-04-22)
- os       macOS Big Sur/Monterey 10.16
- system   x86_64, darwin17.0
+ os       macOS Monterey 12.6.1
+ system   aarch64, darwin20
  ui       X11
  language (EN)
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       America/New_York
- date     2022-12-06
- pandoc   2.17.1.1 @ /usr/local/bin/pandoc
+ date     2022-12-28
+ pandoc   NA
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package       * version    date (UTC) lib source
  assertthat      0.2.1      2019-03-21 [1] CRAN (R 4.2.0)
  backports       1.4.1      2021-12-13 [1] CRAN (R 4.2.0)
- baguette      * 1.0.0      2022-06-17 [1] CRAN (R 4.2.0)
- BiocParallel    1.30.4     2022-10-13 [1] Bioconductor
- bonsai        * 0.2.0.9000 2022-09-21 [1] Github (tidymodels/bonsai@035a0af)
+ baguette      * 1.0.0.9000 2022-09-22 [1] local
+ BiocParallel    1.30.4     2022-10-11 [1] Bioconductor
+ bit             4.0.4      2020-08-04 [1] CRAN (R 4.2.0)
+ bit64           4.0.5      2020-08-30 [1] CRAN (R 4.2.0)
+ bonsai        * 0.2.0      2022-08-31 [1] CRAN (R 4.2.0)
  broom         * 1.0.1      2022-08-29 [1] CRAN (R 4.2.0)
- butcher       * 0.3.0.9000 2022-09-21 [1] Github (tidymodels/butcher@c472231)
- C50             0.1.7      2022-11-09 [1] local
+ brulee        * 0.2.0      2022-09-19 [1] CRAN (R 4.2.0)
+ butcher       * 0.3.1      2022-12-14 [1] CRAN (R 4.2.0)
+ C50             0.1.6      2022-02-05 [1] CRAN (R 4.2.0)
  cachem          1.0.6      2021-08-19 [1] CRAN (R 4.2.0)
- caret         * 6.0-91     2022-03-11 [1] CRAN (R 4.2.0)
- class           7.3-20     2022-01-13 [1] CRAN (R 4.2.0)
- cli             3.4.1      2022-09-23 [1] CRAN (R 4.2.0)
+ callr           3.7.3      2022-11-02 [1] CRAN (R 4.2.0)
+ caret         * 6.0-93     2022-08-08 [1] local
+ class           7.3-20     2022-01-16 [1] CRAN (R 4.2.0)
+ cli             3.5.0      2022-12-20 [1] CRAN (R 4.2.0)
  codetools       0.2-18     2020-11-04 [1] CRAN (R 4.2.0)
  colorspace      2.0-3      2022-02-21 [1] CRAN (R 4.2.0)
  conflicted      1.1.0      2021-11-26 [1] CRAN (R 4.2.0)
+ coro            1.0.3      2022-07-19 [1] CRAN (R 4.2.0)
  corpcor         1.6.10     2021-09-16 [1] CRAN (R 4.2.0)
  Cubist          0.4.0      2022-02-05 [1] CRAN (R 4.2.0)
  data.table      1.14.4     2022-10-17 [1] CRAN (R 4.2.0)
@@ -443,8 +458,8 @@ Warning messages:
  DBI             1.1.3      2022-06-18 [1] CRAN (R 4.2.0)
  dials         * 1.1.0      2022-11-04 [1] CRAN (R 4.2.0)
  DiceDesign      1.9        2021-02-13 [1] CRAN (R 4.2.0)
- digest          0.6.30     2022-10-18 [1] CRAN (R 4.2.0)
- discrim       * 1.0.0.9000 2022-08-16 [1] Github (tidymodels/discrim@6060ce1)
+ digest          0.6.31     2022-12-11 [1] CRAN (R 4.2.0)
+ discrim       * 1.0.0.9000 2022-08-15 [1] Github (tidymodels/discrim@6060ce1)
  dplyr         * 1.0.10     2022-09-01 [1] CRAN (R 4.2.0)
  earth           5.3.1      2021-07-20 [1] CRAN (R 4.2.0)
  ellipse         0.4.3      2022-05-31 [1] CRAN (R 4.2.0)
@@ -454,22 +469,22 @@ Warning messages:
  foreach         1.5.2      2022-02-02 [1] CRAN (R 4.2.0)
  Formula         1.2-4      2020-10-16 [1] CRAN (R 4.2.0)
  furrr           0.3.1      2022-08-15 [1] CRAN (R 4.2.0)
- future          1.29.0     2022-11-06 [1] CRAN (R 4.2.0)
+ future          1.30.0     2022-12-16 [1] CRAN (R 4.2.0)
  future.apply    1.10.0     2022-11-05 [1] CRAN (R 4.2.0)
  fuzzyjoin       0.1.6      2020-05-15 [1] CRAN (R 4.2.0)
  generics        0.1.3      2022-07-05 [1] CRAN (R 4.2.0)
  ggplot2       * 3.4.0      2022-11-04 [1] CRAN (R 4.2.0)
  ggrepel         0.9.1      2021-01-15 [1] CRAN (R 4.2.0)
  glmnet          4.1-4      2022-04-15 [1] CRAN (R 4.2.0)
- globals         0.16.1     2022-08-28 [1] CRAN (R 4.2.0)
+ globals         0.16.2     2022-11-21 [1] CRAN (R 4.2.0)
  glue            1.6.2      2022-02-24 [1] CRAN (R 4.2.0)
- gower           1.0.0      2022-02-03 [1] CRAN (R 4.2.0)
+ gower           1.0.1      2022-12-22 [1] CRAN (R 4.2.0)
  GPfit           1.0-8      2019-02-08 [1] CRAN (R 4.2.0)
  gridExtra       2.3        2017-09-09 [1] CRAN (R 4.2.0)
  gtable          0.3.1      2022-09-01 [1] CRAN (R 4.2.0)
- hardhat         1.2.0.9000 2022-11-30 [1] Github (tidymodels/hardhat@c2c896c)
+ hardhat         1.2.0.9000 2022-11-03 [1] Github (tidymodels/hardhat@c2c896c)
  igraph          1.3.5      2022-09-22 [1] CRAN (R 4.2.0)
- infer         * 1.0.3      2022-08-22 [1] CRAN (R 4.2.0)
+ infer         * 1.0.4      2022-12-02 [1] CRAN (R 4.2.0)
  inum            1.0-4      2021-04-12 [1] CRAN (R 4.2.0)
  ipred           0.9-13     2022-06-02 [1] CRAN (R 4.2.0)
  iterators       1.0.14     2022-02-05 [1] CRAN (R 4.2.0)
@@ -478,35 +493,37 @@ Warning messages:
  kknn            1.3.1      2016-03-26 [1] CRAN (R 4.2.0)
  lattice       * 0.20-45    2021-09-22 [1] CRAN (R 4.2.0)
  lava            1.7.0      2022-10-25 [1] CRAN (R 4.2.0)
- lhs             1.1.5      2022-03-22 [1] CRAN (R 4.2.0)
+ lhs             1.1.6      2022-12-17 [1] CRAN (R 4.2.0)
  libcoin         1.0-9      2021-09-27 [1] CRAN (R 4.2.0)
  lifecycle       1.0.3      2022-10-07 [1] CRAN (R 4.2.0)
- listenv         0.8.0      2019-12-05 [1] CRAN (R 4.2.0)
+ listenv         0.9.0      2022-12-16 [1] CRAN (R 4.2.0)
  lubridate       1.9.0      2022-11-06 [1] CRAN (R 4.2.0)
  magrittr        2.0.3      2022-03-30 [1] CRAN (R 4.2.0)
  MASS            7.3-58.1   2022-08-03 [1] CRAN (R 4.2.0)
  Matrix          1.5-3      2022-11-11 [1] CRAN (R 4.2.0)
  matrixStats     0.62.0     2022-04-19 [1] CRAN (R 4.2.0)
  memoise         2.0.1      2021-11-26 [1] CRAN (R 4.2.0)
- mixOmics        6.20.0     2022-08-16 [1] bioc_git2r (@dd98c6e)
+ mixOmics        6.20.0     2022-04-30 [1] bioc_xgit (@dd98c6e)
  modeldata     * 1.0.1      2022-09-06 [1] CRAN (R 4.2.0)
  ModelMetrics    1.2.2.2    2020-03-17 [1] CRAN (R 4.2.0)
  munsell         0.5.0      2018-06-12 [1] CRAN (R 4.2.0)
  mvtnorm         1.1-3      2021-10-08 [1] CRAN (R 4.2.0)
- nlme            3.1-160    2022-10-10 [1] CRAN (R 4.2.0)
+ nlme            3.1-161    2022-12-15 [1] CRAN (R 4.2.0)
  nnet            7.3-18     2022-09-28 [1] CRAN (R 4.2.0)
- parallelly      1.32.1     2022-07-21 [1] CRAN (R 4.2.0)
+ parallelly      1.33.0     2022-12-14 [1] CRAN (R 4.2.0)
  parsnip       * 1.0.3      2022-11-11 [1] CRAN (R 4.2.0)
  partykit        1.2-16     2022-06-20 [1] CRAN (R 4.2.0)
  pillar          1.8.1      2022-08-19 [1] CRAN (R 4.2.0)
  pkgconfig       2.0.3      2019-09-22 [1] CRAN (R 4.2.0)
  plotmo          3.6.2      2022-05-21 [1] CRAN (R 4.2.0)
  plotrix         3.8-2      2021-09-08 [1] CRAN (R 4.2.0)
- plsmod        * 1.0.0.9000 2022-09-21 [1] Github (tidymodels/plsmod@1127497)
+ plsmod        * 1.0.0      2022-09-06 [1] Bioconductor
  plyr            1.8.7      2022-03-24 [1] CRAN (R 4.2.0)
  pROC            1.18.0     2021-09-03 [1] CRAN (R 4.2.0)
+ processx        3.8.0      2022-10-26 [1] CRAN (R 4.2.0)
  prodlim         2019.11.13 2019-11-17 [1] CRAN (R 4.2.0)
- purrr         * 0.3.5      2022-10-06 [1] CRAN (R 4.2.0)
+ ps              1.7.2      2022-10-26 [1] CRAN (R 4.2.0)
+ purrr         * 1.0.0      2022-12-20 [1] CRAN (R 4.2.0)
  R6              2.5.1      2021-08-19 [1] CRAN (R 4.2.0)
  ranger          0.14.1     2022-06-18 [1] CRAN (R 4.2.0)
  rARPACK         0.11-0     2016-03-10 [1] CRAN (R 4.2.0)
@@ -516,15 +533,15 @@ Warning messages:
  reshape2        1.4.4      2020-04-09 [1] CRAN (R 4.2.0)
  rlang         * 1.0.6      2022-09-24 [1] CRAN (R 4.2.0)
  rpart           4.1.19     2022-10-21 [1] CRAN (R 4.2.0)
- rsample       * 1.1.0      2022-08-08 [1] CRAN (R 4.2.0)
+ rsample       * 1.1.1      2022-12-07 [1] CRAN (R 4.2.0)
  RSpectra        0.16-1     2022-04-24 [1] CRAN (R 4.2.0)
  rstudioapi      0.14       2022-08-22 [1] CRAN (R 4.2.0)
- rules         * 1.0.0.9000 2022-09-21 [1] Github (tidymodels/rules@48dd5bf)
+ rules         * 1.0.0.9000 2022-12-28 [1] local
  scales        * 1.2.1      2022-08-20 [1] CRAN (R 4.2.0)
- sessioninfo     1.2.2.9000 2022-10-11 [1] Github (r-lib/sessioninfo@d70760d)
+ sessioninfo     1.2.2      2021-12-06 [1] CRAN (R 4.2.0)
  shape           1.4.6      2021-05-19 [1] CRAN (R 4.2.0)
  stringi         1.7.8      2022-07-11 [1] CRAN (R 4.2.0)
- stringr         1.4.1      2022-08-20 [1] CRAN (R 4.2.0)
+ stringr         1.5.0      2022-12-02 [1] CRAN (R 4.2.0)
  survival        3.4-0      2022-08-09 [1] CRAN (R 4.2.0)
  TeachingDemos   2.12       2020-04-07 [1] CRAN (R 4.2.0)
  tibble        * 3.1.8      2022-07-22 [1] CRAN (R 4.2.0)
@@ -532,8 +549,9 @@ Warning messages:
  tidyr         * 1.2.1      2022-09-08 [1] CRAN (R 4.2.0)
  tidyselect      1.2.0      2022-10-10 [1] CRAN (R 4.2.0)
  timechange      0.1.1      2022-11-04 [1] CRAN (R 4.2.0)
- timeDate        4021.106   2022-09-30 [1] CRAN (R 4.2.0)
- tune          * 1.0.1.9001 2022-12-05 [1] Github (tidymodels/tune@e23abdf)
+ timeDate        4021.107   2022-12-08 [1] CRAN (R 4.2.0)
+ torch           0.9.0.9000 2022-10-26 [1] Github (rstudio/torch@0713236)
+ tune          * 1.0.1.9001 2022-12-09 [1] Github (tidymodels/tune@e23abdf)
  utf8            1.2.2      2021-07-24 [1] CRAN (R 4.2.0)
  vctrs           0.5.1      2022-11-16 [1] CRAN (R 4.2.0)
  withr           2.5.0      2022-03-03 [1] CRAN (R 4.2.0)
@@ -541,13 +559,13 @@ Warning messages:
  workflowsets  * 1.0.0      2022-07-12 [1] CRAN (R 4.2.0)
  xgboost         1.6.0.1    2022-04-16 [1] CRAN (R 4.2.0)
  xrf             0.2.2      2022-10-04 [1] CRAN (R 4.2.0)
- yardstick     * 1.1.0.9000 2022-11-30 [1] Github (tidymodels/yardstick@5f1b9ce)
+ yardstick     * 1.1.0.9000 2022-12-27 [1] Github (tidymodels/yardstick@5f1b9ce)
 
- [1] /Library/Frameworks/R.framework/Versions/4.2/Resources/library
+ [1] /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library
 
 ──────────────────────────────────────────────────────────────────────────────
 > 
 > q("no")
 > proc.time()
    user  system elapsed 
- 15.898   0.507  16.424 
+ 10.234   0.263  10.520 

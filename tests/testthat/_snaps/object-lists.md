@@ -31,35 +31,36 @@
       25 num_active_features lgb.Booster
       26 num_active_features         xrf
       27      num_parameters      bagger
-      28      num_parameters      cubist
-      29      num_parameters       earth
-      30      num_parameters      glmnet
-      31      num_parameters    mixo_pls
-      32      num_parameters  mixo_plsda
-      33      num_parameters   mixo_spls
-      34      num_parameters mixo_splsda
-      35      num_parameters    multinom
-      36      num_parameters        nnet
-      37      num_parameters         xrf
-      38           num_rules        C5.0
-      39           num_rules      cubist
-      40           num_rules         xrf
-      41 num_support_vectors        ksvm
-      42      num_term_nodes        C5.0
-      43      num_term_nodes      bagger
-      44      num_term_nodes        bart
-      45      num_term_nodes     cforest
-      46      num_term_nodes lgb.Booster
-      47      num_term_nodes       party
-      48      num_term_nodes   partynode
-      49      num_term_nodes      ranger
-      50      num_term_nodes       rpart
-      51      num_term_nodes xgb.Booster
+      28      num_parameters  brulee_mlp
+      29      num_parameters      cubist
+      30      num_parameters       earth
+      31      num_parameters      glmnet
+      32      num_parameters    mixo_pls
+      33      num_parameters  mixo_plsda
+      34      num_parameters   mixo_spls
+      35      num_parameters mixo_splsda
+      36      num_parameters    multinom
+      37      num_parameters        nnet
+      38      num_parameters         xrf
+      39           num_rules        C5.0
+      40           num_rules      cubist
+      41           num_rules         xrf
+      42 num_support_vectors        ksvm
+      43      num_term_nodes        C5.0
+      44      num_term_nodes      bagger
+      45      num_term_nodes        bart
+      46      num_term_nodes     cforest
+      47      num_term_nodes lgb.Booster
+      48      num_term_nodes       party
+      49      num_term_nodes   partynode
+      50      num_term_nodes      ranger
+      51      num_term_nodes       rpart
+      52      num_term_nodes xgb.Booster
 
 ---
 
     Code
       object_list()
     Output
-      [1] "`C5.0`, `bagger`, `bart`, `cforest`, `cubist`, `earth`, `glmnet`, `ksvm`, `lgb.Booster`, `mixo_pls`, `mixo_plsda`, `mixo_spls`, `mixo_splsda`, `multinom`, `nnet`, `party`, `partynode`, `ranger`, `rpart`, `terms`, `xgb.Booster`, `xrf`"
+      [1] "`C5.0`, `bagger`, `bart`, `brulee_mlp`, `cforest`, `cubist`, `earth`, `glmnet`, `ksvm`, `lgb.Booster`, `mixo_pls`, `mixo_plsda`, `mixo_spls`, `mixo_splsda`, `multinom`, `nnet`, `party`, `partynode`, `ranger`, `rpart`, `terms`, `xgb.Booster`, `xrf`"
 

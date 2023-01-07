@@ -70,6 +70,14 @@
 
 #' @rdname pluck_num_parameters
 #' @export
+.pluck_num_parameters.brulee_mlp <- function(x, ...) {
+  tibble::tibble(statistic = "num_parameters",
+                 value = length(unlist(x$estimates[[1]]))
+  )
+}
+
+#' @rdname pluck_num_parameters
+#' @export
 .pluck_num_parameters.glmnet <- function(x, penalty = 0.001, ...) {
   rlang::is_installed("glmnet")
   vars_used <- unlist(predict(x, s = penalty, type = "nonzero"))

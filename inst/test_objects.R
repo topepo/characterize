@@ -6,6 +6,7 @@ library(baguette)
 library(discrim)
 library(bonsai)
 library(plsmod)
+library(brulee)
 library(butcher)
 library(rlang)
 
@@ -136,8 +137,6 @@ svm_mod <-
 
 # ------------------------------------------------------------------------------
 
-# TODO add a brulee model
-
 nnet_mod <-
   mlp() %>%
   set_mode("classification") %>%
@@ -152,6 +151,17 @@ mtn_mod <-
   butcher()
 
 exp_param_mtn <- length(coef(mtn_mod$fit))
+
+# ------------------------------------------------------------------------------
+
+brulee_mlp_mod <-
+  mlp() %>%
+  set_mode("classification") %>%
+  set_engine("brulee") %>%
+  fit(class ~ ., data = cls_dat) %>%
+  butcher()
+
+exp_param_brulee_mlp <- length(unlist(brulee_mlp_mod$fit$estimates[[1]]))
 
 # ------------------------------------------------------------------------------
 
