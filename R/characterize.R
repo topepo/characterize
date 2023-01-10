@@ -235,3 +235,11 @@ characterize.lgb.Booster <- function(x, trees = NULL, ...) {
   ) %>%
     yardstick_like()
 }
+
+
+#' @rdname characterize
+#' @export
+characterize.fda <- function(x, ...) {
+  characterize(x$fit)
+}
+

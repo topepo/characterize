@@ -14,6 +14,7 @@
 \alias{characterize.tidy_xrf}
 \alias{characterize.xrf}
 \alias{characterize.lgb.Booster}
+\alias{characterize.fda}
 \title{Compute model characteristics}
 \usage{
 characterize(x, ...)
@@ -43,6 +44,8 @@ characterize(x, ...)
 \method{characterize}{xrf}(x, penalty = 0.001, ...)
 
 \method{characterize}{lgb.Booster}(x, trees = NULL, ...)
+
+\method{characterize}{fda}(x, ...)
 }
 \arguments{
 \item{x}{An object.}
