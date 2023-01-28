@@ -22,27 +22,26 @@ options(pillar.advice = FALSE, pillar.min_title_chars = Inf)
 ```
 
 
+$$
+y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
+  sin^{-1}(x_{i4}) + \log(x_{i5}  + x_{i5}) -
+  (x_{i9} / x_{i10}) \sqrt{x_{i7} / x_{i8}} -
+  x_{i2} x_{i7} + \epsilon_{i}
+$$
+
 ```{r}
-#| label: ames-setup
-
-data(ames)
-ames <-
-  ames %>%
-  mutate(Sale_Price = log10(Sale_Price))
-
-set.seed(1)
-ames_split <- initial_split(ames)
-ames_train <- training(ames_split)
-ames_test <- testing(ames_split)
-
-set.seed(2)
-ames_rs <- vfold_cv(ames_train)
+#| label: data-setup
+set.seed(4005)
+sim_train <- 
+  sim_regression(1000, method = "hooker_2004") %>% 
+  bind_cols(sim_noise(1000, 50))
+sim_rs <- vfold_cv(sim_train)
 ```
 
 
 ```{r}
 #| label: cart
-
+#| cache: true
 cart_spec <- 
   decision_tree(cost_complexity = tune()) %>% 
   set_mode("regression")
@@ -52,9 +51,9 @@ ctrl <- control_grid(save_workflow = TRUE, extract = retain_characteristics)
 cart_res <-
   cart_spec %>%
   tune_grid(
-    Sale_Price ~ .,
-    resamples = ames_rs,
-    grid = tibble(cost_complexity = 10 ^ seq(-5, -1, length.out = 20)),
+    outcome ~ .,
+    resamples = sim_rs,
+    grid = tibble(cost_complexity = 10 ^ seq(-4, -1, length.out = 20)),
     control = ctrl
   )
 cart_res
@@ -62,6 +61,7 @@ cart_res
 
 ```{r}
 #| label: get-results
+#| warning: false
 model_char <- collect_characteristics(cart_res)
 model_char
 
@@ -78,6 +78,7 @@ model_char %>%
 
 ```{r}
 #| label: get-results-and-metrics
+#| warning: false
 metric_and_char <- collect_characteristics(cart_res, add_metrics = TRUE)
 metric_and_char
 
@@ -94,22 +95,14 @@ metric_and_char %>%
 
 ```{r}
 #| label: rmse-vs-vars
-rmse_vs_vars <- 
-  metric_and_char %>% 
-  filter(.metric %in% c("rmse", "num_active_features")) %>% 
-  select(.metric, mean, .config, cost_complexity) %>% 
-  pivot_wider(
-    id_cols = c(.config, cost_complexity),
-    names_from = .metric,
-    values_from = mean
-  )
+rmse_vs_vars <- collect_characteristics(cart_res, add_metrics = TRUE, wide = TRUE)
 rmse_vs_vars
 
 rmse_vs_vars %>%
   ggplot(aes(num_active_features, rmse)) + 
   geom_point() + 
   geom_line(alpha = 1 / 2) +
-  geom_hline(yintercept = 0.085, lty = 2, col = "green")
+  geom_hline(yintercept = 0.55, lty = 2, col = "green")
 ```
 
 
@@ -117,7 +110,7 @@ rmse_vs_vars %>%
 #| label: select
 
 rmse_vs_vars %>% 
-  filter(rmse <= .085) %>% 
+  filter(rmse <= 0.55) %>% 
   slice_min(num_active_features, n = 1)
 ```
 

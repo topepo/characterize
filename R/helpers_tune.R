@@ -39,17 +39,23 @@ collect_characteristics <-
     }
     if (add_metrics) {
       metric_res <- tune::collect_metrics(x, summarize = summarize, parameters = parameters)
+      res <- dplyr::bind_rows(res, metric_res) %>% dplyr::arrange(.config, .metric)
       if (wide) {
         metrics <- unique(metric_res$.metric)
+        params <- tune::.get_tune_parameter_names(x)
         res <-
-          metric_res %>%
-          dplyr::select(.config, mean, .metric) %>%
-          tidyr::pivot_wider(id_cols = .config, names_from = .metric, values_from = mean) %>%
-          dplyr::full_join(res, by = ".config") %>%
-          dplyr::relocate(!!!metrics, .after = dplyr::last_col())
-      } else {
-        res <- dplyr::bind_rows(res, metric_res)
+          res %>%
+          dplyr::select(.config, mean, .metric, dplyr::all_of(params)) %>%
+          tidyr::pivot_wider(
+            id_cols = c(.config,!!!params),
+            names_from = .metric,
+            values_from = mean
+          ) %>%
+          dplyr::relocate(.config , .after = dplyr::last_col())
       }
+    } else {
+      res <- dplyr::arrange(res, .config, .metric)
     }
-    dplyr::arrange(res, .config, .metric)
+    res
+
   }
