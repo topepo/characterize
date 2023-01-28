@@ -62,8 +62,11 @@
 <span><span class="co"># S3 method for rpart</span></span>
 <span><span class="fu">.pluck_num_term_nodes</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for tidy_C50</span></span>
+<span><span class="fu">.pluck_num_term_nodes</span><span class="op">(</span><span class="va">x</span>, trials <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">trial</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S3 method for C5.0</span></span>
-<span><span class="fu">.pluck_num_term_nodes</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">.pluck_num_term_nodes</span><span class="op">(</span><span class="va">x</span>, trials <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">trials</span><span class="op">[</span><span class="st">"Actual"</span><span class="op">]</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for ranger</span></span>
 <span><span class="fu">.pluck_num_term_nodes</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -101,6 +104,10 @@
 
 <dt>...</dt>
 <dd><p>Not currently used.</p></dd>
+
+
+<dt>trials, nrounds, trees</dt>
+<dd><p>The number of boosting to use in the examination.</p></dd>
 
 </dl></div>
 
