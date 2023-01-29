@@ -57,7 +57,7 @@ sim_rs <- vfold_cv(sim_train)
 
 ## A single model fit
 
-Let's fit a regression tree to theese data: 
+Let's fit a regression tree to these data: 
 
 ```{r}
 #| label: cart-fit
@@ -77,7 +77,7 @@ Fit this particular model, there are a few aspects of this model that can be qua
 characterize(cart_fit)
 ```
 
-These values can help understand the complexity of the model. Each aspect is determined by individual functions that start with `.pluck`, such as `.pluck_num_active_features()`. Almost all of these functions return numeric values. The one exception can return _which_ predictors are functiionally used in the prediction equation:
+These values can help understand the complexity of the model. Each aspect is determined by individual functions that start with `.pluck`, such as `.pluck_num_active_features()`. Almost all of these functions return numeric values. The one exception can return _which_ predictors are functionally used in the prediction equation:
 
 
 ```{r}
@@ -103,12 +103,12 @@ ppr(outcome ~ ., data = sim_train, nterms = 3) %>%
 
 We night want to know how these characteristics related to model performance. Let's tune this model. The cost-complexity parameter (aka C<sub>p</sub>) is modulated over 20 different values. These models are fit on each of the `r nrow(sim_rs)` resamples of the data. 
 
-The tuning functions in tidymodels have an option to return the fitted models (or some results that are based on those models). The `extract` option in the control functions can be used to define what will be returned. We'll use the `retain_characteristics()` function. This will execute `characterize()` on each of hte models. 
+The tuning functions in tidymodels have an option to return the fitted models (or some results that are based on those models). The `extract` option in the control functions can be used to define what will be returned. We'll use the `retain_characteristics()` function. This will execute `characterize()` on each of the models. 
 
 
 ```{r}
 #| label: cart
-#| cache: true
+
 cart_spec <- 
   decision_tree(cost_complexity = tune()) %>% 
   set_mode("regression")
