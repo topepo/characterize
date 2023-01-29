@@ -2,7 +2,7 @@ library(testthat)
 library(rlang)
 
 
-test_that("examining an object", {
+test_that("characterizing an object", {
   skip_if_not_installed("kernlab")
 
   load(test_path("test_cases.RData"))

@@ -9,8 +9,8 @@
 #' @param x An object.
 #' @param penalty A numeric parameter value for the amount of
 #' regularization/penalty of the model.
-#' @param committees The number of Cubist committees to use in the examination.
-#' @param trials,nrounds,trees The number of boosting to use in the examination.
+#' @param committees The number of Cubist committees to use in the characterization.
+#' @param trials,nrounds,trees The number of boosting to use in the characterization.
 #' @param ... Not currently used.
 #' @details
 #' For a list of object types supported, see [list_characteristics()].
