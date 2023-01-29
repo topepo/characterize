@@ -22,6 +22,11 @@ options(pillar.advice = FALSE, pillar.min_title_chars = Inf)
 ```
 
 
+This tutorial will demonstrate how characterize can be used to understand how your model works. 
+
+First, let's generate some data where there are 10 informative parameters and 50 that are non-informative. The `sim_regression()` function in the modeldata package can be used to simulate numerous equations. We'll use the method of Hooker (2004), which uses the equation: 
+
+
 $$
 y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
   sin^{-1}(x_{i4}) + \log(x_{i5}  + x_{i5}) -
@@ -29,14 +34,76 @@ y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
   x_{i2} x_{i7} + \epsilon_{i}
 $$
 
+We'll also create a set of cross-validation indices form the training set: 
+
 ```{r}
 #| label: data-setup
+
+library(tidymodels)
+library(characterize)
+tidymodels_prefer()
+theme_set(theme_bw())
+
+
 set.seed(4005)
 sim_train <- 
   sim_regression(1000, method = "hooker_2004") %>% 
   bind_cols(sim_noise(1000, 50))
+
+sim_train
+
 sim_rs <- vfold_cv(sim_train)
 ```
+
+## A single model fit
+
+Let's fit a regression tree to theese data: 
+
+```{r}
+#| label: cart-fit
+
+cart_fit <- 
+  decision_tree(cost_complexity = 0.05) %>% 
+  set_mode("regression") %>% 
+  fit(outcome ~ ., data = sim_train)
+cart_fit
+```
+
+Fit this particular model, there are a few aspects of this model that can be quantified using `characterize()`: 
+
+
+```{r}
+#| label: cart-fit-char
+characterize(cart_fit)
+```
+
+These values can help understand the complexity of the model. Each aspect is determined by individual functions that start with `.pluck`, such as `.pluck_num_active_features()`. Almost all of these functions return numeric values. The one exception can return _which_ predictors are functiionally used in the prediction equation:
+
+
+```{r}
+#| label: cart-fit-features
+.pluck_active_features(cart_fit)
+
+# to get them: 
+.pluck_active_features(cart_fit) %>% 
+  unnest(value)
+```
+
+Different models will return different types of model characteristics and some will not return any: 
+
+```{r}
+#| label: ppr
+ppr(outcome ~ ., data = sim_train, nterms = 3) %>% 
+  characterize()
+```
+
+
+
+## Characterizing the models from tuning
+
+We night want to know how these characteristics related to model performance. Let's tune this model. The cost-complexity parameter (aka C<sub>p</sub>) is modulated over 20 different values. These models are fit on each of the `r nrow(sim_rs)` resamples of the data. 
+
+The tuning functions in tidymodels have an option to return the fitted models (or some results that are based on those models). The `extract` option in the control functions can be used to define what will be returned. We'll use the `retain_characteristics()` function. This will execute `characterize()` on each of hte models. 
 
 
 ```{r}
@@ -46,7 +113,7 @@ cart_spec <-
   decision_tree(cost_complexity = tune()) %>% 
   set_mode("regression")
 
-ctrl <- control_grid(save_workflow = TRUE, extract = retain_characteristics)
+ctrl <- control_grid(extract = retain_characteristics)
 
 cart_res <-
   cart_spec %>%
@@ -59,12 +126,39 @@ cart_res <-
 cart_res
 ```
 
+Note that this is now a column called `.extracts`. Each resample has a corresponding tibble with `r nrow(cart_res$.extracts[[1]])` rows: 
+
+
+```{r}
+#| label: cart-extract
+
+cart_res$.extracts[[1]] %>% head()
+
+# Getting closer:
+cart_res$.extracts[[1]]$.extracts[[1]]
+
+# The actual results: 
+cart_res$.extracts[[1]]$.extracts[[1]]$results
+```
+
+Before you open the help files for `tidyr::unnest()`, or stop reading, there is a helper function that will put the results in a usable format: 
+
 ```{r}
 #| label: get-results
 #| warning: false
 model_char <- collect_characteristics(cart_res)
 model_char
+```
 
+The values in the `mean` column are the average characteristics. There is an option called `summarize` that can indicate that the individual model results should be returned. 
+
+What is the relationship between the tuning parameter and the characteristics? 
+
+```{r}
+#| label: cart-cp-vs-chars
+#| fig.align: "center"
+#| fig.width: 8
+#| dev: svg
 model_char %>% 
   ggplot(aes(cost_complexity, mean)) + 
   geom_point() + 
@@ -72,13 +166,17 @@ model_char %>%
   facet_wrap(~ .metric, scales = "free_y") + 
   scale_x_log10() +
   labs(y = NULL)
-
 ```
 
+That great but you probably want to know how these characteristics relate to model performance. Another option, `add_metrics = TRUE` will also collect the performance metrics (RMSE and R<sup>2</sup>) are row-bound to the previous results. 
 
 ```{r}
 #| label: get-results-and-metrics
 #| warning: false
+#| fig.align: "center"
+#| fig.width: 8
+#| fig.height: 6
+#| dev: svg
 metric_and_char <- collect_characteristics(cart_res, add_metrics = TRUE)
 metric_and_char
 
@@ -91,12 +189,15 @@ metric_and_char %>%
   labs(y = NULL)
 ```
 
-
+Another way to do this is to pivot the performance metrics to columns. From here, we can plot versus performance: 
 
 ```{r}
 #| label: rmse-vs-vars
+#| fig.align: "center"
+#| fig.width: 6
+#| dev: svg
 rmse_vs_vars <- collect_characteristics(cart_res, add_metrics = TRUE, wide = TRUE)
-rmse_vs_vars
+rmse_vs_vars %>% head()
 
 rmse_vs_vars %>%
   ggplot(aes(num_active_features, rmse)) + 
@@ -105,6 +206,9 @@ rmse_vs_vars %>%
   geom_hline(yintercept = 0.55, lty = 2, col = "green")
 ```
 
+Recall that there are only 10 informative predictors. Selecting those out results in sudden and severe under-fitting. Keeping too many in the model results in a slow degradation of performance. 
+
+One thing that we might also desire to know is "what's the minimum number of features that will give me an RMSE less than 0.55?"
 
 ```{r}
 #| label: select
