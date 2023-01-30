@@ -70,24 +70,141 @@
 
     
     
+<p>This tutorial will demonstrate how characterize can be used to
+understand how your model works.</p>
+<p>First, let’s generate some data where there are 10 informative
+parameters and 50 that are non-informative. The
+<code>sim_regression()</code> function in the modeldata package can be
+used to simulate numerous equations. We’ll use the method of Hooker
+(2004), which uses the equation:</p>
 <p><span class="math display">\[
 y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
   sin^{-1}(x_{i4}) + \log(x_{i5}  + x_{i5}) -
   (x_{i9} / x_{i10}) \sqrt{x_{i7} / x_{i8}} -
   x_{i2} x_{i7} + \epsilon_{i}
 \]</span></p>
+<p>We’ll also create a set of cross-validation indices form the training
+set:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">4005</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org" class="external-link">tidymodels</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">characterize</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://tidymodels.tidymodels.org/reference/tidymodels_prefer.html" class="external-link">tidymodels_prefer</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">theme_set</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">4005</span><span class="op">)</span></span>
 <span><span class="va">sim_train</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu">sim_regression</span><span class="op">(</span><span class="fl">1000</span>, method <span class="op">=</span> <span class="st">"hooker_2004"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_cols</a></span><span class="op">(</span><span class="fu">sim_noise</span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">sim_rs</span> <span class="op">&lt;-</span> <span class="fu">vfold_cv</span><span class="op">(</span><span class="va">sim_train</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<span></span>
+<span><span class="va">sim_train</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1,000 × 61</span></span></span>
+<span><span class="co">##    outcome predictor_01 predictor_02 predictor_03 predictor_04 predictor_05</span></span>
+<span><span class="co">##      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> -<span style="color: #BB0000;">1.10</span>         0.413        0.328        0.022<span style="text-decoration: underline;">6</span>        0.633        0.837</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> -<span style="color: #BB0000;">0.501</span>        0.850        0.261        0.129         0.956        0.693</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> -<span style="color: #BB0000;">0.564</span>        0.701        0.482        0.033<span style="text-decoration: underline;">2</span>        0.834        0.727</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> -<span style="color: #BB0000;">0.560</span>        0.129        0.226        0.685         0.833        0.755</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>  1.10         0.037<span style="text-decoration: underline;">8</span>       0.205        1.00          0.698        0.989</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>  0.320        0.722        0.137        0.942         0.748        0.655</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>  0.836        0.037<span style="text-decoration: underline;">9</span>       0.082<span style="text-decoration: underline;">0</span>       0.831         0.679        0.865</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>  2.52         0.762        0.991        0.937         0.690        0.634</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>  0.055<span style="text-decoration: underline;">5</span>       0.825        0.195        0.443         0.942        0.694</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> -<span style="color: #BB0000;">1.35</span>         0.671        0.333        0.226         0.949        0.915</span></span>
+<span><span class="co">## <span style="color: #949494;"># … with 990 more rows, and 55 more variables: predictor_06 &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   predictor_07 &lt;dbl&gt;, predictor_08 &lt;dbl&gt;, predictor_09 &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   predictor_10 &lt;dbl&gt;, noise_01 &lt;dbl&gt;, noise_02 &lt;dbl&gt;, noise_03 &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   noise_04 &lt;dbl&gt;, noise_05 &lt;dbl&gt;, noise_06 &lt;dbl&gt;, noise_07 &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   noise_08 &lt;dbl&gt;, noise_09 &lt;dbl&gt;, noise_10 &lt;dbl&gt;, noise_11 &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   noise_12 &lt;dbl&gt;, noise_13 &lt;dbl&gt;, noise_14 &lt;dbl&gt;, noise_15 &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   noise_16 &lt;dbl&gt;, noise_17 &lt;dbl&gt;, noise_18 &lt;dbl&gt;, noise_19 &lt;dbl&gt;, …</span></span></span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sim_rs</span> <span class="op">&lt;-</span> <span class="fu">vfold_cv</span><span class="op">(</span><span class="va">sim_train</span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="a-single-model-fit">A single model fit<a class="anchor" aria-label="anchor" href="#a-single-model-fit"></a>
+</h2>
+<p>Let’s fit a regression tree to these data:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cart_fit</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu">decision_tree</span><span class="op">(</span>cost_complexity <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">set_mode</span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">fit</span><span class="op">(</span><span class="va">outcome</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">sim_train</span><span class="op">)</span></span>
+<span><span class="va">cart_fit</span></span></code></pre></div>
+<pre><code><span><span class="co">## parsnip model object</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## n= 1000 </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## node), split, n, deviance, yval</span></span>
+<span><span class="co">##       * denotes terminal node</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##  1) root 1000 675.56010  0.132640600  </span></span>
+<span><span class="co">##    2) predictor_03&lt; 0.4294012 401 169.56340 -0.398818000  </span></span>
+<span><span class="co">##      4) predictor_07&gt;=0.3936169 247  88.29824 -0.650205000 *</span></span>
+<span><span class="co">##      5) predictor_07&lt; 0.3936169 154  40.62021  0.004380685 *</span></span>
+<span><span class="co">##    3) predictor_03&gt;=0.4294012 599 316.91210  0.488425100  </span></span>
+<span><span class="co">##      6) predictor_01&lt; 0.5095151 306  92.81308  0.204690200 *</span></span>
+<span><span class="co">##      7) predictor_01&gt;=0.5095151 293 173.73660  0.784749000  </span></span>
+<span><span class="co">##       14) predictor_02&lt; 0.674366 182  55.90145  0.472063700 *</span></span>
+<span><span class="co">##       15) predictor_02&gt;=0.674366 111  70.86405  1.297440000 *</span></span></code></pre>
+<p>Fit this particular model, there are a few aspects of this model that
+can be quantified using <code><a href="../reference/characterize.html">characterize()</a></code>:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/characterize.html">characterize</a></span><span class="op">(</span><span class="va">cart_fit</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
+<span><span class="co">##   .metric             .estimator .estimate</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> num_active_features model              4</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> num_term_nodes      model              5</span></span></code></pre>
+<p>These values can help understand the complexity of the model. Each
+aspect is determined by individual functions that start with
+<code>.pluck</code>, such as <code><a href="../reference/pluck_num_active_features.html">.pluck_num_active_features()</a></code>.
+Almost all of these functions return numeric values. The one exception
+can return <em>which</em> predictors are functionally used in the
+prediction equation:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pluck_active_features.html">.pluck_active_features</a></span><span class="op">(</span><span class="va">cart_fit</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
+<span><span class="co">##   statistic       value    </span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> active_features <span style="color: #949494;">&lt;chr [4]&gt;</span></span></span></code></pre>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># to get them: </span></span>
+<span><span class="fu"><a href="../reference/pluck_active_features.html">.pluck_active_features</a></span><span class="op">(</span><span class="va">cart_fit</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 2</span></span></span>
+<span><span class="co">##   statistic       value       </span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> active_features predictor_01</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> active_features predictor_02</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> active_features predictor_03</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> active_features predictor_07</span></span></code></pre>
+<p>Different models will return different types of model characteristics
+and some will not return any:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/ppr.html" class="external-link">ppr</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">sim_train</span>, nterms <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/characterize.html">characterize</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 0 × 3</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># … with 3 variables: .metric &lt;chr&gt;, .estimator &lt;chr&gt;, .estimate &lt;dbl&gt;</span></span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 id="characterizing-the-models-from-tuning">Characterizing the models from tuning<a class="anchor" aria-label="anchor" href="#characterizing-the-models-from-tuning"></a>
+</h2>
+<p>We night want to know how these characteristics related to model
+performance. Let’s tune this model. The cost-complexity parameter (aka
+C<sub>p</sub>) is modulated over 20 different values. These models are
+fit on each of the 10 resamples of the data.</p>
+<p>The tuning functions in tidymodels have an option to return the
+fitted models (or some results that are based on those models). The
+<code>extract</code> option in the control functions can be used to
+define what will be returned. We’ll use the
+<code><a href="../reference/retain_characteristics.html">retain_characteristics()</a></code> function. This will execute
+<code><a href="../reference/characterize.html">characterize()</a></code> on each of the models.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cart_spec</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu">decision_tree</span><span class="op">(</span>cost_complexity <span class="op">=</span> <span class="fu">tune</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">set_mode</span><span class="op">(</span><span class="st">"regression"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ctrl</span> <span class="op">&lt;-</span> <span class="fu">control_grid</span><span class="op">(</span>save_workflow <span class="op">=</span> <span class="cn">TRUE</span>, extract <span class="op">=</span> <span class="va">retain_characteristics</span><span class="op">)</span></span>
+<span><span class="va">ctrl</span> <span class="op">&lt;-</span> <span class="fu">control_grid</span><span class="op">(</span>extract <span class="op">=</span> <span class="va">retain_characteristics</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cart_res</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">cart_spec</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -113,7 +230,39 @@ y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> <span style="color: #949494;">&lt;split [900/100]&gt;</span> Fold08 <span style="color: #949494;">&lt;tibble [40 × 5]&gt;</span> <span style="color: #949494;">&lt;tibble [0 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [20 × 3]&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> <span style="color: #949494;">&lt;split [900/100]&gt;</span> Fold09 <span style="color: #949494;">&lt;tibble [40 × 5]&gt;</span> <span style="color: #949494;">&lt;tibble [0 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [20 × 3]&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> <span style="color: #949494;">&lt;split [900/100]&gt;</span> Fold10 <span style="color: #949494;">&lt;tibble [40 × 5]&gt;</span> <span style="color: #949494;">&lt;tibble [0 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [20 × 3]&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>Note that this is now a column called <code>.extracts</code>. Each
+resample has a corresponding tibble with 20 rows:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cart_res</span><span class="op">$</span><span class="va">.extracts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
+<span><span class="co">##   cost_complexity .extracts        .config              </span></span>
+<span><span class="co">##             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>        0.000<span style="text-decoration: underline;">1</span>   <span style="color: #949494;">&lt;tibble [1 × 1]&gt;</span> Preprocessor1_Model01</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>        0.000<span style="text-decoration: underline;">144</span> <span style="color: #949494;">&lt;tibble [1 × 1]&gt;</span> Preprocessor1_Model02</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>        0.000<span style="text-decoration: underline;">207</span> <span style="color: #949494;">&lt;tibble [1 × 1]&gt;</span> Preprocessor1_Model03</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>        0.000<span style="text-decoration: underline;">298</span> <span style="color: #949494;">&lt;tibble [1 × 1]&gt;</span> Preprocessor1_Model04</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>        0.000<span style="text-decoration: underline;">428</span> <span style="color: #949494;">&lt;tibble [1 × 1]&gt;</span> Preprocessor1_Model05</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>        0.000<span style="text-decoration: underline;">616</span> <span style="color: #949494;">&lt;tibble [1 × 1]&gt;</span> Preprocessor1_Model06</span></span></code></pre>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Getting closer:</span></span>
+<span><span class="va">cart_res</span><span class="op">$</span><span class="va">.extracts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">.extracts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 1</span></span></span>
+<span><span class="co">##   results         </span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>          </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span></span></code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The actual results: </span></span>
+<span><span class="va">cart_res</span><span class="op">$</span><span class="va">.extracts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">.extracts</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">results</span></span></code></pre></div>
+<pre><code><span><span class="co">## [[1]]</span></span>
+<span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
+<span><span class="co">##   .metric             .estimator .estimate</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> num_active_features model             26</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> num_term_nodes      model             76</span></span></code></pre>
+<p>Before you open the help files for <code><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">tidyr::unnest()</a></code>, or
+stop reading, there is a helper function that will put the results in a
+usable format:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_char</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retain_characteristics.html">collect_characteristics</a></span><span class="op">(</span><span class="va">cart_res</span><span class="op">)</span></span>
 <span><span class="va">model_char</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 40 × 7</span></span></span>
@@ -130,7 +279,12 @@ y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span>        0.000<span style="text-decoration: underline;">428</span> num_active_features model       26.7    10    1.16 Preproces…</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span>        0.000<span style="text-decoration: underline;">428</span> num_term_nodes      model       73.4    10    1.03 Preproces…</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 30 more rows</span></span></span></code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>The values in the <code>mean</code> column are the average
+characteristics. There is an option called <code>summarize</code> that
+can indicate that the individual model results should be returned.</p>
+<p>What is the relationship between the tuning parameter and the
+characteristics?</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_char</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">cost_complexity</span>, <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -138,8 +292,13 @@ y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">.metric</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Using_characterize_with_tidymodels_files/figure-html/get-results-1.png" width="700"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p><img src="Using_characterize_with_tidymodels_files/figure-html/cart-cp-vs-chars-1.png" width="768" style="display: block; margin: auto;"></p>
+<p>That great but you probably want to know how these characteristics
+relate to model performance. Another option,
+<code>add_metrics = TRUE</code> will also collect the performance
+metrics (RMSE and R<sup>2</sup>) are row-bound to the previous
+results.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">metric_and_char</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retain_characteristics.html">collect_characteristics</a></span><span class="op">(</span><span class="va">cart_res</span>, add_metrics <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">metric_and_char</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 80 × 7</span></span></span>
@@ -156,7 +315,7 @@ y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span>        0.000<span style="text-decoration: underline;">207</span> num_active_features model      26.7      10 1.16    Preproce…</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span>        0.000<span style="text-decoration: underline;">207</span> num_term_nodes      model      73.4      10 1.03    Preproce…</span></span>
 <span><span class="co">## <span style="color: #949494;"># … with 70 more rows</span></span></span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">metric_and_char</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">cost_complexity</span>, <span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -164,41 +323,34 @@ y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">.metric</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Using_characterize_with_tidymodels_files/figure-html/get-results-and-metrics-1.png" width="700"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p><img src="Using_characterize_with_tidymodels_files/figure-html/get-results-and-metrics-1.png" width="768" style="display: block; margin: auto;"></p>
+<p>Another way to do this is to pivot the performance metrics to
+columns. From here, we can plot versus performance:</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rmse_vs_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retain_characteristics.html">collect_characteristics</a></span><span class="op">(</span><span class="va">cart_res</span>, add_metrics <span class="op">=</span> <span class="cn">TRUE</span>, wide <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">rmse_vs_vars</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 20 × 6</span></span></span>
-<span><span class="co">##    cost_complexity num_active_features num_term_nodes  rmse   rsq .config       </span></span>
-<span><span class="co">##              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>        0.000<span style="text-decoration: underline;">1</span>                  26.7           73.4 0.542 0.587 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>        0.000<span style="text-decoration: underline;">144</span>                26.7           73.4 0.542 0.587 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>        0.000<span style="text-decoration: underline;">207</span>                26.7           73.4 0.542 0.587 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>        0.000<span style="text-decoration: underline;">298</span>                26.7           73.4 0.542 0.587 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>        0.000<span style="text-decoration: underline;">428</span>                26.7           73.4 0.542 0.587 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>        0.000<span style="text-decoration: underline;">616</span>                26.5           72.6 0.541 0.588 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>        0.000<span style="text-decoration: underline;">886</span>                25.6           70   0.541 0.589 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>        0.001<span style="text-decoration: underline;">27</span>                 22.1           64.3 0.536 0.594 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>        0.001<span style="text-decoration: underline;">83</span>                 17.3           55.1 0.530 0.598 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span>        0.002<span style="text-decoration: underline;">64</span>                 12.2           44.1 0.528 0.598 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">11</span>        0.003<span style="text-decoration: underline;">79</span>                  8.6           33.4 0.528 0.592 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">12</span>        0.005<span style="text-decoration: underline;">46</span>                  7.4           24.9 0.540 0.571 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">13</span>        0.007<span style="text-decoration: underline;">85</span>                  6.6           18.6 0.556 0.546 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">14</span>        0.011<span style="text-decoration: underline;">3</span>                   5.3           12.9 0.572 0.519 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">15</span>        0.016<span style="text-decoration: underline;">2</span>                   5              9.5 0.580 0.503 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">16</span>        0.023<span style="text-decoration: underline;">4</span>                   4.9            7   0.610 0.452 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">17</span>        0.033<span style="text-decoration: underline;">6</span>                   4.1            5.1 0.618 0.439 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">18</span>        0.048<span style="text-decoration: underline;">3</span>                   4              5   0.617 0.440 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">19</span>        0.069<span style="text-decoration: underline;">5</span>                   2.2            3.2 0.678 0.329 Preprocessor1…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">20</span>        0.1                      1              2   0.704 0.273 Preprocessor1…</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<span><span class="va">rmse_vs_vars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 6</span></span></span>
+<span><span class="co">##   cost_complexity num_active_features num_term_nodes  rmse   rsq .config        </span></span>
+<span><span class="co">##             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>        0.000<span style="text-decoration: underline;">1</span>                  26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>        0.000<span style="text-decoration: underline;">144</span>                26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>        0.000<span style="text-decoration: underline;">207</span>                26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>        0.000<span style="text-decoration: underline;">298</span>                26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>        0.000<span style="text-decoration: underline;">428</span>                26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>        0.000<span style="text-decoration: underline;">616</span>                26.5           72.6 0.541 0.588 Preprocessor1_…</span></span></code></pre>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rmse_vs_vars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">num_active_features</span>, <span class="va">rmse</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.55</span>, lty <span class="op">=</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="st">"green"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Using_characterize_with_tidymodels_files/figure-html/rmse-vs-vars-1.png" width="700"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p><img src="Using_characterize_with_tidymodels_files/figure-html/rmse-vs-vars-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>Recall that there are only 10 informative predictors. Selecting those
+out results in sudden and severe under-fitting. Keeping too many in the
+model results in a slow degradation of performance.</p>
+<p>One thing that we might also desire to know is “what’s the minimum
+number of features that will give me an RMSE less than 0.55?”</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rmse_vs_vars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">rmse</span> <span class="op">&lt;=</span> <span class="fl">0.55</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_min</a></span><span class="op">(</span><span class="va">num_active_features</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
@@ -206,7 +358,9 @@ y_{i} = \pi^{x_{i1} x_{i2}} \sqrt{ 2 x_{i3} } -
 <span><span class="co">##   cost_complexity num_active_features num_term_nodes  rmse   rsq .config        </span></span>
 <span><span class="co">##             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span>         0.005<span style="text-decoration: underline;">46</span>                 7.4           24.9 0.540 0.571 Preprocessor1_…</span></span></code></pre>
-  </main>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
