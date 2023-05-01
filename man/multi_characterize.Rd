@@ -65,9 +65,9 @@ multi_characterize(object, ...)
 \item{penalty}{A numeric parameter value for the amount of
 regularization/penalty of the model.}
 
-\item{committees}{The number of Cubist committees to use in the examination.}
+\item{committees}{The number of Cubist committees to use in the characterization.}
 
-\item{trials, nrounds, trees}{The number of boosting to use in the examination.}
+\item{trials, nrounds, trees}{The number of boosting to use in the characterization.}
 }
 \value{
 A tibble of characterized results (\code{results}) with extra columns for the

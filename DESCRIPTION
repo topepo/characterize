@@ -1,6 +1,6 @@
 Package: characterize
 Title: Characteristics of a Fitted Model
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: c(
     person("Max", "Kuhn", , "max@rstudio.com", role = c("cre", "aut"),
            comment = c(ORCID = "0000-0003-2402-136X")),
@@ -20,7 +20,7 @@ Imports:
     rlang,
     tibble,
     tidyr,
-    tune (>= 1.0.1.9001),
+    tune (>= 1.1.1),
     utils,
     workflows
 Suggests: 
@@ -32,13 +32,10 @@ Suggests:
     partykit,
     rmarkdown,
     rpart,
-    rules (>= 1.0.0.9001),
+    rules (>= 1.0.2),
     spelling,
     testthat (>= 3.0.0),
     tidymodels
-Remotes:
-    tidymodels/rules,
-    tidymodels/tune#584
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US

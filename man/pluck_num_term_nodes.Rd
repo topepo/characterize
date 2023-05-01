@@ -57,7 +57,7 @@
 
 \item{...}{Not currently used.}
 
-\item{trials, nrounds, trees}{The number of boosting to use in the examination.}
+\item{trials, nrounds, trees}{The number of boosting to use in the characterization.}
 }
 \description{
 Compute the number of terminal nodes in a tree-based model

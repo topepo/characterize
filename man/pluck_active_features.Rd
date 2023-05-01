@@ -92,9 +92,9 @@
 \item{penalty}{A numeric parameter value for the amount of
 regularization/penalty of the model.}
 
-\item{committees}{The number of Cubist committees to use in the examination.}
+\item{committees}{The number of Cubist committees to use in the characterization.}
 
-\item{trials, nrounds, trees}{The number of boosting to use in the examination.}
+\item{trials, nrounds, trees}{The number of boosting to use in the characterization.}
 }
 \description{
 Predictors used in the model

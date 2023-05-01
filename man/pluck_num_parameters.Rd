@@ -63,7 +63,7 @@
 
 \item{...}{Not currently used.}
 
-\item{committees}{The number of Cubist committees to use in the examination.}
+\item{committees}{The number of Cubist committees to use in the characterization.}
 
 \item{penalty}{A numeric parameter value for the amount of
 regularization/penalty of the model.}

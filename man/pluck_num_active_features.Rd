@@ -51,7 +51,7 @@
 \item{penalty}{A numeric parameter value for the amount of
 regularization/penalty of the model.}
 
-\item{committees}{The number of Cubist committees to use in the examination.}
+\item{committees}{The number of Cubist committees to use in the characterization.}
 }
 \description{
 Number of predictors used in the model
