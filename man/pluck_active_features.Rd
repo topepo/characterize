@@ -42,6 +42,9 @@
 \alias{.pluck_active_features.rda}
 \alias{.pluck_active_features.randomForest}
 \alias{.pluck_active_features.lda_diag}
+\alias{.pluck_active_features._keras.engine.sequential.Sequential}
+\alias{.pluck_active_features.LiblineaR}
+\alias{.pluck_active_features.mda}
 \title{Predictors used in the model}
 \usage{
 .pluck_active_features(x, ...)
@@ -125,6 +128,12 @@
 \method{.pluck_active_features}{randomForest}(x, ...)
 
 \method{.pluck_active_features}{lda_diag}(x, ...)
+
+\method{.pluck_active_features}{`_keras.engine.sequential.Sequential`}(x, ...)
+
+\method{.pluck_active_features}{LiblineaR}(x, ...)
+
+\method{.pluck_active_features}{mda}(x, ...)
 }
 \arguments{
 \item{x}{An object.}

@@ -57,6 +57,11 @@ no_int_coefs <- function(x) {
   names(x)
 }
 
+act_vars_to_tbl <- function(x) {
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(x))))
+}
+
 # ------------------------------------------------------------------------------
 
 #' @rdname pluck_active_features
@@ -64,9 +69,7 @@ no_int_coefs <- function(x) {
 .pluck_active_features.rpart <- function(x, ...) {
   terms <- x$frame$var
   vars_used <- terms[terms != "<leaf>"]
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 # ------------------------------------------------------------------------------
@@ -78,9 +81,7 @@ no_int_coefs <- function(x) {
   var_index <- var_index[var_index > 0]
   vars_used <- x$forest$independent.variable.names[var_index]
 
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 # ------------------------------------------------------------------------------
@@ -92,10 +93,7 @@ no_int_coefs <- function(x) {
   cl <- rlang::call2("xgb.importance", .ns = "xgboost", model = expr(x),
                      trees = seq.int(0, nrounds - 1))
   vars_used <- rlang::eval_tidy(cl)
-
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used$Feature)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 # ------------------------------------------------------------------------------
@@ -113,9 +111,7 @@ no_int_coefs <- function(x) {
   }
 
   vars_used <- nms[index_used]
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 # ------------------------------------------------------------------------------
@@ -153,9 +149,7 @@ get_rule_vars <- function(x) {
 #' @export
 .pluck_active_features.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   terms <- cubist_vars(committees, x)
-  tibble::tibble(statistic = "active_features",
-                 value = list(terms)
-  )
+  act_vars_to_tbl(terms)
 }
 
 #' @rdname pluck_active_features
@@ -188,9 +182,7 @@ c5_vars <- function(iter, x) {
 #' @export
 .pluck_active_features.tidy_C50 <- function(x, trials = max(x$trial), ...) {
   terms <- c5_vars(trials, x)
-  tibble::tibble(statistic = "active_features",
-                 value = list(terms)
-  )
+  act_vars_to_tbl(terms)
 }
 
 #' @rdname pluck_active_features
@@ -209,9 +201,7 @@ c5_vars <- function(iter, x) {
   ev <- rlang::eval_tidy(cl)
   ev <- ev[ ev[,"nsubsets"] > 0, ]
   vars_used <- rownames(ev)
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 # ------------------------------------------------------------------------------
@@ -221,9 +211,7 @@ pls_features <- function(x, ...) {
   loads <- x$loadings$X[, uses_y_loading]
   non_zero_loadings <- apply(loads, 1, function(x) any(x != 0))
   vars_used <- rownames(loads)[non_zero_loadings]
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 #' @rdname pluck_active_features
@@ -249,9 +237,7 @@ pls_features <- function(x, ...) {
 .pluck_active_features.bagger <- function(x, ...) {
   vars_used <- purrr::map_dfr(x$model_df$model, .pluck_active_features)
   vars_used <- unique(unlist(vars_used$value))
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 # ------------------------------------------------------------------------------
@@ -262,9 +248,7 @@ pls_features <- function(x, ...) {
   nms <- colnames(x$varcount)
   is_used <- apply(x$varcount, 2, function(x) any(x > 0))
   vars_used <- nms[is_used]
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 # ------------------------------------------------------------------------------
@@ -290,9 +274,7 @@ get_party_var_index <- function(x) {
 .pluck_active_features.party <- function(x, ...) {
   var_index <- get_party_var_index(x)
   var_names <- colnames(x$data)[var_index]
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(var_names))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 #' @rdname pluck_active_features
@@ -302,9 +284,7 @@ get_party_var_index <- function(x) {
   var_index <- unlist(var_index)
   var_index <- unique(var_index)
   var_names <- colnames(x$data)[var_index]
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(var_names))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 
@@ -314,10 +294,7 @@ get_party_var_index <- function(x) {
 #' @export
 .pluck_active_features.tidy_xrf <- function(x, ...) {
   vars_used <- purrr::map(x$rule, ~ all.vars(rlang::parse_expr(.x)))
-
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(unlist(vars_used))))
-  )
+  act_vars_to_tbl(unlist(vars_used))
 }
 
 #' @rdname pluck_active_features
@@ -335,8 +312,7 @@ get_party_var_index <- function(x) {
   res <-
     purrr::map_dfr(x$model_df$model, ~ .pluck_active_features(.x$fit)) %>%
     tidyr::unnest(value)
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(res$value))))
+  act_vars_to_tbl(res$value)
 }
 
 
@@ -346,9 +322,7 @@ get_party_var_index <- function(x) {
 #' @export
 .pluck_active_features.lgb_trees <- function(x, trees = max(x$trees), ...) {
   dat <- dplyr::filter(x, trees <= !!trees)
-
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(dat$split_feature))))
+  act_vars_to_tbl(dat$split_feature)
 }
 
 
@@ -363,8 +337,7 @@ get_party_var_index <- function(x) {
 #' @rdname pluck_active_features
 #' @export
 .pluck_active_features.nullmodel <- function(x, ...) {
-  tibble::tibble(statistic = "active_features",
-                 value = list(character(0)))
+  act_vars_to_tbl(character(0))
 }
 
 # ------------------------------------------------------------------------------
@@ -376,8 +349,7 @@ get_party_var_index <- function(x) {
 #' @export
 .pluck_active_features.lm <- function(x, ...) {
   vars_used <- no_int_coefs(x$coef)
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(unlist(vars_used)))))
+  act_vars_to_tbl(unlist(vars_used))
 
 }
 
@@ -402,10 +374,7 @@ get_party_var_index <- function(x) {
   vars_used <-
     purrr::map(x$coefficients, no_int_coefs) %>%
     unlist()
-
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 #' @rdname pluck_active_features
@@ -416,8 +385,7 @@ get_party_var_index <- function(x) {
 #' @export
 .pluck_active_features.gam <- function(x, ...) {
   vars_used <- no_int_coefs(x$coefficients)
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used))))
+  act_vars_to_tbl(vars_used)
 
 }
 
@@ -425,8 +393,7 @@ get_party_var_index <- function(x) {
 #' @export
 .pluck_active_features.lda <- function(x, ...) {
   vars_used <- colames(x$means)
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used))))
+  act_vars_to_tbl(vars_used)
 }
 
 #' @rdname pluck_active_features
@@ -439,24 +406,21 @@ get_party_var_index <- function(x) {
 #' @export
 .pluck_active_features.qda <- function(x, ...) {
   vars_used <- colnames(x$means)
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used))))
+  act_vars_to_tbl(vars_used)
 }
 
 #' @rdname pluck_active_features
 #' @export
 .pluck_active_features.rda <- function(x, ...) {
   vars_used <- rownames(x$means)
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used))))
+  act_vars_to_tbl(vars_used)
 }
 
 #' @rdname pluck_active_features
 #' @export
 .pluck_active_features.randomForest <- function(x, ...) {
   vars_used <- names(x$forest$xlevels)
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used))))
+  act_vars_to_tbl(vars_used)
 }
 
 
@@ -464,6 +428,28 @@ get_party_var_index <- function(x) {
 #' @export
 .pluck_active_features.lda_diag <- function(x, ...) {
   vars_used <- x$col_names
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used))))
+  act_vars_to_tbl(vars_used)
 }
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features._keras.engine.sequential.Sequential <- function(x, ...) {
+  .pluck_active_features(x$preproc$terms)
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.LiblineaR <- function(x, ...) {
+  vars_used <- colnames(x$W)
+  vars_used <- vars_used[vars_used != "Bias"]
+  act_vars_to_tbl(vars_used)
+}
+
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.mda <- function(x, ...) {
+  vars_used <- names(x$fit$xmeans)
+  act_vars_to_tbl(vars_used)
+}
+
