@@ -8,8 +8,8 @@
 <meta name="description" content="characterize">
 <title>Using characterize with tidymodels • characterize</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Using characterize with tidymodels">
 <meta property="og:description" content="characterize">
@@ -101,16 +101,16 @@ set:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1,000 × 61</span></span></span>
 <span><span class="co">##    outcome predictor_01 predictor_02 predictor_03 predictor_04 predictor_05</span></span>
 <span><span class="co">##      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> -<span style="color: #BB0000;">1.10</span>         0.413        0.328        0.022<span style="text-decoration: underline;">6</span>        0.633        0.837</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> -<span style="color: #BB0000;">0.501</span>        0.850        0.261        0.129         0.956        0.693</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> -<span style="color: #BB0000;">0.564</span>        0.701        0.482        0.033<span style="text-decoration: underline;">2</span>        0.834        0.727</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> -<span style="color: #BB0000;">0.560</span>        0.129        0.226        0.685         0.833        0.755</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>  1.10         0.037<span style="text-decoration: underline;">8</span>       0.205        1.00          0.698        0.989</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>  0.320        0.722        0.137        0.942         0.748        0.655</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>  0.836        0.037<span style="text-decoration: underline;">9</span>       0.082<span style="text-decoration: underline;">0</span>       0.831         0.679        0.865</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>  2.52         0.762        0.991        0.937         0.690        0.634</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>  0.055<span style="text-decoration: underline;">5</span>       0.825        0.195        0.443         0.942        0.694</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> -<span style="color: #BB0000;">1.35</span>         0.671        0.333        0.226         0.949        0.915</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>  -<span style="color: #BB0000;">1.77</span>        0.413        0.328        0.022<span style="text-decoration: underline;">6</span>        0.633        0.837</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>  -<span style="color: #BB0000;">1.02</span>        0.850        0.261        0.129         0.956        0.693</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>  -<span style="color: #BB0000;">1.21</span>        0.701        0.482        0.033<span style="text-decoration: underline;">2</span>        0.834        0.727</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>  -<span style="color: #BB0000;">0.608</span>       0.129        0.226        0.685         0.833        0.755</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>   1.10        0.037<span style="text-decoration: underline;">8</span>       0.205        1.00          0.698        0.989</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>   0.518       0.722        0.137        0.942         0.748        0.655</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>   0.816       0.037<span style="text-decoration: underline;">9</span>       0.082<span style="text-decoration: underline;">0</span>       0.831         0.679        0.865</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>   2.74        0.762        0.991        0.937         0.690        0.634</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>  -<span style="color: #BB0000;">0.143</span>       0.825        0.195        0.443         0.942        0.694</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span>  -<span style="color: #BB0000;">1.82</span>        0.671        0.333        0.226         0.949        0.915</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 990 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 55 more variables: predictor_06 &lt;dbl&gt;, predictor_07 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   predictor_08 &lt;dbl&gt;, predictor_09 &lt;dbl&gt;, predictor_10 &lt;dbl&gt;, noise_01 &lt;dbl&gt;,</span></span></span>
@@ -137,15 +137,13 @@ set:</p>
 <span><span class="co">## node), split, n, deviance, yval</span></span>
 <span><span class="co">##       * denotes terminal node</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##  1) root 1000 675.56010  0.132640600  </span></span>
-<span><span class="co">##    2) predictor_03&lt; 0.4294012 401 169.56340 -0.398818000  </span></span>
-<span><span class="co">##      4) predictor_07&gt;=0.3936169 247  88.29824 -0.650205000 *</span></span>
-<span><span class="co">##      5) predictor_07&lt; 0.3936169 154  40.62021  0.004380685 *</span></span>
-<span><span class="co">##    3) predictor_03&gt;=0.4294012 599 316.91210  0.488425100  </span></span>
-<span><span class="co">##      6) predictor_01&lt; 0.5095151 306  92.81308  0.204690200 *</span></span>
-<span><span class="co">##      7) predictor_01&gt;=0.5095151 293 173.73660  0.784749000  </span></span>
-<span><span class="co">##       14) predictor_02&lt; 0.674366 182  55.90145  0.472063700 *</span></span>
-<span><span class="co">##       15) predictor_02&gt;=0.674366 111  70.86405  1.297440000 *</span></span></code></pre>
+<span><span class="co">## 1) root 1000 946.31230 -0.08750445  </span></span>
+<span><span class="co">##   2) predictor_03&lt; 0.4294012 401 203.18290 -0.86655150  </span></span>
+<span><span class="co">##     4) predictor_03&lt; 0.2134647 216  83.56724 -1.22532000 *</span></span>
+<span><span class="co">##     5) predictor_03&gt;=0.2134647 185  59.35220 -0.44766550 *</span></span>
+<span><span class="co">##   3) predictor_03&gt;=0.4294012 599 336.83130  0.43402790  </span></span>
+<span><span class="co">##     6) predictor_03&lt; 0.7312179 321 129.33980  0.15833970 *</span></span>
+<span><span class="co">##     7) predictor_03&gt;=0.7312179 278 154.92320  0.75235840 *</span></span></code></pre>
 <p>Fit this particular model, there are a few aspects of this model that
 can be quantified using <code><a href="../reference/characterize.html">characterize()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -153,8 +151,8 @@ can be quantified using <code><a href="../reference/characterize.html">character
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
 <span><span class="co">##   .metric             .estimator .estimate</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> num_active_features model              4</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> num_term_nodes      model              5</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> num_active_features model              1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> num_term_nodes      model              4</span></span></code></pre>
 <p>These values can help understand the complexity of the model. Each
 aspect is determined by individual functions that start with
 <code>.pluck</code>, such as <code><a href="../reference/pluck_num_active_features.html">.pluck_num_active_features()</a></code>.
@@ -166,18 +164,15 @@ prediction equation:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
 <span><span class="co">##   statistic       value    </span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>   </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> active_features <span style="color: #949494;">&lt;chr [4]&gt;</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> active_features <span style="color: #949494;">&lt;chr [1]&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># to get them: </span></span>
 <span><span class="fu"><a href="../reference/pluck_active_features.html">.pluck_active_features</a></span><span class="op">(</span><span class="va">cart_fit</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 2</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
 <span><span class="co">##   statistic       value       </span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> active_features predictor_01</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> active_features predictor_02</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> active_features predictor_03</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> active_features predictor_07</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> active_features predictor_03</span></span></code></pre>
 <p>Different models will return different types of model characteristics
 and some will not return any:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -257,8 +252,8 @@ resample has a corresponding tibble with 20 rows:</p>
 <span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
 <span><span class="co">##   .metric             .estimator .estimate</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> num_active_features model             26</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> num_term_nodes      model             76</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> num_active_features model             28</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> num_term_nodes      model             73</span></span></code></pre>
 <p>Before you open the help files for <code><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">tidyr::unnest()</a></code>, or
 stop reading, there is a helper function that will put the results in a
 usable format:</p>
@@ -268,16 +263,16 @@ usable format:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 40 × 7</span></span></span>
 <span><span class="co">##    cost_complexity .metric             .estimator  mean     n std_err .config   </span></span>
 <span><span class="co">##              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>        0.000<span style="text-decoration: underline;">1</span>   num_active_features model       26.7    10    1.16 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>        0.000<span style="text-decoration: underline;">1</span>   num_term_nodes      model       73.4    10    1.03 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>        0.000<span style="text-decoration: underline;">144</span> num_active_features model       26.7    10    1.16 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>        0.000<span style="text-decoration: underline;">144</span> num_term_nodes      model       73.4    10    1.03 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>        0.000<span style="text-decoration: underline;">207</span> num_active_features model       26.7    10    1.16 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>        0.000<span style="text-decoration: underline;">207</span> num_term_nodes      model       73.4    10    1.03 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>        0.000<span style="text-decoration: underline;">298</span> num_active_features model       26.7    10    1.16 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>        0.000<span style="text-decoration: underline;">298</span> num_term_nodes      model       73.4    10    1.03 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>        0.000<span style="text-decoration: underline;">428</span> num_active_features model       26.7    10    1.16 Preproces…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span>        0.000<span style="text-decoration: underline;">428</span> num_term_nodes      model       73.4    10    1.03 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>        0.000<span style="text-decoration: underline;">1</span>   num_active_features model       28.8    10   0.892 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>        0.000<span style="text-decoration: underline;">1</span>   num_term_nodes      model       74.6    10   0.653 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>        0.000<span style="text-decoration: underline;">144</span> num_active_features model       28.8    10   0.892 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>        0.000<span style="text-decoration: underline;">144</span> num_term_nodes      model       74.6    10   0.653 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>        0.000<span style="text-decoration: underline;">207</span> num_active_features model       28.8    10   0.892 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>        0.000<span style="text-decoration: underline;">207</span> num_term_nodes      model       74.6    10   0.653 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>        0.000<span style="text-decoration: underline;">298</span> num_active_features model       28.8    10   0.892 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>        0.000<span style="text-decoration: underline;">298</span> num_term_nodes      model       74.6    10   0.653 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>        0.000<span style="text-decoration: underline;">428</span> num_active_features model       28.6    10   0.921 Preproces…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span>        0.000<span style="text-decoration: underline;">428</span> num_term_nodes      model       73.9    10   0.586 Preproces…</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 30 more rows</span></span></span></code></pre>
 <p>The values in the <code>mean</code> column are the average
 characteristics. There is an option called <code>summarize</code> that
@@ -304,16 +299,16 @@ results.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 80 × 7</span></span></span>
 <span><span class="co">##    cost_complexity .metric             .estimator   mean     n std_err .config  </span></span>
 <span><span class="co">##              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>        0.000<span style="text-decoration: underline;">1</span>   num_active_features model      26.7      10 1.16    Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>        0.000<span style="text-decoration: underline;">1</span>   num_term_nodes      model      73.4      10 1.03    Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>        0.000<span style="text-decoration: underline;">1</span>   rmse                standard    0.542    10 0.007<span style="text-decoration: underline;">53</span> Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>        0.000<span style="text-decoration: underline;">1</span>   rsq                 standard    0.587    10 0.019<span style="text-decoration: underline;">1</span>  Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>        0.000<span style="text-decoration: underline;">144</span> num_active_features model      26.7      10 1.16    Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>        0.000<span style="text-decoration: underline;">144</span> num_term_nodes      model      73.4      10 1.03    Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>        0.000<span style="text-decoration: underline;">144</span> rmse                standard    0.542    10 0.007<span style="text-decoration: underline;">53</span> Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>        0.000<span style="text-decoration: underline;">144</span> rsq                 standard    0.587    10 0.019<span style="text-decoration: underline;">1</span>  Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>        0.000<span style="text-decoration: underline;">207</span> num_active_features model      26.7      10 1.16    Preproce…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span>        0.000<span style="text-decoration: underline;">207</span> num_term_nodes      model      73.4      10 1.03    Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span>        0.000<span style="text-decoration: underline;">1</span>   num_active_features model      28.8      10  0.892  Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span>        0.000<span style="text-decoration: underline;">1</span>   num_term_nodes      model      74.6      10  0.653  Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span>        0.000<span style="text-decoration: underline;">1</span>   rmse                standard    0.581    10  0.013<span style="text-decoration: underline;">6</span> Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span>        0.000<span style="text-decoration: underline;">1</span>   rsq                 standard    0.659    10  0.020<span style="text-decoration: underline;">5</span> Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span>        0.000<span style="text-decoration: underline;">144</span> num_active_features model      28.8      10  0.892  Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span>        0.000<span style="text-decoration: underline;">144</span> num_term_nodes      model      74.6      10  0.653  Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span>        0.000<span style="text-decoration: underline;">144</span> rmse                standard    0.581    10  0.013<span style="text-decoration: underline;">6</span> Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span>        0.000<span style="text-decoration: underline;">144</span> rsq                 standard    0.659    10  0.020<span style="text-decoration: underline;">5</span> Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span>        0.000<span style="text-decoration: underline;">207</span> num_active_features model      28.8      10  0.892  Preproce…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span>        0.000<span style="text-decoration: underline;">207</span> num_term_nodes      model      74.6      10  0.653  Preproce…</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 70 more rows</span></span></span></code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">metric_and_char</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -332,12 +327,12 @@ columns. From here, we can plot versus performance:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 6</span></span></span>
 <span><span class="co">##   cost_complexity num_active_features num_term_nodes  rmse   rsq .config        </span></span>
 <span><span class="co">##             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span>        0.000<span style="text-decoration: underline;">1</span>                  26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span>        0.000<span style="text-decoration: underline;">144</span>                26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span>        0.000<span style="text-decoration: underline;">207</span>                26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span>        0.000<span style="text-decoration: underline;">298</span>                26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span>        0.000<span style="text-decoration: underline;">428</span>                26.7           73.4 0.542 0.587 Preprocessor1_…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span>        0.000<span style="text-decoration: underline;">616</span>                26.5           72.6 0.541 0.588 Preprocessor1_…</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>        0.000<span style="text-decoration: underline;">1</span>                  28.8           74.6 0.581 0.659 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>        0.000<span style="text-decoration: underline;">144</span>                28.8           74.6 0.581 0.659 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>        0.000<span style="text-decoration: underline;">207</span>                28.8           74.6 0.581 0.659 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>        0.000<span style="text-decoration: underline;">298</span>                28.8           74.6 0.581 0.659 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>        0.000<span style="text-decoration: underline;">428</span>                28.6           73.9 0.581 0.659 Preprocessor1_…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>        0.000<span style="text-decoration: underline;">616</span>                27.9           72.6 0.581 0.658 Preprocessor1_…</span></span></code></pre>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rmse_vs_vars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">num_active_features</span>, <span class="va">rmse</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -357,7 +352,7 @@ number of features that will give me an RMSE less than 0.55?”</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
 <span><span class="co">##   cost_complexity num_active_features num_term_nodes  rmse   rsq .config        </span></span>
 <span><span class="co">##             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span>         0.005<span style="text-decoration: underline;">46</span>                 7.4           24.9 0.540 0.571 Preprocessor1_…</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>         0.003<span style="text-decoration: underline;">79</span>                 7.7           26.3 0.550 0.683 Preprocessor1_…</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
