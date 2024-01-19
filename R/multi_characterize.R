@@ -60,7 +60,7 @@
 #' @export
 multi_characterize <- function(object, ...) {
   if (inherits(object, "try-error")) {
-    rlang::warn("Model fit failed; cannot make predictions.")
+    cli::cli_warn("Model fit failed; cannot make predictions.")
     return(NULL)
   }
   UseMethod("multi_characterize")
@@ -85,7 +85,7 @@ multi_characterize.workflow <- function(object, ...) {
 #' @export
 multi_characterize.model_fit <- function(object, ...) {
   if (inherits(object$fit, "try-error")) {
-    rlang::warn("Model fit failed; cannot make predictions.")
+    cli::cli_warn("Model fit failed; cannot make predictions.")
     return(NULL)
   }
   multi_characterize(object$fit, ...)

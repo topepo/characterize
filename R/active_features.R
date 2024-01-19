@@ -52,6 +52,11 @@ has_terms <- function(x) {
   }
 }
 
+no_int_coefs <- function(x) {
+  x <- x[!grepl("(Intercept)", names(x), fixed = TRUE)]
+  names(x)
+}
+
 # ------------------------------------------------------------------------------
 
 #' @rdname pluck_active_features
@@ -353,3 +358,112 @@ get_party_var_index <- function(x) {
   .pluck_active_features(lgb_trees(x), trees = trees)
 }
 
+# ------------------------------------------------------------------------------
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.nullmodel <- function(x, ...) {
+  tibble::tibble(statistic = "active_features",
+                 value = list(character(0)))
+}
+
+# ------------------------------------------------------------------------------
+# Models based on simple terms objects
+# TODO talk about the semantics of "Feature" not input variable
+# TODO some of these need to prune unused values
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.lm <- function(x, ...) {
+  vars_used <- no_int_coefs(x$coef)
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(unlist(vars_used)))))
+
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.glm <- .pluck_active_features.lm
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.kknn <- function(x, ...) {
+  .pluck_active_features(x$terms)
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.stanreg <- .pluck_active_features.lm
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.hurdle <- function(x, ...) {
+  # different terms for different components
+  vars_used <-
+    purrr::map(x$coefficients, no_int_coefs) %>%
+    unlist()
+
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(vars_used)))
+  )
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.zeroinfl <- .pluck_active_features.hurdle
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.gam <- function(x, ...) {
+  vars_used <- no_int_coefs(x$coefficients)
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(vars_used))))
+
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.lda <- function(x, ...) {
+  vars_used <- colames(x$means)
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(vars_used))))
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.fda <- function(x, ...) {
+  .pluck_active_features(x$fit)
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.qda <- function(x, ...) {
+  vars_used <- colnames(x$means)
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(vars_used))))
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.rda <- function(x, ...) {
+  vars_used <- rownames(x$means)
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(vars_used))))
+}
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.randomForest <- function(x, ...) {
+  vars_used <- names(x$forest$xlevels)
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(vars_used))))
+}
+
+
+#' @rdname pluck_active_features
+#' @export
+.pluck_active_features.lda_diag <- function(x, ...) {
+  vars_used <- x$col_names
+  tibble::tibble(statistic = "active_features",
+                 value = list(sort(unique(vars_used))))
+}

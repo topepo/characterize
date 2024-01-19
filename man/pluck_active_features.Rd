@@ -28,6 +28,20 @@
 \alias{.pluck_active_features.xrf}
 \alias{.pluck_active_features.lgb_trees}
 \alias{.pluck_active_features.lgb.Booster}
+\alias{.pluck_active_features.nullmodel}
+\alias{.pluck_active_features.lm}
+\alias{.pluck_active_features.glm}
+\alias{.pluck_active_features.kknn}
+\alias{.pluck_active_features.stanreg}
+\alias{.pluck_active_features.hurdle}
+\alias{.pluck_active_features.zeroinfl}
+\alias{.pluck_active_features.gam}
+\alias{.pluck_active_features.lda}
+\alias{.pluck_active_features.fda}
+\alias{.pluck_active_features.qda}
+\alias{.pluck_active_features.rda}
+\alias{.pluck_active_features.randomForest}
+\alias{.pluck_active_features.lda_diag}
 \title{Predictors used in the model}
 \usage{
 .pluck_active_features(x, ...)
@@ -83,6 +97,34 @@
 \method{.pluck_active_features}{lgb_trees}(x, trees = max(x$trees), ...)
 
 \method{.pluck_active_features}{lgb.Booster}(x, trees = x$params$num_iterations, ...)
+
+\method{.pluck_active_features}{nullmodel}(x, ...)
+
+\method{.pluck_active_features}{lm}(x, ...)
+
+\method{.pluck_active_features}{glm}(x, ...)
+
+\method{.pluck_active_features}{kknn}(x, ...)
+
+\method{.pluck_active_features}{stanreg}(x, ...)
+
+\method{.pluck_active_features}{hurdle}(x, ...)
+
+\method{.pluck_active_features}{zeroinfl}(x, ...)
+
+\method{.pluck_active_features}{gam}(x, ...)
+
+\method{.pluck_active_features}{lda}(x, ...)
+
+\method{.pluck_active_features}{fda}(x, ...)
+
+\method{.pluck_active_features}{qda}(x, ...)
+
+\method{.pluck_active_features}{rda}(x, ...)
+
+\method{.pluck_active_features}{randomForest}(x, ...)
+
+\method{.pluck_active_features}{lda_diag}(x, ...)
 }
 \arguments{
 \item{x}{An object.}
