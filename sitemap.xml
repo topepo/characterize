@@ -37,13 +37,13 @@
     <loc>/reference/multi_characterize.html</loc>
   </url>
   <url>
-    <loc>/reference/pluck_active_features.html</loc>
+    <loc>/reference/pluck_features_active.html</loc>
   </url>
   <url>
     <loc>/reference/pluck_mean_rule_size.html</loc>
   </url>
   <url>
-    <loc>/reference/pluck_num_active_features.html</loc>
+    <loc>/reference/pluck_num_features_active.html</loc>
   </url>
   <url>
     <loc>/reference/pluck_num_parameters.html</loc>
