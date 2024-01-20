@@ -1,37 +1,51 @@
 #' Predictors used in the model
+#'
+#' `.pluck_features_active()` enumerates all of the features/predictors that
+#' have contributions to the prediction equation. This excludes variables that
+#' were included in the model fit but have not affect on the prediction
+#' equations. For example, if a decision tree never split on a particular
+#' feature, it is not included in this list.
+#'
+#' @details
+#' Note that the term "features" corresponds to predictors produced by any
+#' pre-processing operations executed by the model (if any). For example, if
+#' `lm(y + x + z, data)` is used and predictor `x` is a factor, some models
+#' will convert `x` to a set of binary indicator columns. In that instance, this
+#' function will list the indicator columns (instead of `x`).
+#'
 #' @inheritParams characterize
 #' @export
-#' @name pluck_active_features
+#' @name pluck_features_active
 #' @keywords internal
-.pluck_active_features <- function(x, ...) {
-  UseMethod(".pluck_active_features")
+.pluck_features_active <- function(x, ...) {
+  UseMethod(".pluck_features_active")
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.default <- function(x, ...) {
+.pluck_features_active.default <- function(x, ...) {
   nolla
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.workflow <- function(x, ...) {
+.pluck_features_active.workflow <- function(x, ...) {
   x <- workflows::extract_fit_engine(x)
-  .pluck_active_features(x, ...)
+  .pluck_features_active(x, ...)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.model_fit <- function(x, ...) {
+.pluck_features_active.model_fit <- function(x, ...) {
   x <- parsnip::extract_fit_engine(x)
-  .pluck_active_features(x, ...)
+  .pluck_features_active(x, ...)
 }
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.terms <- function(x, ...) {
+.pluck_features_active.terms <- function(x, ...) {
   facts <- attr(x, "factors")
   resp <- attr(x, "response")
   vars_used <- rownames(facts)[-resp]
@@ -41,7 +55,7 @@
 }
 
 terms_wrapper <- function(x, ...) {
-  .pluck_active_features(x$terms, ...)
+  .pluck_features_active(x$terms, ...)
 }
 
 has_terms <- function(x) {
@@ -64,9 +78,9 @@ act_vars_to_tbl <- function(x) {
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.rpart <- function(x, ...) {
+.pluck_features_active.rpart <- function(x, ...) {
   terms <- x$frame$var
   vars_used <- terms[terms != "<leaf>"]
   act_vars_to_tbl(vars_used)
@@ -74,9 +88,9 @@ act_vars_to_tbl <- function(x) {
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.ranger <- function(x, ...) {
+.pluck_features_active.ranger <- function(x, ...) {
   var_index <- sort(unique(unlist(x$forest$split.varIDs)))
   var_index <- var_index[var_index > 0]
   vars_used <- x$forest$independent.variable.names[var_index]
@@ -86,9 +100,9 @@ act_vars_to_tbl <- function(x) {
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.xgb.Booster <- function(x, nrounds = x$niter, ...) {
+.pluck_features_active.xgb.Booster <- function(x, nrounds = x$niter, ...) {
   rlang::check_installed("xgboost")
   cl <- rlang::call2("xgb.importance", .ns = "xgboost", model = expr(x),
                      trees = seq.int(0, nrounds - 1))
@@ -98,9 +112,9 @@ act_vars_to_tbl <- function(x) {
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.glmnet <- function(x, penalty = 0.001, ...) {
+.pluck_features_active.glmnet <- function(x, penalty = 0.001, ...) {
   rlang::is_installed("glmnet")
 
   index_used <- unlist(predict(x, s = penalty, type = "nonzero"))
@@ -145,17 +159,17 @@ get_rule_vars <- function(x) {
   res
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.tidy_cubist <- function(x, committees = max(x$committee), ...) {
+.pluck_features_active.tidy_cubist <- function(x, committees = max(x$committee), ...) {
   terms <- cubist_vars(committees, x)
   act_vars_to_tbl(terms)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.cubist <- function(x, committees = x$committees, ...) {
-  .pluck_active_features(make_tidy_cubist(x), committees = committees)
+.pluck_features_active.cubist <- function(x, committees = x$committees, ...) {
+  .pluck_features_active(make_tidy_cubist(x), committees = committees)
 }
 
 # ------------------------------------------------------------------------------
@@ -178,24 +192,24 @@ c5_vars <- function(iter, x) {
   res
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.tidy_C50 <- function(x, trials = max(x$trial), ...) {
+.pluck_features_active.tidy_C50 <- function(x, trials = max(x$trial), ...) {
   terms <- c5_vars(trials, x)
   act_vars_to_tbl(terms)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
-  .pluck_active_features(make_tidy_c5(x), trials = trials)
+.pluck_features_active.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  .pluck_features_active(make_tidy_c5(x), trials = trials)
 }
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.earth <- function(x, ...) {
+.pluck_features_active.earth <- function(x, ...) {
   rlang::check_installed("earth")
   cl <- rlang::call2("evimp", .ns = "earth", object = expr(x), trim = TRUE)
   ev <- rlang::eval_tidy(cl)
@@ -214,37 +228,37 @@ pls_features <- function(x, ...) {
   act_vars_to_tbl(vars_used)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.mixo_spls <- pls_features
+.pluck_features_active.mixo_spls <- pls_features
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.mixo_pls <- pls_features
+.pluck_features_active.mixo_pls <- pls_features
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.mixo_splsda <- pls_features
+.pluck_features_active.mixo_splsda <- pls_features
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.mixo_plsda <- pls_features
+.pluck_features_active.mixo_plsda <- pls_features
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.bagger <- function(x, ...) {
-  vars_used <- purrr::map_dfr(x$model_df$model, .pluck_active_features)
+.pluck_features_active.bagger <- function(x, ...) {
+  vars_used <- purrr::map_dfr(x$model_df$model, .pluck_features_active)
   vars_used <- unique(unlist(vars_used$value))
   act_vars_to_tbl(vars_used)
 }
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.bart <- function(x, ...) {
+.pluck_features_active.bart <- function(x, ...) {
   nms <- colnames(x$varcount)
   is_used <- apply(x$varcount, 2, function(x) any(x > 0))
   vars_used <- nms[is_used]
@@ -269,48 +283,48 @@ get_party_var_index <- function(x) {
   var_index
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.party <- function(x, ...) {
+.pluck_features_active.party <- function(x, ...) {
   var_index <- get_party_var_index(x)
   var_names <- colnames(x$data)[var_index]
-  act_vars_to_tbl(vars_used)
+  act_vars_to_tbl(var_names)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.cforest <- function(x, ...) {
+.pluck_features_active.cforest <- function(x, ...) {
   var_index <- purrr::map(x$nodes, get_party_var_index)
   var_index <- unlist(var_index)
   var_index <- unique(var_index)
   var_names <- colnames(x$data)[var_index]
-  act_vars_to_tbl(vars_used)
+  act_vars_to_tbl(var_names)
 }
 
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.tidy_xrf <- function(x, ...) {
+.pluck_features_active.tidy_xrf <- function(x, ...) {
   vars_used <- purrr::map(x$rule, ~ all.vars(rlang::parse_expr(.x)))
   act_vars_to_tbl(unlist(vars_used))
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.xrf <- function(x, penalty = 0.001, ...) {
-  .pluck_active_features(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
+.pluck_features_active.xrf <- function(x, penalty = 0.001, ...) {
+  .pluck_features_active(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }
 
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.bagger <- function(x, ...) {
+.pluck_features_active.bagger <- function(x, ...) {
   res <-
-    purrr::map_dfr(x$model_df$model, ~ .pluck_active_features(.x$fit)) %>%
+    purrr::map_dfr(x$model_df$model, ~ .pluck_features_active(.x$fit)) %>%
     tidyr::unnest(value)
   act_vars_to_tbl(res$value)
 }
@@ -318,25 +332,25 @@ get_party_var_index <- function(x) {
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.lgb_trees <- function(x, trees = max(x$trees), ...) {
+.pluck_features_active.lgb_trees <- function(x, trees = max(x$trees), ...) {
   dat <- dplyr::filter(x, trees <= !!trees)
   act_vars_to_tbl(dat$split_feature)
 }
 
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.lgb.Booster <- function(x, trees = x$params$num_iterations, ...) {
-  .pluck_active_features(lgb_trees(x), trees = trees)
+.pluck_features_active.lgb.Booster <- function(x, trees = x$params$num_iterations, ...) {
+  .pluck_features_active(lgb_trees(x), trees = trees)
 }
 
 # ------------------------------------------------------------------------------
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.nullmodel <- function(x, ...) {
+.pluck_features_active.nullmodel <- function(x, ...) {
   act_vars_to_tbl(character(0))
 }
 
@@ -345,31 +359,31 @@ get_party_var_index <- function(x) {
 # TODO talk about the semantics of "Feature" not input variable
 # TODO some of these need to prune unused values
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.lm <- function(x, ...) {
+.pluck_features_active.lm <- function(x, ...) {
   vars_used <- no_int_coefs(x$coef)
   act_vars_to_tbl(unlist(vars_used))
 
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.glm <- .pluck_active_features.lm
+.pluck_features_active.glm <- .pluck_features_active.lm
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.kknn <- function(x, ...) {
-  .pluck_active_features(x$terms)
+.pluck_features_active.kknn <- function(x, ...) {
+  .pluck_features_active(x$terms)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.stanreg <- .pluck_active_features.lm
+.pluck_features_active.stanreg <- .pluck_features_active.lm
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.hurdle <- function(x, ...) {
+.pluck_features_active.hurdle <- function(x, ...) {
   # different terms for different components
   vars_used <-
     purrr::map(x$coefficients, no_int_coefs) %>%
@@ -377,79 +391,133 @@ get_party_var_index <- function(x) {
   act_vars_to_tbl(vars_used)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.zeroinfl <- .pluck_active_features.hurdle
+.pluck_features_active.zeroinfl <- .pluck_features_active.hurdle
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.gam <- function(x, ...) {
+.pluck_features_active.gam <- function(x, ...) {
   vars_used <- no_int_coefs(x$coefficients)
   act_vars_to_tbl(vars_used)
 
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.lda <- function(x, ...) {
+.pluck_features_active.lda <- function(x, ...) {
   vars_used <- colames(x$means)
   act_vars_to_tbl(vars_used)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.fda <- function(x, ...) {
-  .pluck_active_features(x$fit)
+.pluck_features_active.fda <- function(x, ...) {
+  .pluck_features_active(x$fit)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.qda <- function(x, ...) {
+.pluck_features_active.gen.ridge <- function(x, ...) {
+  vars_used <- colnames(x$xmeans)
+  act_vars_to_tbl(vars_used)
+}
+
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.qda <- function(x, ...) {
   vars_used <- colnames(x$means)
   act_vars_to_tbl(vars_used)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.rda <- function(x, ...) {
+.pluck_features_active.rda <- function(x, ...) {
   vars_used <- rownames(x$means)
   act_vars_to_tbl(vars_used)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.randomForest <- function(x, ...) {
+.pluck_features_active.randomForest <- function(x, ...) {
   vars_used <- names(x$forest$xlevels)
   act_vars_to_tbl(vars_used)
 }
 
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.lda_diag <- function(x, ...) {
+.pluck_features_active.lda_diag <- function(x, ...) {
   vars_used <- x$col_names
   act_vars_to_tbl(vars_used)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features._keras.engine.sequential.Sequential <- function(x, ...) {
-  .pluck_active_features(x$preproc$terms)
+.pluck_features_active.qda_diag <- .pluck_features_active.lda_diag
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active._keras.engine.sequential.Sequential <- function(x, ...) {
+  .pluck_features_active(x$preproc$terms)
 }
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.LiblineaR <- function(x, ...) {
+.pluck_features_active.LiblineaR <- function(x, ...) {
   vars_used <- colnames(x$W)
   vars_used <- vars_used[vars_used != "Bias"]
   act_vars_to_tbl(vars_used)
 }
 
 
-#' @rdname pluck_active_features
+#' @rdname pluck_features_active
 #' @export
-.pluck_active_features.mda <- function(x, ...) {
+.pluck_features_active.mda <- function(x, ...) {
   vars_used <- names(x$fit$xmeans)
+  act_vars_to_tbl(vars_used)
+}
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.naive_bayes <- function(x, ...) {
+  vars_used <- names(x$tables)
+  act_vars_to_tbl(vars_used)
+}
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.NaiveBayes <- .pluck_features_active.naive_bayes
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.brulee_multinomial_reg <- function(x, ...) {
+  vars_used <- x$dims$features
+  act_vars_to_tbl(vars_used)
+}
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.brulee_logistic_reg <-
+  .pluck_features_active.brulee_multinomial_reg
+
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.brulee_linear_reg <-
+  .pluck_features_active.brulee_multinomial_reg
+
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.brulee_mlp <-
+  .pluck_features_active.brulee_multinomial_reg
+
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.sda <- function(x, ...) {
+  vars_used <- names(x$betas)
   act_vars_to_tbl(vars_used)
 }
 

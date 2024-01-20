@@ -6,7 +6,7 @@
       # A tibble: 2 x 3
         .metric             .estimator .estimate
         <chr>               <chr>          <dbl>
-      1 num_active_features model              4
+      1 num_features_active model              4
       2 num_parameters      model              5
 
 ---
@@ -17,6 +17,6 @@
       # A tibble: 2 x 3
         .metric             .estimator .estimate
         <chr>               <chr>          <dbl>
-      1 num_active_features model              7
+      1 num_features_active model              7
       2 num_parameters      model             10
 

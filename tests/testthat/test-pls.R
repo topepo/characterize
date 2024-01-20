@@ -11,7 +11,7 @@ test_that("pls via mixOmics", {
   # regression
   expect_snapshot(characterize(pls_mod))
   expect_equal(
-    .pluck_num_active_features(pls_mod)$value,
+    .pluck_num_features_active(pls_mod)$value,
     nrow(pls_mod$fit$loadings$X)
   )
   expect_equal(
@@ -19,7 +19,7 @@ test_that("pls via mixOmics", {
     prod(dim(pls_mod$fit$loadings$X))
   )
   expect_equal(
-    .pluck_num_active_features(spls_mod)$value,
+    .pluck_num_features_active(spls_mod)$value,
     sum(!apply(spls_mod$fit$loadings$X, 1, function(x) all(x == 0)))
   )
   expect_equal(
@@ -31,7 +31,7 @@ test_that("pls via mixOmics", {
   # classification
   expect_snapshot(characterize(plsda_mod))
   expect_equal(
-    .pluck_num_active_features(plsda_mod)$value,
+    .pluck_num_features_active(plsda_mod)$value,
     nrow(plsda_mod$fit$loadings$X)
   )
   expect_equal(
@@ -39,7 +39,7 @@ test_that("pls via mixOmics", {
     prod(dim(plsda_mod$fit$loadings$X)) + prod(dim(plsda_mod$fit$loadings$Y))
   )
   expect_equal(
-    .pluck_num_active_features(splsda_mod)$value,
+    .pluck_num_features_active(splsda_mod)$value,
     sum(!apply(splsda_mod$fit$loadings$X, 1, function(x) all(x == 0)))
   )
   expect_equal(

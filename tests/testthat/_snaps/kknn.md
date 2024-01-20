@@ -3,6 +3,8 @@
     Code
       characterize(knn_mod)
     Output
-      # A tibble: 0 x 3
-      # ... with 3 variables: .metric <chr>, .estimator <chr>, .estimate <dbl>
+      # A tibble: 1 x 3
+        .metric             .estimator .estimate
+        <chr>               <chr>          <dbl>
+      1 num_features_active model             15
 

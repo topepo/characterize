@@ -14,7 +14,7 @@ test_that("earth", {
     nrow(earth_mod$fit$coefficients)
   )
   expect_equal(
-    .pluck_num_active_features(earth_mod)$value,
+    .pluck_num_features_active(earth_mod)$value,
     exp_act_feat_earth_reg
   )
 
@@ -25,7 +25,7 @@ test_that("earth", {
     nrow(earth_cls_mod$fit$coefficients)
   )
   expect_equal(
-    .pluck_num_active_features(earth_cls_mod)$value,
+    .pluck_num_features_active(earth_cls_mod)$value,
     exp_act_feat_earth_cls
   )
 })

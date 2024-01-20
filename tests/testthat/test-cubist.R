@@ -10,7 +10,7 @@ test_that("cubist", {
   expect_snapshot(characterize(cubist_mod))
 
   expect_equal(
-    .pluck_num_active_features(cubist_mod)$value,
+    .pluck_num_features_active(cubist_mod)$value,
     nrow(cubist_mod$fit$usage)
   )
 
@@ -32,7 +32,7 @@ test_that("cubist", {
   expect_snapshot(characterize(cubist_mod, committees = 1))
 
   expect_equal(
-    .pluck_num_active_features(cubist_mod, committees = 1)$value,
+    .pluck_num_features_active(cubist_mod, committees = 1)$value,
     nrow(cubist_mod$fit$usage)
   )
 

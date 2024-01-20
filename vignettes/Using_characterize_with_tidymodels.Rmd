@@ -77,15 +77,15 @@ Fit this particular model, there are a few aspects of this model that can be qua
 characterize(cart_fit)
 ```
 
-These values can help understand the complexity of the model. Each aspect is determined by individual functions that start with `.pluck`, such as `.pluck_num_active_features()`. Almost all of these functions return numeric values. The one exception can return _which_ predictors are functionally used in the prediction equation:
+These values can help understand the complexity of the model. Each aspect is determined by individual functions that start with `.pluck`, such as `.pluck_num_features_active()`. Almost all of these functions return numeric values. The one exception can return _which_ predictors are functionally used in the prediction equation:
 
 
 ```{r}
 #| label: cart-fit-features
-.pluck_active_features(cart_fit)
+.pluck_features_active(cart_fit)
 
 # to get them: 
-.pluck_active_features(cart_fit) %>% 
+.pluck_features_active(cart_fit) %>% 
   unnest(value)
 ```
 
@@ -200,7 +200,7 @@ rmse_vs_vars <- collect_characteristics(cart_res, add_metrics = TRUE, wide = TRU
 rmse_vs_vars %>% head()
 
 rmse_vs_vars %>%
-  ggplot(aes(num_active_features, rmse)) + 
+  ggplot(aes(num_features_active, rmse)) + 
   geom_point() + 
   geom_line(alpha = 1 / 2) +
   geom_hline(yintercept = 0.55, lty = 2, col = "green")
@@ -215,6 +215,6 @@ One thing that we might also desire to know is "what's the minimum number of fea
 
 rmse_vs_vars %>% 
   filter(rmse <= 0.55) %>% 
-  slice_min(num_active_features, n = 1)
+  slice_min(num_features_active, n = 1)
 ```
 
