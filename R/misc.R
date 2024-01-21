@@ -80,6 +80,27 @@ object_list <- function() {
   paste0("`", models, "`", collapse = ", ")
 }
 
+# ------------------------------------------------------------------------------
+
+check_wflow_fit <- function(x, call = rlang::env_parent()) {
+  is_trained <- workflows::is_trained_workflow(x)
+  if (!is_trained) {
+    cli::cli_abort("The workflow should be trainined.", call = call)
+  }
+  invisible(NULL)
+}
+
+is_predictor_role <- function(x) {
+  vapply(x$role, function(x) any(x == "predictor"), logical(1))
+}
+
+check_recipe_fit <- function(x, call = rlang::env_parent()) {
+  is_trained <- vapply(x$steps, function(x) x$trained, logical(1))
+  if (!all(is_trained)) {
+    cli::cli_abort("All recipe steps should be trainined.", call = call)
+  }
+  invisible(NULL)
+}
 
 # ------------------------------------------------------------------------------
 

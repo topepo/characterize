@@ -49,9 +49,7 @@
   facts <- attr(x, "factors")
   resp <- attr(x, "response")
   vars_used <- rownames(facts)[-resp]
-  tibble::tibble(statistic = "active_features",
-                 value = list(sort(unique(vars_used)))
-  )
+  act_vars_to_tbl(vars_used)
 }
 
 terms_wrapper <- function(x, ...) {
@@ -72,7 +70,7 @@ no_int_coefs <- function(x) {
 }
 
 act_vars_to_tbl <- function(x) {
-  tibble::tibble(statistic = "active_features",
+  tibble::tibble(statistic = "features_active",
                  value = list(sort(unique(x))))
 }
 

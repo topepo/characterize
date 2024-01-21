@@ -42,6 +42,7 @@ characterize.default <- function(x, ...) {
     # model objects. Many of these are inappropriate for any given model and,
     # in these cases, an empty tibble is returned. There are specific characterize
     # methods below and those have a reduced set of pluck calls.
+    .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, ...),
     .pluck_num_parameters(x, ...),
     .pluck_num_rules(x, ...),
@@ -73,6 +74,7 @@ characterize.workflow <- function(x, ...) {
 #' @export
 characterize.glmnet <- function(x, penalty = 0.001, ...) {
   dplyr::bind_rows(
+    .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, penalty = penalty),
     .pluck_num_parameters(x, penalty = penalty)
   ) %>%
@@ -98,6 +100,7 @@ characterize.cubist <- function(x, committees = NULL, ...) {
   }
   x <- make_tidy_cubist(x)
   dplyr::bind_rows(
+    .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, committees = committees),
     .pluck_num_parameters(x, committees = committees),
     .pluck_num_rules(x, committees = committees),
@@ -115,6 +118,7 @@ characterize.tidy_cubist <- function(x, committees = NULL, ...) {
   x <- dplyr::filter(x, committee <= !!committees)
 
   dplyr::bind_rows(
+    .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, committees = committees),
     .pluck_num_parameters(x, committees = committees),
     .pluck_num_rules(x, committees = committees),
@@ -150,6 +154,7 @@ make_tidy_c5 <- function(x, ...) {
 characterize.tidy_C50 <- function(x, trials = max(x$trials), ...) {
   x <- dplyr::filter(x, trial <= !!trials)
   dplyr::bind_rows(
+    .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, trials = trials),
     .pluck_num_rules(x, trials = trials),
     .pluck_mean_rule_size(x, trials = trials),
@@ -171,6 +176,7 @@ characterize.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
 #' @export
 characterize.xgb.Booster <- function(x, nrounds = x$niter, ...) {
   dplyr::bind_rows(
+    .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, nrounds = nrounds),
     .pluck_num_term_nodes(x, nrounds = nrounds)
   ) %>%
@@ -192,6 +198,7 @@ make_tidy_xrf <- function(x, penalty = 0.001, ...) {
 #' @export
 characterize.tidy_xrf <- function(x, penalty = 0.001, ...) {
   dplyr::bind_rows(
+    .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, penalty = penalty),
     .pluck_num_rules(x, penalty = penalty),
     .pluck_mean_rule_size(x, penalty = penalty)
@@ -230,6 +237,7 @@ characterize.lgb.Booster <- function(x, trees = NULL, ...) {
   }
   x <- lgb_trees(x)
   dplyr::bind_rows(
+    .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, trees = trees),
     .pluck_num_term_nodes(x, trees = trees)
   ) %>%
@@ -242,4 +250,3 @@ characterize.lgb.Booster <- function(x, trees = NULL, ...) {
 characterize.fda <- function(x, ...) {
   characterize(x$fit)
 }
-

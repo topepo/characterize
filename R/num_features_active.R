@@ -22,10 +22,6 @@
   res
 }
 
-# maybe rename to
-# num_features_active
-# num_features_inputs
-
 #' @rdname pluck_num_features_active
 #' @export
 .pluck_num_features_active.workflow <- function(x, ...) {
