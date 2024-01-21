@@ -40,10 +40,16 @@
     <loc>/reference/pluck_features_active.html</loc>
   </url>
   <url>
+    <loc>/reference/pluck_features_input.html</loc>
+  </url>
+  <url>
     <loc>/reference/pluck_mean_rule_size.html</loc>
   </url>
   <url>
     <loc>/reference/pluck_num_features_active.html</loc>
+  </url>
+  <url>
+    <loc>/reference/pluck_num_features_input.html</loc>
   </url>
   <url>
     <loc>/reference/pluck_num_parameters.html</loc>
