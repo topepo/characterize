@@ -209,7 +209,7 @@ characterize.tidy_xrf <- function(x, penalty = 0.001, ...) {
 #' @rdname characterize
 #' @export
 characterize.xrf <- function(x, penalty = 0.001, ...) {
-  characterize(make_tidy_xrf(x), penalty = penalty)
+  characterize(make_tidy_xrf(x, penalty = penalty))
 }
 
 # ------------------------------------------------------------------------------
