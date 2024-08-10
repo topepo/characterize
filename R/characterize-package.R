@@ -5,7 +5,7 @@
 #' @importFrom stats predict coef
 #' @importFrom methods slotNames
 #' @importFrom utils methods
-#' @importFrom stats as.formula
+#' @importFrom stats as.formula update
 ## usethis namespace: end
 NULL
 

@@ -11,6 +11,7 @@ Description: Inspect structural characteristics of a fitted model, such as the
 License: MIT + file LICENSE
 Depends: R (>= 3.6.0)
 Imports: 
+    cli,
     dplyr,
     generics,
     magrittr,
