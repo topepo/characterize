@@ -211,7 +211,9 @@ c5_vars <- function(iter, x) {
   rlang::check_installed("earth")
   cl <- rlang::call2("evimp", .ns = "earth", object = expr(x), trim = TRUE)
   ev <- rlang::eval_tidy(cl)
-  ev <- ev[ ev[,"nsubsets"] > 0, ]
+  if (nrow(ev) > 1) {
+    ev <- ev[ ev[,"nsubsets"] > 0, ]
+  }
   vars_used <- rownames(ev)
   act_vars_to_tbl(vars_used)
 }
