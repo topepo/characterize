@@ -7,13 +7,7 @@
 \usage{
 retain_characteristics(wflow)
 
-collect_characteristics(
-  x,
-  summarize = TRUE,
-  parameters = NULL,
-  add_metrics = FALSE,
-  wide = FALSE
-)
+collect_characteristics(x, summarize = TRUE, add_metrics = FALSE, wide = FALSE)
 }
 \arguments{
 \item{wflow}{A fitted model workflow.}
@@ -25,11 +19,6 @@ or \code{\link[tune:last_fit]{last_fit()}}. For \code{\link[tune:collect_predict
 (\code{TRUE}) or return the values for each individual resample. Note that, if \code{x}
 is created by \code{\link[tune:last_fit]{last_fit()}}, \code{summarize} has no effect. For the other object
 types, the method of summarizing predictions is detailed below.}
-
-\item{parameters}{An optional tibble of tuning parameter values that can be
-used to filter the predicted values before processing. This tibble should
-only have columns for each tuning parameter identifier (e.g. \code{"my_param"}
-if \code{tune("my_param")} was used).}
 
 \item{add_metrics}{A logical to combine the results the associated
 performance metrics.}

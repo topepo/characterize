@@ -24,7 +24,7 @@ retain_characteristics <- function(wflow) {
 #' @export
 #' @rdname retain_characteristics
 collect_characteristics <-
-  function(x, summarize = TRUE, parameters = NULL, add_metrics = FALSE, wide = FALSE) {
+  function(x, summarize = TRUE, add_metrics = FALSE, wide = FALSE) {
     if (summarize) {
       res <- tune::estimate_tune_results(x, col_name = ".extracts")
     } else {
@@ -38,7 +38,7 @@ collect_characteristics <-
         tidyr::unnest(.extracts)
     }
     if (add_metrics) {
-      metric_res <- tune::collect_metrics(x, summarize = summarize, parameters = parameters)
+      metric_res <- tune::collect_metrics(x, summarize = summarize)
       res <- dplyr::bind_rows(res, metric_res) %>% dplyr::arrange(.config, .metric)
       if (wide) {
         metrics <- unique(metric_res$.metric)
