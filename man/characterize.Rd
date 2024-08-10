@@ -15,6 +15,7 @@
 \alias{characterize.xrf}
 \alias{characterize.lgb.Booster}
 \alias{characterize.fda}
+\alias{characterize.earth}
 \title{Compute model characteristics}
 \usage{
 characterize(x, ...)
@@ -46,6 +47,8 @@ characterize(x, ...)
 \method{characterize}{lgb.Booster}(x, trees = NULL, ...)
 
 \method{characterize}{fda}(x, ...)
+
+\method{characterize}{earth}(x, num_terms = NULL, ...)
 }
 \arguments{
 \item{x}{An object.}
@@ -58,6 +61,8 @@ regularization/penalty of the model.}
 \item{committees}{The number of Cubist committees to use in the characterization.}
 
 \item{trials, nrounds, trees}{The number of boosting to use in the characterization.}
+
+\item{num_terms}{The number of retained terms in the model.}
 }
 \value{
 A tibble with columns \code{.metric}, \code{.estimator}, and \code{.estimate}. If

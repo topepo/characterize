@@ -19,6 +19,7 @@
 \alias{multi_characterize.xrf}
 \alias{multi_characterize.lgb_trees}
 \alias{multi_characterize.lgb.Booster}
+\alias{multi_characterize.earth}
 \title{Model characterizations across multiple configurations}
 \usage{
 multi_characterize(object, ...)
@@ -56,6 +57,8 @@ multi_characterize(object, ...)
 \method{multi_characterize}{lgb_trees}(object, trees = NULL, ...)
 
 \method{multi_characterize}{lgb.Booster}(object, trees = NULL, ...)
+
+\method{multi_characterize}{earth}(object, num_terms = NULL, ...)
 }
 \arguments{
 \item{object}{A \code{model_fit} object.}
@@ -68,6 +71,8 @@ regularization/penalty of the model.}
 \item{committees}{The number of Cubist committees to use in the characterization.}
 
 \item{trials, nrounds, trees}{The number of boosting to use in the characterization.}
+
+\item{num_terms}{The number of retained terms in the model.}
 }
 \value{
 A tibble of characterized results (\code{results}) with extra columns for the

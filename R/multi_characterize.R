@@ -184,9 +184,6 @@ multi_characterize.xgb.Booster <- function(object, nrounds = object$niter, ...) 
 
 # ------------------------------------------------------------------------------
 
-
-# TODO earth
-
 #' @rdname multi_characterize
 #' @export
 multi_characterize.xrf <- function(object, penalty = NULL, ...) {
@@ -224,3 +221,17 @@ multi_characterize.lgb.Booster <- function(object, trees = NULL, ...) {
   multi_characterize(lgb_trees(object), trees = trees)
 }
 
+# ------------------------------------------------------------------------------
+
+#' @rdname multi_characterize
+#' @export
+multi_characterize.earth <- function(object, num_terms = NULL, ...) {
+  max_num_terms <- object$nk
+  if (is.null(num_terms)) {
+    num_terms <- max_num_terms
+  }
+  res <-
+    tibble::tibble(num_terms = num_terms) %>%
+    dplyr::mutate(results = purrr::map(num_terms, ~ characterize(object, num_terms = .x)))
+  res
+}

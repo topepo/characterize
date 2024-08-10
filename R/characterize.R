@@ -11,6 +11,7 @@
 #' regularization/penalty of the model.
 #' @param committees The number of Cubist committees to use in the characterization.
 #' @param trials,nrounds,trees The number of boosting to use in the characterization.
+#' @param num_terms The number of retained terms in the model.
 #' @param ... Not currently used.
 #' @details
 #' For a list of object types supported, see [list_characteristics()].
@@ -249,4 +250,54 @@ characterize.lgb.Booster <- function(x, trees = NULL, ...) {
 #' @export
 characterize.fda <- function(x, ...) {
   characterize(x$fit)
+}
+
+# ------------------------------------------------------------------------------
+# MARS via earth package
+
+# earth uses the call object to prune the model
+repair_mars_call <- function(x) {
+  fit_call <- x$call
+  needs_eval <- purrr::map_lgl(as.list(fit_call), rlang::is_quosure)
+  if (any(needs_eval)) {
+    eval_args <- names(needs_eval)[needs_eval]
+    for (arg in eval_args) {
+      # Use of calls and pairlists in map functions was deprecated in purrr 1.0.0.
+      # TODO make parsnip issue for repair_call()
+      fit_call[[arg]] <- rlang::eval_tidy(fit_call[[arg]])
+    }
+  }
+  x$call <- fit_call
+
+  # So earth:::update.earth() evaluate the call object. If the package is not
+  # attached, it will fail since earth() isn't loaded
+  if ( identical(x$call[1], rlang::call2("earth")) ) {
+    x$call[1] <- rlang::call2("earth", .ns = "earth")
+  }
+
+  x
+}
+
+
+#' @rdname characterize
+#' @export
+characterize.earth <- function(x, num_terms = NULL, ...) {
+  x <- repair_mars_call(x)
+  max_num_terms <- x$nk
+  if (is.null(num_terms)) {
+    num_terms <- max_num_terms
+  }
+
+  if (num_terms < max_num_terms) {
+    # TODO use a call handler to remove constant message of
+    # 'glm.fit: fitted probabilities numerically 0 or 1 occurred'
+    x <- update(x, nprune = num_terms, pmethod = x$pmethod)
+  }
+
+  dplyr::bind_rows(
+    .pluck_num_features_input(x, ...),
+    .pluck_num_features_active(x, num_terms = num_terms),
+    .pluck_num_parameters(x, num_terms = num_terms),
+  ) %>%
+    yardstick_like()
 }
