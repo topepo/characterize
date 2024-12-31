@@ -32,8 +32,6 @@ nolla <-
 
 # ------------------------------------------------------------------------------
 
-num_uniq <- function(x) length(unique(x))
-
 num_coef <- function(x) {
   res <- coef(x)
 
