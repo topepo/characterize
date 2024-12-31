@@ -9,6 +9,9 @@ library(plsmod)
 library(brulee)
 library(butcher)
 library(rlang)
+library(earth)
+library(mda)
+
 
 tidymodels_prefer()
 
