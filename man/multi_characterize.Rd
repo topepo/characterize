@@ -20,6 +20,7 @@
 \alias{multi_characterize.lgb_trees}
 \alias{multi_characterize.lgb.Booster}
 \alias{multi_characterize.earth}
+\alias{multi_characterize.fda}
 \title{Model characterizations across multiple configurations}
 \usage{
 multi_characterize(object, ...)
@@ -59,6 +60,8 @@ multi_characterize(object, ...)
 \method{multi_characterize}{lgb.Booster}(object, trees = NULL, ...)
 
 \method{multi_characterize}{earth}(object, num_terms = NULL, ...)
+
+\method{multi_characterize}{fda}(object, num_terms = NULL, ...)
 }
 \arguments{
 \item{object}{A \code{model_fit} object.}

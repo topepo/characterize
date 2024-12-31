@@ -235,3 +235,22 @@ multi_characterize.earth <- function(object, num_terms = NULL, ...) {
     dplyr::mutate(results = purrr::map(num_terms, ~ characterize(object, num_terms = .x)))
   res
 }
+
+
+#' @rdname multi_characterize
+#' @export
+multi_characterize.fda <- function(object, num_terms = NULL, ...) {
+  if ( !inherits(object$fit, "earth") ) {
+    cli::cli_abort("{.code fda} models are only supported when \\
+                   {.code method = earth} was used.")
+  }
+  max_num_terms <- object$fit$nk
+  if (is.null(num_terms)) {
+    num_terms <- max_num_terms
+  }
+  res <-
+    tibble::tibble(num_terms = num_terms) %>%
+    dplyr::mutate(results = purrr::map(num_terms, ~ characterize(object$fit, num_terms = .x)))
+  res
+}
+

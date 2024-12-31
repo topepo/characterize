@@ -266,8 +266,9 @@ repair_mars_call <- function(x) {
       # TODO make parsnip issue for repair_call()
       fit_call[[arg]] <- rlang::eval_tidy(fit_call[[arg]])
     }
+    x$call <- fit_call
   }
-  x$call <- fit_call
+
 
   # So earth:::update.earth() evaluate the call object. If the package is not
   # attached, it will fail since earth() isn't loaded
