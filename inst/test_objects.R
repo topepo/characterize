@@ -1,19 +1,23 @@
-library(caret)
+pkgs <-
+  c("baguette", "bonsai", "brulee", "butcher", "C50", "caret", "dbarts",
+    "discrim", "earth", "lobstr", "mda", "plsmod", "rlang", "rpart", "rules",
+    "sessioninfo", "tidymodels")
 
-library(tidymodels)
-library(rules)
-library(baguette)
-library(discrim)
-library(bonsai)
-library(plsmod)
-library(brulee)
-library(butcher)
-library(rlang)
-library(earth)
-library(mda)
+load_pkg <- function(x) {
+  suppressPackageStartupMessages(library(x, character.only = TRUE))
+}
 
+load_res <- lapply(pkgs, load_pkg)
+
+# ------------------------------------------------------------------------------
 
 tidymodels_prefer()
+
+# ------------------------------------------------------------------------------
+
+# Model fits begin with `fit_`.
+# Expected results lists start with `exp_`. There are only created when one of
+# the 'engine' packages is required to compute the results.
 
 # ------------------------------------------------------------------------------
 
@@ -31,335 +35,291 @@ penguins <- penguins[complete.cases(penguins),]
 set.seed(1)
 cls_dat <- sim_classification(50)
 reg_dat <- sim_regression(50)
+mnl_dat <-
+  sim_multinomial(
+    100,
+    ~  -0.5    +  0.6 * abs(A),
+    ~ ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, - 2),
+    ~ -0.6 * A + 0.50 * B -  A * B)
 
 # ------------------------------------------------------------------------------
+# bagger
 
-two_class_rec <-
-  recipe(class ~ ., data = cls_dat) %>%
-  step_normalize(all_predictors())
+## C5.0
 
-# ------------------------------------------------------------------------------
-
-knn_mod <-
-  nearest_neighbor(neighbors = 5) %>%
-  set_mode("classification") %>%
-  fit(class ~ ., data = cls_dat) %>%
+set.seed(1)
+fit_cls_bag_c5 <-
+  bagger(class ~ ., data = cls_dat, base_model = "C5.0", times = 3) %>%
   butcher()
 
-# ------------------------------------------------------------------------------
+# The number of terminal nodes and active predictors computed with tidy method in
+# the rules pkgs
 
-glmn_mod <-
-  workflow() %>%
-  add_model(logistic_reg(penalty = 0.1) %>% set_engine("glmnet")) %>%
-  add_recipe(two_class_rec) %>%
-  fit(data = cls_dat) %>%
+tidy_cls_bag_c5 <-
+  purrr::map(fit_cls_bag_c5$model_df$model, tidy) %>%
+  purrr::list_rbind()
+
+get_rule_vars <- function(x) {
+  unique(all.vars(parse_expr(x)))
+}
+
+var_names <- map(tidy_cls_bag_c5$rule, get_rule_vars)
+var_names <- sort(unique(unlist(var_names)))
+
+exp_cls_bag_c5 <- list()
+exp_cls_bag_c5$num_term_nodes <- nrow(tidy_cls_bag_c5)
+exp_cls_bag_c5$num_features_active <- length(var_names)
+exp_cls_bag_c5$features_active <- var_names
+
+## rpart
+
+set.seed(1)
+fit_cls_bag_rpart <-
+  bagger(class ~ ., data = cls_dat, base_model = "CART", times = 3) %>%
   butcher()
 
-glmnet_0.1 <- coef(glmn_mod %>% extract_fit_engine(), s = 0.1)
-exp_param_glmnet_0.1 <- sum(glmnet_0.1[,1] != 0)
-exp_act_feat_glmnet_0.1 <- sum(glmnet_0.1[-1,1] != 0)
-
-glmnet_0.01 <- coef(glmn_mod %>% extract_fit_engine(), s = 0.01)
-exp_param_glmnet_0.01 <- sum(glmnet_0.01[,1] != 0)
-exp_act_feat_glmnet_0.01 <- sum(glmnet_0.01[-1,1] != 0)
-
-glmn_mtn_mod <-
-  multinom_reg(penalty = 0.1) %>% set_engine("glmnet") %>%
-  fit(species ~ ., data = penguins) %>%
+set.seed(1)
+fit_reg_bag_rpart <-
+  bagger(Sale_Price ~ ., data = ames, base_model = "CART", times = 3) %>%
   butcher()
 
-glmnet_mtn_0.1 <- coef(glmn_mtn_mod %>% extract_fit_engine(), s = 0.1)
-exp_param_glmnet_mtn_0.1 <- sum(map_int(glmnet_mtn_0.1, ~ sum(.x[,1] != 0)))
-exp_act_feat_glmnet_mtn_0.1 <- sum(map_int(glmnet_mtn_0.1, ~ sum(.x[-1,1] != 0)))
+## mars
 
-glmnet_mtn_0.01 <- coef(glmn_mtn_mod %>% extract_fit_engine(), s = 0.01)
-exp_param_glmnet_mtn_0.01 <- sum(map_int(glmnet_mtn_0.01, ~ sum(.x[,1] != 0)))
-exp_act_feat_glmnet_mtn_0.01 <- sum(map_int(glmnet_mtn_0.01, ~ sum(.x[-1,1] != 0)))
-
-# ------------------------------------------------------------------------------
-
-rpart_mod <-
-  decision_tree() %>%
-  set_mode("classification") %>%
-  set_engine("rpart", control = rpart::rpart.control(maxcompete = 0, maxsurrogate = 0)) %>%
-  fit(class ~ ., data = cls_dat) %>%
+set.seed(1)
+fit_cls_bag_mars <-
+  bagger(class ~ ., data = cls_dat, base_model = "MARS", times = 3) %>%
   butcher()
 
-# ------------------------------------------------------------------------------
-
-c5_mod <-
-  decision_tree() %>%
-  set_mode("classification") %>%
-  set_engine("C5.0") %>%
-  fit(class ~ ., data = cls_dat)
-
-exp_act_feat_c5 <- sum(C50::C5imp(c5_mod$fit, metric = "splits")$Overall > 0)
-
-# TODO add for different # trees
-
-# ------------------------------------------------------------------------------
-
-c5_rules_mod <-
-  decision_tree() %>%
-  set_mode("classification") %>%
-  set_engine("C5.0", rules = TRUE) %>%
-  fit(class ~ ., data = cls_dat)
-
-exp_act_feat_c5_rules <- sum(C50::C5imp(c5_rules_mod$fit, metric = "splits")$Overall > 0)
-# TODO add for different # trees
-
-# ------------------------------------------------------------------------------
-
-c5_boost_mod <-
-  boost_tree() %>%
-  set_mode("classification") %>%
-  set_engine("C5.0") %>%
-  fit(class ~ ., data = cls_dat)
-
-exp_act_feat_c5_boost <- sum(C50::C5imp(c5_boost_mod$fit, metric = "splits")$Overall > 0)
-
-
-c5_rules_boost_mod <-
-  boost_tree() %>%
-  set_mode("classification") %>%
-  set_engine("C5.0", rules = TRUE) %>%
-  fit(class ~ ., data = cls_dat)
-
-exp_act_feat_c5_rules_boost <- sum(C50::C5imp(c5_rules_boost_mod$fit, metric = "splits")$Overall > 0)
-
-# ------------------------------------------------------------------------------
-
-xgb_mod <-
-  boost_tree() %>%
-  set_mode("classification") %>%
-  fit(class ~ ., data = cls_dat) %>%
+set.seed(1)
+fit_reg_bag_mars <-
+  bagger(Sale_Price ~ ., data = ames, base_model = "MARS", times = 3) %>%
   butcher()
 
-exp_act_feat_xgb <- row(xgboost::xgb.importance(model = xgb_mod$fit))
-exp_act_feat_xgb_3 <- row(xgboost::xgb.importance(model = xgb_mod$fit, trees = 0:3))
-exp_act_feat_xgb_9 <- row(xgboost::xgb.importance(model = xgb_mod$fit, trees = 0:9))
+## nnet
 
-# ------------------------------------------------------------------------------
+set.seed(1)
+fit_cls_bag_nnet <-
+  bagger(class ~ ., data = cls_dat, base_model = "nnet", times = 3) %>%
+  butcher()
 
-svm_mod <-
-  svm_rbf() %>%
-  set_mode("classification") %>%
-  fit(class ~ ., data = cls_dat) %>%
+set.seed(1)
+fit_reg_bag_nnet <-
+  bagger(outcome ~ ., data = reg_dat, base_model = "nnet", times = 3) %>%
   butcher()
 
 # ------------------------------------------------------------------------------
+# bart
 
-nnet_mod <-
-  mlp() %>%
-  set_mode("classification") %>%
-  fit(class ~ ., data = cls_dat) %>%
-  butcher()
+# TODO stop butcher from removing `varcount`; needed for 'num_term_nodes'
 
-exp_param_nnet <- length(coef(nnet_mod$fit))
+set.seed(1)
+fit_cls_dbart <-
+  dbarts::bart(cls_dat[-1], y.train = cls_dat$class, verbose = FALSE)
+lobstr::obj_size(fit_cls_dbart)
 
-mtn_mod <-
-  multinom_reg() %>%
-  fit(species ~ ., data = penguins) %>%
-  butcher()
+# we need 'varcount' to measure the number of terminal nodes but butcher removes it
+cls_varcount <- fit_cls_dbart$varcount
+fit_cls_dbart <- butcher(fit_cls_dbart)
+lobstr::obj_size(fit_cls_dbart)
 
-exp_param_mtn <- length(coef(mtn_mod$fit))
+fit_cls_dbart$varcount <- cls_varcount
+lobstr::obj_size(fit_cls_dbart)
 
-# ------------------------------------------------------------------------------
 
-brulee_mlp_mod <-
-  mlp() %>%
-  set_mode("classification") %>%
-  set_engine("brulee") %>%
-  fit(class ~ ., data = cls_dat) %>%
-  butcher()
+set.seed(1)
+fit_reg_dbart <-
+  dbarts::bart(reg_dat[-1], y.train = reg_dat$outcome, verbose = FALSE)
 
-exp_param_brulee_mlp <- length(unlist(brulee_mlp_mod$fit$estimates[[1]]))
-
-# ------------------------------------------------------------------------------
-
-xrf_mod <-
-  rule_fit(trees = 10, penalty = 0.1, learn_rate = .1) %>%
-  set_mode("classification") %>%
-  fit(class ~ ., data = cls_dat) %>%
-  butcher()
-
-# TODO I don't think that they tidy method is working correctly
-xrf_tidy_0.1 <-
-  tidy(xrf_mod, penalty = 0.1) %>%
-  mutate(
-    rule_expr = map(rule, ~ rlang::parse_expr(.x)),
-    num_pred = map_int(rule_expr, ~ length(all.vars(.x)))
-  )
-is_rule_0.1 <- grepl("^r[0-9]", xrf_tidy_0.1$rule_id)
-exp_rules_xrf_0.1 <- sum(is_rule_0.1)
-exp_rule_size_xrf_0.1 <- mean(xrf_tidy_0.1$num_pred[is_rule_0.1])
-
-xrf_tidy_0.001 <-
-  tidy(xrf_mod, penalty = 0.001) %>%
-  mutate(
-    rule_expr = map(rule, ~ rlang::parse_expr(.x)),
-    num_pred = map_int(rule_expr, ~ length(all.vars(.x)))
-  )
-is_rule_0.001 <- grepl("^r[0-9]", xrf_tidy_0.001$rule_id)
-exp_rules_xrf_0.001 <- sum(is_rule_0.001)
-exp_rule_size_xrf_0.001 <- mean(xrf_tidy_0.001$num_pred[is_rule_0.001])
-
+reg_varcount <- fit_reg_dbart$varcount
+fit_reg_dbart <- butcher(fit_reg_dbart)
+fit_reg_dbart$varcount <- reg_varcount
 
 # ------------------------------------------------------------------------------
+# brulee_linear_reg
 
-ranger_mod <-
-  rand_forest(trees = 3) %>%
-  set_mode("classification") %>%
-  set_engine("ranger", importance = 'impurity') %>%
-  fit(class ~ ., data = cls_dat) %>%
+set.seed(12)
+fit_reg_bru_lin <-
+  brulee_linear_reg(outcome ~ ., data = reg_dat) %>%
   butcher()
 
 # ------------------------------------------------------------------------------
+# brulee_logistic_reg
 
-cubist_mod <-
-  cubist_rules(committees = 2) %>%
-  fit(Sale_Price ~ ., data = ames) %>%
-  butcher()
-
-cb_tidy_2 <-
-  cubist_mod %>%
-  tidy() %>%
-  mutate(
-    rule_expr = map(rule, rlang::parse_expr),
-    num_pred = map_int(rule_expr, ~ length(all.vars(.x)))
-  )
-
-exp_num_prm_cb_2 <-
-  cb_tidy_2 %>%
-  select(estimate) %>%
-  unnest(cols = estimate) %>%
-  nrow()
-exp_rule_size_cb_2 <- mean(cb_tidy_2$num_pred)
-exp_num_rules_cb_2 <- nrow(cb_tidy_2)
-
-cb_tidy_1 <-
-  cubist_mod %>%
-  tidy() %>%
-  filter(committee == 1) %>%
-  mutate(
-    rule_expr = map(rule, rlang::parse_expr),
-    num_pred = map_int(rule_expr, ~ length(all.vars(.x)))
-  )
-
-exp_num_prm_cb_1 <-
-  cb_tidy_1 %>%
-  select(estimate) %>%
-  unnest(cols = estimate) %>%
-  nrow()
-exp_rule_size_cb_1 <- mean(cb_tidy_1$num_pred)
-exp_num_rules_cb_1 <- nrow(cb_tidy_1)
-
-# ------------------------------------------------------------------------------
-
-earth_mod <-
-  mars() %>%
-  set_mode("regression") %>%
-  fit(outcome ~ ., data = reg_dat) %>%
-  butcher()
-
-earth_cls_mod <-
-  mars() %>%
-  set_mode("classification") %>%
-  fit(class ~ ., data = cls_dat) %>%
-  butcher()
-
-exp_act_feat_earth_reg <- nrow(earth::evimp(earth_mod$fit))
-exp_act_feat_earth_cls <- nrow(earth::evimp(earth_cls_mod$fit))
-exp_num_prm_earth_reg <- length(coef(earth_mod$fit))
-exp_num_prm_earth_cls <- length(coef(earth_cls_mod$fit))
-
-# ------------------------------------------------------------------------------
-
-bart_mod <-
-  bart(trees = 5) %>%
-  set_mode("regression") %>%
-  fit(outcome ~ ., data = reg_dat) %>%
+set.seed(12)
+fit_cls_bru_logit <-
+  brulee_logistic_reg(class ~ ., data = cls_dat, hidden_units = 3) %>%
   butcher()
 
 # ------------------------------------------------------------------------------
+# brulee_mlp
 
-bag_cart_mod <-
-  bag_tree() %>%
-  set_mode("classification") %>%
-  set_engine("rpart", times = 3L) %>%
-  fit(class ~ ., data = cls_dat) %>%
+set.seed(12)
+fit_cls_bru_mlp <-
+  brulee_mlp(class ~ ., data = cls_dat, hidden_units = 3) %>%
   butcher()
 
-bag_c5_mod <-
-  bag_tree() %>%
-  set_mode("classification") %>%
-  set_engine("C5.0", times = 3L) %>%
-  fit(class ~ ., data = cls_dat) %>%
-  butcher()
-
-bag_mars_reg_mod <-
-  bag_mars() %>%
-  set_mode("regression") %>%
-  set_engine("earth", times = 3L) %>%
-  fit(outcome ~ ., data = reg_dat) %>%
+set.seed(12)
+fit_reg_bru_mlp <-
+  brulee_mlp(outcome ~ ., data = reg_dat, hidden_units = 3) %>%
   butcher()
 
 # ------------------------------------------------------------------------------
+# brulee_multinomial_reg
 
-ctree_mod <-
-  decision_tree() %>%
-  set_mode("classification") %>%
-  set_engine("partykit") %>%
-  fit(class ~ ., data = cls_dat) %>%
-  butcher()
-
-cforest_mod <-
-  rand_forest(trees = 5) %>%
-  set_mode("classification") %>%
-  set_engine("partykit") %>%
-  fit(class ~ ., data = cls_dat) %>%
+set.seed(12)
+fit_cls_bru_multi <-
+  brulee_multinomial_reg(class ~ ., data = mnl_dat) %>%
   butcher()
 
 # ------------------------------------------------------------------------------
-# TODO add multivariate model?
+# C5.0
 
-pls_mod <-
-  parsnip::pls(num_comp = 3) %>%
-  set_mode("regression") %>%
-  fit(outcome ~ ., data = reg_dat) %>%
-  butcher()
+# ------------------------------------------------------------------------------
+# cforest
 
-plsda_mod <-
-  parsnip::pls(num_comp = 3) %>%
-  set_mode("classification") %>%
-  fit(class ~ ., data = cls_dat) %>%
-  butcher()
+# ------------------------------------------------------------------------------
+# cubist
 
-spls_mod <-
-  parsnip::pls(num_comp = 3, predictor_prop = 1 / 10) %>%
-  set_mode("regression") %>%
-  fit(outcome ~ ., data = reg_dat) %>%
-  butcher()
+# ------------------------------------------------------------------------------
+# earth
 
-splsda_mod <-
-  parsnip::pls(num_comp = 3, predictor_prop = 1 / 10) %>%
-  set_mode("classification") %>%
-  fit(class ~ ., data = cls_dat) %>%
-  butcher()
+# ------------------------------------------------------------------------------
+# fda
+
+# ------------------------------------------------------------------------------
+# formula
+
+# ------------------------------------------------------------------------------
+# gam
+
+# ------------------------------------------------------------------------------
+# gen.ridge
+
+# ------------------------------------------------------------------------------
+# glm
+
+# ------------------------------------------------------------------------------
+# glmnet
+
+# ------------------------------------------------------------------------------
+# hardhat_blueprint
+
+# ------------------------------------------------------------------------------
+# hurdle
+
+# ------------------------------------------------------------------------------
+# keras.engine.sequential.Sequential
+
+# ------------------------------------------------------------------------------
+# kknn
+
+# ------------------------------------------------------------------------------
+# ksvm
+
+# ------------------------------------------------------------------------------
+# lda
+
+# ------------------------------------------------------------------------------
+# lda_diag
+
+# ------------------------------------------------------------------------------
+# lgb.Booster
+
+# ------------------------------------------------------------------------------
+# LiblineaR
+
+# ------------------------------------------------------------------------------
+# lm
+
+# ------------------------------------------------------------------------------
+# mda
+
+# ------------------------------------------------------------------------------
+# mixo_pls
+
+# ------------------------------------------------------------------------------
+# mixo_plsda
+
+# ------------------------------------------------------------------------------
+# mixo_spls
+
+# ------------------------------------------------------------------------------
+# mixo_splsda
+
+# ------------------------------------------------------------------------------
+# multinom
+
+# ------------------------------------------------------------------------------
+# multnet
+
+# ------------------------------------------------------------------------------
+# naive_bayes
+
+# ------------------------------------------------------------------------------
+# NaiveBayes
+
+# ------------------------------------------------------------------------------
+# nnet
+
+# ------------------------------------------------------------------------------
+# nullmodel
+
+# ------------------------------------------------------------------------------
+# party
+
+# ------------------------------------------------------------------------------
+# partynode
+
+# ------------------------------------------------------------------------------
+# qda
+
+# ------------------------------------------------------------------------------
+# qda_diag
+
+# ------------------------------------------------------------------------------
+# randomForest
+
+# ------------------------------------------------------------------------------
+# ranger
+
+# ------------------------------------------------------------------------------
+# rda
+
+# ------------------------------------------------------------------------------
+# recipe
+
+# ------------------------------------------------------------------------------
+# rpart
+
+# ------------------------------------------------------------------------------
+# sda
+
+# ------------------------------------------------------------------------------
+# stanreg
+
+# ------------------------------------------------------------------------------
+# terms
+
+# ------------------------------------------------------------------------------
+# xgb.Booster
+
+# ------------------------------------------------------------------------------
+# xrf
+
+# ------------------------------------------------------------------------------
+# zeroinfl
 
 # ------------------------------------------------------------------------------
 
-mods <- ls(pattern = "(_mod)|(^exp_)")
-
-save(
-  list = mods,
-  version = 2,
-  file = "tests/testthat/test_cases.RData",
-  compress = TRUE, compression_level = 9
-)
+save_names <- ls(pattern = "(^fit_)|(^exp_)")
+save(list = save_names, file = "tests/testthat/test_cases.RData", compress = TRUE)
 
 # ------------------------------------------------------------------------------
 
 sessioninfo::session_info()
 
-q("no")
+# ------------------------------------------------------------------------------
+
+if (!interactive()) {
+  q("no")
+}
