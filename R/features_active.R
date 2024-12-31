@@ -404,7 +404,7 @@ get_party_var_index <- function(x) {
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.lda <- function(x, ...) {
-  vars_used <- colames(x$means)
+  vars_used <- colnames(x$means)
   act_vars_to_tbl(vars_used)
 }
 

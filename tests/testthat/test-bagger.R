@@ -114,6 +114,9 @@ test_that("bagging - rpart - classification", {
 
 
 test_that("bagging - earth - regression", {
+  skip_if_not_installed("earth")
+  library(earth)
+
   # tests objects in "test_cases.RData"
 
   bag_chr <- characterize(fit_reg_bag_mars)
@@ -152,6 +155,9 @@ test_that("bagging - earth - regression", {
 
 
 test_that("bagging - earth - classification", {
+  skip_if_not_installed("earth")
+  library(earth)
+
   # tests objects in "test_cases.RData"
 
   bag_chr <- characterize(fit_cls_bag_mars)
