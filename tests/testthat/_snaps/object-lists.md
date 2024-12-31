@@ -48,45 +48,53 @@
       42     features_active                         xgb.Booster
       43     features_active                                 xrf
       44     features_active                            zeroinfl
-      45      mean_rule_size                                C5.0
-      46      mean_rule_size                              cubist
-      47      mean_rule_size                                 xrf
-      48 num_features_active                                C5.0
-      49 num_features_active                              cubist
-      50 num_features_active                              glmnet
-      51 num_features_active                         lgb.Booster
-      52 num_features_active                                 xrf
-      53      num_parameters                              bagger
-      54      num_parameters                          brulee_mlp
-      55      num_parameters                              cubist
-      56      num_parameters                               earth
-      57      num_parameters                              glmnet
-      58      num_parameters                            mixo_pls
-      59      num_parameters                          mixo_plsda
-      60      num_parameters                           mixo_spls
-      61      num_parameters                         mixo_splsda
-      62      num_parameters                            multinom
-      63      num_parameters                                nnet
-      64      num_parameters                                 xrf
-      65           num_rules                                C5.0
-      66           num_rules                              cubist
-      67           num_rules                                 xrf
-      68 num_support_vectors                                ksvm
-      69      num_term_nodes                                C5.0
-      70      num_term_nodes                              bagger
-      71      num_term_nodes                                bart
-      72      num_term_nodes                             cforest
-      73      num_term_nodes                         lgb.Booster
-      74      num_term_nodes                               party
-      75      num_term_nodes                           partynode
-      76      num_term_nodes                              ranger
-      77      num_term_nodes                               rpart
-      78      num_term_nodes                         xgb.Booster
+      45      features_input _keras.engine.sequential.Sequential
+      46      features_input                             formula
+      47      features_input                              glmnet
+      48      features_input                   hardhat_blueprint
+      49      features_input  keras.engine.sequential.Sequential
+      50      features_input                             multnet
+      51      features_input                              recipe
+      52      features_input                               terms
+      53      mean_rule_size                                C5.0
+      54      mean_rule_size                              cubist
+      55      mean_rule_size                                 xrf
+      56 num_features_active                                C5.0
+      57 num_features_active                              cubist
+      58 num_features_active                              glmnet
+      59 num_features_active                         lgb.Booster
+      60 num_features_active                                 xrf
+      61      num_parameters                              bagger
+      62      num_parameters                          brulee_mlp
+      63      num_parameters                              cubist
+      64      num_parameters                               earth
+      65      num_parameters                              glmnet
+      66      num_parameters                            mixo_pls
+      67      num_parameters                          mixo_plsda
+      68      num_parameters                           mixo_spls
+      69      num_parameters                         mixo_splsda
+      70      num_parameters                            multinom
+      71      num_parameters                                nnet
+      72      num_parameters                                 xrf
+      73           num_rules                                C5.0
+      74           num_rules                              cubist
+      75           num_rules                                 xrf
+      76 num_support_vectors                                ksvm
+      77      num_term_nodes                                C5.0
+      78      num_term_nodes                              bagger
+      79      num_term_nodes                                bart
+      80      num_term_nodes                             cforest
+      81      num_term_nodes                         lgb.Booster
+      82      num_term_nodes                               party
+      83      num_term_nodes                           partynode
+      84      num_term_nodes                              ranger
+      85      num_term_nodes                               rpart
+      86      num_term_nodes                         xgb.Booster
 
 ---
 
     Code
       object_list()
     Output
-      [1] "`C5.0`, `LiblineaR`, `NaiveBayes`, `_keras.engine.sequential.Sequential`, `bagger`, `bart`, `brulee_linear_reg`, `brulee_logistic_reg`, `brulee_mlp`, `brulee_multinomial_reg`, `cforest`, `cubist`, `earth`, `fda`, `gam`, `gen.ridge`, `glm`, `glmnet`, `hurdle`, `kknn`, `ksvm`, `lda`, `lda_diag`, `lgb.Booster`, `lm`, `mda`, `mixo_pls`, `mixo_plsda`, `mixo_spls`, `mixo_splsda`, `multinom`, `naive_bayes`, `nnet`, `nullmodel`, `party`, `partynode`, `qda`, `qda_diag`, `randomForest`, `ranger`, `rda`, `rpart`, `sda`, `stanreg`, `terms`, `xgb.Booster`, `xrf`, `zeroinfl`"
+      [1] "`C5.0`, `LiblineaR`, `NaiveBayes`, `_keras.engine.sequential.Sequential`, `bagger`, `bart`, `brulee_linear_reg`, `brulee_logistic_reg`, `brulee_mlp`, `brulee_multinomial_reg`, `cforest`, `cubist`, `earth`, `fda`, `formula`, `gam`, `gen.ridge`, `glm`, `glmnet`, `hardhat_blueprint`, `hurdle`, `keras.engine.sequential.Sequential`, `kknn`, `ksvm`, `lda`, `lda_diag`, `lgb.Booster`, `lm`, `mda`, `mixo_pls`, `mixo_plsda`, `mixo_spls`, `mixo_splsda`, `multinom`, `multnet`, `naive_bayes`, `nnet`, `nullmodel`, `party`, `partynode`, `qda`, `qda_diag`, `randomForest`, `ranger`, `rda`, `recipe`, `rpart`, `sda`, `stanreg`, `terms`, `xgb.Booster`, `xrf`, `zeroinfl`"
 

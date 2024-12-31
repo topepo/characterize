@@ -174,6 +174,91 @@ fit_cls_bru_multi <-
 # ------------------------------------------------------------------------------
 # C5.0
 
+set.seed(1)
+fit_cls_tree_c5 <-
+  C5.0(class ~ ., data = cls_dat, trials = 1) %>%
+  butcher()
+
+# The number of terminal nodes and active predictors computed with tidy method in
+# the rules pkgs
+
+tidy_cls_tree_c5 <- tidy(fit_cls_tree_c5)
+
+var_names <- map(tidy_cls_tree_c5$rule, ~ all.vars(parse_expr(.x)))
+var_names <- sort(unique(unlist(var_names)))
+
+rule_sizes <- map_int(tidy_cls_tree_c5$rule, characterize:::rule_size)
+mean_size <- mean(rule_sizes)
+
+exp_cls_tree_c5 <- list()
+exp_cls_tree_c5$num_term_nodes <- nrow(tidy_cls_tree_c5)
+exp_cls_tree_c5$num_features_active <- length(var_names)
+exp_cls_tree_c5$features_active <- var_names
+exp_cls_tree_c5$mean_rule_size <- mean_size
+
+###
+
+set.seed(1)
+fit_cls_tree_bst_c5 <-
+  C5.0(class ~ ., data = cls_dat, trials = 3) %>%
+  butcher()
+
+tidy_cls_tree_bst_c5 <- tidy(fit_cls_tree_bst_c5)
+
+var_names <- map(tidy_cls_tree_bst_c5$rule, ~ all.vars(parse_expr(.x)))
+var_names <- sort(unique(unlist(var_names)))
+
+rule_sizes <- map_int(tidy_cls_tree_bst_c5$rule, characterize:::rule_size)
+mean_size <- mean(rule_sizes)
+
+exp_cls_tree_bst_c5 <- list()
+exp_cls_tree_bst_c5$num_term_nodes <- nrow(tidy_cls_tree_bst_c5)
+exp_cls_tree_bst_c5$num_features_active <- length(var_names)
+exp_cls_tree_bst_c5$features_active <- var_names
+exp_cls_tree_bst_c5$mean_rule_size <- mean_size
+
+###
+
+set.seed(1)
+fit_cls_rule_c5 <-
+  C5.0(class ~ ., data = cls_dat, trials = 1, rules = TRUE) %>%
+  butcher()
+
+tidy_cls_rule_c5 <- tidy(fit_cls_rule_c5)
+
+var_names <- map(tidy_cls_rule_c5$rule, ~ all.vars(parse_expr(.x)))
+var_names <- sort(unique(unlist(var_names)))
+
+rule_sizes <- map_int(tidy_cls_rule_c5$rule, characterize:::rule_size)
+mean_size <- mean(rule_sizes)
+
+exp_cls_rule_c5 <- list()
+exp_cls_rule_c5$num_rules <- nrow(tidy_cls_rule_c5)
+exp_cls_rule_c5$num_features_active <- length(var_names)
+exp_cls_rule_c5$features_active <- var_names
+exp_cls_rule_c5$mean_rule_size <- mean_size
+
+###
+
+set.seed(1)
+fit_cls_rule_bst_c5 <-
+  C5.0(class ~ ., data = cls_dat, trials = 3, rules = TRUE) %>%
+  butcher()
+
+tidy_cls_rule_bst_c5 <- tidy(fit_cls_rule_bst_c5)
+
+var_names <- map(tidy_cls_rule_bst_c5$rule, ~ all.vars(parse_expr(.x)))
+var_names <- sort(unique(unlist(var_names)))
+
+rule_sizes <- map_int(tidy_cls_rule_bst_c5$rule, characterize:::rule_size)
+mean_size <- mean(rule_sizes)
+
+exp_cls_rule_bst_c5 <- list()
+exp_cls_rule_bst_c5$num_rules <- nrow(tidy_cls_rule_bst_c5)
+exp_cls_rule_bst_c5$num_features_active <- length(var_names)
+exp_cls_rule_bst_c5$features_active <- var_names
+exp_cls_rule_bst_c5$mean_rule_size <- mean_size
+
 # ------------------------------------------------------------------------------
 # cforest
 
