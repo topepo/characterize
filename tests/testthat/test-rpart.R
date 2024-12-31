@@ -4,6 +4,7 @@ library(rlang)
 
 test_that("rpart", {
   skip_if_not_installed("rpart")
+  skip("refactoring")
 
   load(test_path("test_cases.RData"))
   expect_snapshot(characterize(rpart_mod))

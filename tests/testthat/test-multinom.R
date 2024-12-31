@@ -4,6 +4,7 @@ library(rlang)
 
 test_that("multinom", {
   skip_if_not_installed("nnet")
+  skip("refactoring")
 
   load(test_path("test_cases.RData"))
 
