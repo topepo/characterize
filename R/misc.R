@@ -7,7 +7,8 @@ yardstick_like <- function(x) {
       .estimator = "model",
       value = as.numeric(value),
     ) %>%
-    dplyr::select(.metric = statistic, .estimator, .estimate = value)
+    dplyr::select(.metric = statistic, .estimator, .estimate = value) %>%
+    dplyr::arrange(.metric, .estimator)
 }
 
 rien <-
