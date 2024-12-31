@@ -115,7 +115,7 @@ test_that("bagging - rpart - classification", {
 
 test_that("bagging - earth - regression", {
   skip_if_not_installed("earth")
-  library(earth)
+  suppressPackageStartupMessages(library(earth))
 
   # tests objects in "test_cases.RData"
 
@@ -156,7 +156,7 @@ test_that("bagging - earth - regression", {
 
 test_that("bagging - earth - classification", {
   skip_if_not_installed("earth")
-  library(earth)
+  suppressPackageStartupMessages(library(earth))
 
   # tests objects in "test_cases.RData"
 

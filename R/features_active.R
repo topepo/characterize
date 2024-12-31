@@ -213,6 +213,7 @@ c5_vars <- function(iter, x) {
   ev <- rlang::eval_tidy(cl)
   ev <- ev[ ev[,"nsubsets"] > 0, ]
   vars_used <- rownames(ev)
+  vars_used <- vars_used[!grepl("-unused$", vars_used)]
   act_vars_to_tbl(vars_used)
 }
 

@@ -1,6 +1,6 @@
 pkgs <-
-  c("baguette", "bonsai", "brulee", "butcher", "C50", "caret", "dbarts",
-    "discrim", "earth", "lobstr", "mda", "plsmod", "rlang", "rpart", "rules",
+  c("baguette", "bonsai", "brulee", "butcher", "C50", "caret", "Cubist", "dbarts",
+    "discrim", "earth", "lobstr", "mda", "partykit", "plsmod", "rlang", "rpart", "rules",
     "sessioninfo", "tidymodels")
 
 load_pkg <- function(x) {
@@ -262,17 +262,148 @@ exp_cls_rule_bst_c5$mean_rule_size <- mean_size
 # ------------------------------------------------------------------------------
 # cforest
 
+set.seed(12)
+fit_cls_cforest <-
+  cforest(class ~ ., data = cls_dat, ntree = 3) %>%
+  butcher()
+
+# The number of terminal nodes and active predictors computed with tidy method in
+# the rules pkgs
+exp_cls_cforest <- list()
+
+terminal <-
+  purrr::map(fit_cls_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
+  map_int(length) %>%
+  sum()
+exp_cls_cforest$num_term_nodes <- terminal
+
+used <-
+  purrr::map(fit_cls_cforest$nodes, characterize:::get_party_var_index) %>%
+  unlist() %>%
+  unique()
+used <- names(fit_cls_cforest$data)[used]
+
+exp_cls_cforest$features_active <- used
+
+###
+
+set.seed(12)
+fit_reg_cforest <-
+  cforest(outcome ~ ., data = reg_dat, ntree = 3) %>%
+  butcher()
+
+exp_reg_cforest <- list()
+
+terminal <-
+  purrr::map(fit_reg_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
+  map_int(length) %>%
+  sum()
+exp_reg_cforest$num_term_nodes <- terminal
+
+used <-
+  purrr::map(fit_reg_cforest$nodes, characterize:::get_party_var_index) %>%
+  unlist() %>%
+  unique()
+used <- names(fit_reg_cforest$data)[used]
+
+exp_reg_cforest$features_active <- used
+
 # ------------------------------------------------------------------------------
 # cubist
+
+set.seed(1)
+fit_reg_cb <-
+  cubist(ames[, -1], ames$Sale_Price, committees = 1) %>%
+  butcher()
+
+# The number of terminal nodes and active predictors computed with tidy method in
+# the rules pkgs
+
+tidy_reg_cb <- tidy(fit_reg_cb)
+
+var_names_1 <- map(tidy_reg_cb$rule, ~ all.vars(parse_expr(.x)))
+var_names_1 <- sort(unique(unlist(var_names_1)))
+
+var_names_2 <-
+  map(tidy_reg_cb$estimate, ~ .x %>% pluck("term")) %>%
+  unlist() %>%
+  unique()
+
+var_names_2 <- var_names_2[var_names_2 != "(Intercept)"]
+var_names <- sort(unique(c(var_names_1, var_names_2)))
+
+num_param <- sum(map_int(tidy_reg_cb$estimate, nrow))
+
+rule_sizes <- map_int(tidy_reg_cb$rule, characterize:::rule_size)
+mean_size <- mean(rule_sizes)
+
+exp_reg_cb <- list()
+exp_reg_cb$num_rules <- nrow(tidy_reg_cb)
+exp_reg_cb$num_features_active <- length(var_names)
+exp_reg_cb$features_active <- var_names
+exp_reg_cb$mean_rule_size <- mean_size
+exp_reg_cb$num_param <- num_param
+
+###
+
+set.seed(1)
+fit_reg_cb_ens <-
+  cubist(ames[, -1], ames$Sale_Price, committees = 3) %>%
+  butcher()
+
+# The number of terminal nodes and active predictors computed with tidy method in
+# the rules pkgs
+
+tidy_reg_cb_ens <- tidy(fit_reg_cb_ens)
+
+var_names_1 <- map(tidy_reg_cb_ens$rule, ~ all.vars(parse_expr(.x)))
+var_names_1 <- sort(unique(unlist(var_names_1)))
+
+var_names_2 <-
+  map(tidy_reg_cb_ens$estimate, ~ .x %>% pluck("term")) %>%
+  unlist() %>%
+  unique()
+
+var_names_2 <- var_names_2[var_names_2 != "(Intercept)"]
+var_names <- sort(unique(c(var_names_1, var_names_2)))
+
+num_param <- sum(map_int(tidy_reg_cb_ens$estimate, nrow))
+
+rule_sizes <- map_int(tidy_reg_cb_ens$rule, characterize:::rule_size)
+mean_size <- mean(rule_sizes)
+
+exp_reg_cb_ens <- list()
+exp_reg_cb_ens$num_rules <- nrow(tidy_reg_cb_ens)
+exp_reg_cb_ens$num_features_active <- length(var_names)
+exp_reg_cb_ens$features_active <- var_names
+exp_reg_cb_ens$mean_rule_size <- mean_size
+exp_reg_cb_ens$num_param <- num_param
 
 # ------------------------------------------------------------------------------
 # earth
 
+set.seed(1)
+fit_reg_earth <-
+  earth(ames[, -1], ames$Sale_Price, degree = 2) %>%
+  butcher()
+
+set.seed(1)
+fit_cls_earth <-
+  earth(cls_dat[, -1], cls_dat$class, degree = 2) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # fda
 
-# ------------------------------------------------------------------------------
-# formula
+set.seed(1)
+fit_cls_fda_earth <-
+  mda::fda(class ~ ., data = cls_dat, method = earth::earth) %>%
+  butcher()
+
+set.seed(1)
+fit_cls_fda_poly <-
+  mda::fda(class ~ ., data = cls_dat) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # gam
@@ -285,9 +416,6 @@ exp_cls_rule_bst_c5$mean_rule_size <- mean_size
 
 # ------------------------------------------------------------------------------
 # glmnet
-
-# ------------------------------------------------------------------------------
-# hardhat_blueprint
 
 # ------------------------------------------------------------------------------
 # hurdle
@@ -369,9 +497,6 @@ exp_cls_rule_bst_c5$mean_rule_size <- mean_size
 
 # ------------------------------------------------------------------------------
 # rda
-
-# ------------------------------------------------------------------------------
-# recipe
 
 # ------------------------------------------------------------------------------
 # rpart
