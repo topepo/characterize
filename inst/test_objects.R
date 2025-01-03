@@ -399,11 +399,19 @@ fit_reg_glmnet <-
   glmnet(reg_x, reg_dat$outcome, lambda = penalties) %>%
   butcher()
 
+exp_reg_glmnet <-
+  fit_reg_glmnet %>%
+  tidy()
+
 ##
 
 fit_cls_glmnet <-
   glmnet(cls_x, cls_dat$class, lambda = penalties, family = "binomial") %>%
   butcher()
+
+exp_cls_glmnet <-
+  fit_cls_glmnet %>%
+  tidy()
 
 ##
 
@@ -411,11 +419,19 @@ fit_mnl_glmnet <-
   glmnet(mnl_x, mnl_dat$class, lambda = penalties, family = "multinomial") %>%
   butcher()
 
+exp_mnl_glmnet <-
+  fit_mnl_glmnet %>%
+  tidy()
+
 ##
 
 fit_count_glmnet <-
   glmnet(reg_x, count_dat$outcome, lambda = penalties, family = "poisson") %>%
   butcher()
+
+exp_count_glmnet <-
+  fit_count_glmnet %>%
+  tidy()
 
 # ------------------------------------------------------------------------------
 # hurdle
@@ -607,6 +623,11 @@ fit_mnl_glmnet_parsnip <-
   fit(class ~ ., data = mnl_dat) %>%
   butcher()
 
+exp_mnl_glmnet_parsnip <-
+  fit_mnl_glmnet_parsnip %>%
+  extract_fit_engine() %>%
+  tidy()
+
 ###
 
 fit_reg_glmnet_spec <-
@@ -618,6 +639,11 @@ fit_reg_glmnet_parsnip <-
   fit_reg_glmnet_spec %>%
   fit(outcome ~ ., data = reg_dat) %>%
   butcher()
+
+exp_reg_glmnet_parsnip <-
+  fit_reg_glmnet_parsnip %>%
+  extract_fit_engine() %>%
+  tidy()
 
 ###
 
