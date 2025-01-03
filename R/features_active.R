@@ -516,7 +516,7 @@ get_party_var_index <- function(x) {
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.sda <- function(x, ...) {
-  vars_used <- names(x$betas)
+  vars_used <- names(x$beta)
   act_vars_to_tbl(vars_used)
 }
 

@@ -1,10 +1,10 @@
 pkgs <-
-  c("baguette", "bonsai", "brulee", "bundle", "butcher", "C50", "Cubist",
-    "caret", "dbarts", "discrim",  "earth", "klaR",
-    "lightgbm", "lobstr", "MASS", "mda", "mgcv", "naivebayes", "nnet",
-    "plsmod", "pscl", "randomForest", "ranger", "rlang", "rpart",
-    "rules", "sessioninfo", "sparsediscrim", "tidymodels",
-    "xgboost", "xrf", "rstanarm", "mixOmics")
+  c("baguette", "bonsai", "brulee", "bundle", "butcher", "C50",
+    "caret", "Cubist", "dbarts", "discrim", "earth", "glmnet", "keras",
+    "kknn", "klaR", "lightgbm", "lobstr", "MASS", "mda", "mgcv",
+    "mixOmics", "naivebayes", "nnet", "plsmod", "pscl", "randomForest",
+    "ranger", "rlang", "rpart", "rstanarm", "rules", "sda", "sessioninfo",
+    "sparsediscrim", "tidymodels", "xgboost", "xrf")
 
 load_pkg <- function(x) {
   suppressPackageStartupMessages(library(x, character.only = TRUE))
@@ -51,6 +51,12 @@ mnl_dat <-
 
 count_dat <- reg_dat
 count_dat$outcome <- rpois(nrow(reg_dat), exp(reg_dat$outcome / 10))
+
+reg_x <- as.matrix(reg_dat[,-1])
+cls_x <- as.matrix(cls_dat[,-1])
+mnl_x <- as.matrix(mnl_dat[,-3])
+
+penalties <- 10^(-1:-3)
 
 # ------------------------------------------------------------------------------
 # bagger
@@ -389,6 +395,28 @@ fit_cls_glm <-
 # ------------------------------------------------------------------------------
 # glmnet
 
+fit_reg_glmnet <-
+  glmnet(reg_x, reg_dat$outcome, lambda = penalties) %>%
+  butcher()
+
+##
+
+fit_cls_glmnet <-
+  glmnet(cls_x, cls_dat$class, lambda = penalties, family = "binomial") %>%
+  butcher()
+
+##
+
+fit_mnl_glmnet <-
+  glmnet(mnl_x, mnl_dat$class, lambda = penalties, family = "multinomial") %>%
+  butcher()
+
+##
+
+fit_count_glmnet <-
+  glmnet(reg_x, count_dat$outcome, lambda = penalties, family = "poisson") %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # hurdle
 
@@ -401,6 +429,20 @@ fit_reg_hurdle <-
 
 # ------------------------------------------------------------------------------
 # kknn
+
+conflicted::conflict_prefer("contr.dummy", "kknn")
+
+fit_reg_kknn <-
+  kknn::kknn(Sale_Price ~ ., train = ames, ames) %>%
+  butcher()
+
+fit_cls_kknn <-
+  kknn::kknn(class ~ ., train = cls_dat, cls_dat) %>%
+  butcher()
+
+fit_mnl_kknn <-
+  kknn::kknn(class ~ ., train = mnl_dat, mnl_dat) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # lda
@@ -469,14 +511,38 @@ fit_mnl_mda <-
 # ------------------------------------------------------------------------------
 # mixo_pls
 
+fit_reg_pls <-
+  mixOmics::pls(reg_dat[, -1], reg_dat$outcome, ncomp = 2) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # mixo_plsda
+
+fit_cls_plsda <-
+  mixOmics::plsda(cls_dat[, -1], cls_dat$class, ncomp = 2) %>%
+  butcher()
+
+fit_mnl_plsda <-
+  mixOmics::plsda(mnl_dat[, -3], mnl_dat$class, ncomp = 2) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # mixo_spls
 
+fit_reg_spls <-
+  mixOmics::spls(reg_dat[, -1], reg_dat$outcome, ncomp = 2, keepX = rep(3, 20)) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # mixo_splsda
+
+fit_cls_splsda <-
+  mixOmics::splsda(cls_dat[, -1], cls_dat$class, ncomp = 2) %>%
+  butcher()
+
+fit_mnl_splsda <-
+  mixOmics::splsda(mnl_dat[, -3], mnl_dat$class, ncomp = 2) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # multinom
@@ -530,6 +596,39 @@ fit_mnl_nnet <-
 
 # ------------------------------------------------------------------------------
 # parsnip model fits
+
+fit_mnl_glmnet_spec <-
+  multinom_reg(penalty = 0.1) %>%
+  set_engine("glmnet", path_values = penalties) %>%
+  set_mode("classification")
+
+fit_mnl_glmnet_parsnip <-
+  fit_mnl_glmnet_spec %>%
+  fit(class ~ ., data = mnl_dat) %>%
+  butcher()
+
+###
+
+fit_reg_glmnet_spec <-
+  linear_reg(penalty = 0.1) %>%
+  set_engine("glmnet", path_values = penalties) %>%
+  set_mode("regression")
+
+fit_reg_glmnet_parsnip <-
+  fit_reg_glmnet_spec %>%
+  fit(outcome ~ ., data = reg_dat) %>%
+  butcher()
+
+###
+
+fit_mnl_ksvm_spec <-
+  svm_poly(degree = 3) %>%
+  set_mode("classification")
+
+fit_mnl_ksvm_parsnip <-
+  fit_mnl_ksvm_spec %>%
+  fit(class ~ ., data = mnl_dat) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # qda
@@ -597,11 +696,56 @@ fit_mnl_rda <-
 # ------------------------------------------------------------------------------
 # sda
 
+fit_cls_sda <-
+  sda::sda(cls_x, cls_dat$class, verbose = FALSE) %>%
+  butcher()
+
+fit_mnl_sda <-
+  sda::sda(mnl_x, mnl_dat$class, verbose = FALSE) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # stanreg
 
+fit_reg_stan_glm <-
+  stan_glm(Sale_Price ~ Neighborhood + Longitude, data = ames,
+           chains = 2, iter = 100, refresh = 0) %>%
+  butcher()
+
+fit_cls_stan_glm <-
+  stan_glm(class ~ ., data = cls_dat, family = binomial,
+           chains = 2, iter = 100, refresh = 0) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # fitted workflows
+
+fit_mnl_glmnet_wflow <-
+  workflow(class ~ ., fit_mnl_glmnet_spec) %>%
+  fit(data = mnl_dat) %>%
+  butcher()
+
+###
+
+ames_rec <-
+  recipe(Sale_Price ~ ., data = ames) %>%
+  step_dummy(all_factor_predictors()) %>%
+  step_zv(all_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+fit_reg_glmnet_wflow <-
+  workflow(ames_rec, fit_reg_glmnet_spec) %>%
+  fit(data = ames) %>%
+  butcher()
+
+###
+
+fit_mnl_ksvm_wflow <-
+  workflow() %>%
+  add_model(fit_mnl_ksvm_spec) %>%
+  add_variables(outcomes = c(class), predictors = c(everything())) %>%
+  fit(data = mnl_dat) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # xgb.Booster
