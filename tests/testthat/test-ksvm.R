@@ -1,16 +1,75 @@
-library(testthat)
-library(rlang)
-
-
-test_that("kernlab SVM", {
+test_that("ksvm - regression", {
   skip_if_not_installed("kernlab")
-  skip("refactoring")
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("butcher")
+  suppressPackageStartupMessages(library(kernlab))
+  suppressPackageStartupMessages(library(modeldata))
+  suppressPackageStartupMessages(library(butcher))
 
-  load(test_path("test_cases.RData"))
+  fit_reg_ksvm <-
+    ksvm(Sale_Price ~ Neighborhood + Longitude, data = ames) %>%
+    butcher()
 
-  expect_snapshot(characterize(svm_mod))
+  bag_chr <- characterize(fit_reg_ksvm)
+  check_characterize_object(bag_chr)
+
   expect_equal(
-    .pluck_num_support_vectors(svm_mod)$value,
-    length(svm_mod$fit@alphaindex[[1]])
+    .pluck_num_support_vectors(fit_reg_ksvm)$value,
+    length(unique(unlist(fit_reg_ksvm@alphaindex)))
+  )
+  expect_equal(
+    .pluck_num_features_input(fit_reg_ksvm)$value,
+    ncol(attr(fit_reg_ksvm@terms, "factors"))
   )
 })
+
+test_that("ksvm - binary classification", {
+  skip_if_not_installed("kernlab")
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("butcher")
+  suppressPackageStartupMessages(library(kernlab))
+  suppressPackageStartupMessages(library(modeldata))
+  suppressPackageStartupMessages(library(butcher))
+
+  fit_cls_ksvm <-
+    ksvm(class ~ ., data = cls_dat, family = binomial) %>%
+    butcher()
+
+  bag_chr <- characterize(fit_cls_ksvm)
+  check_characterize_object(bag_chr)
+
+  expect_equal(
+    .pluck_num_support_vectors(fit_cls_ksvm)$value,
+    length(unique(unlist(fit_cls_ksvm@alphaindex)))
+  )
+  expect_equal(
+    .pluck_num_features_input(fit_cls_ksvm)$value,
+    ncol(attr(fit_cls_ksvm@terms, "factors"))
+  )
+})
+
+test_that("ksvm - multinomial classification", {
+  skip_if_not_installed("kernlab")
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("butcher")
+  suppressPackageStartupMessages(library(kernlab))
+  suppressPackageStartupMessages(library(modeldata))
+  suppressPackageStartupMessages(library(butcher))
+
+  fit_mnl_ksvm <-
+    ksvm(class ~ ., data = mnl_dat, family = binomial) %>%
+    butcher()
+
+  bag_chr <- characterize(fit_mnl_ksvm)
+  check_characterize_object(bag_chr)
+
+  expect_equal(
+    .pluck_num_support_vectors(fit_mnl_ksvm)$value,
+    length(unique(unlist(fit_mnl_ksvm@alphaindex)))
+  )
+  expect_equal(
+    .pluck_num_features_input(fit_mnl_ksvm)$value,
+    ncol(attr(fit_mnl_ksvm@terms, "factors"))
+  )
+})
+

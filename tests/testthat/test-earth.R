@@ -1,8 +1,15 @@
 test_that("earth - regression", {
   skip_if_not_installed("earth")
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("butcher")
   suppressPackageStartupMessages(library(earth))
+  suppressPackageStartupMessages(library(modeldata))
+  suppressPackageStartupMessages(library(butcher))
 
-  # tests objects in "test_cases.RData"
+  set.seed(1)
+  fit_reg_earth <-
+    earth(ames[, -1], ames$Sale_Price, degree = 2) %>%
+    butcher()
 
   bag_chr <- characterize(fit_reg_earth)
   check_characterize_object(bag_chr)
@@ -34,9 +41,16 @@ test_that("earth - regression", {
 
 test_that("earth - classification", {
   skip_if_not_installed("earth")
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("butcher")
   suppressPackageStartupMessages(library(earth))
+  suppressPackageStartupMessages(library(modeldata))
+  suppressPackageStartupMessages(library(butcher))
 
-  # tests objects in "test_cases.RData"
+  set.seed(1)
+  fit_cls_earth <-
+    earth(cls_dat[, -1], cls_dat$class, degree = 2) %>%
+    butcher()
 
   bag_chr <- characterize(fit_cls_earth)
   check_characterize_object(bag_chr)

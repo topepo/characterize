@@ -1,13 +1,20 @@
 pkgs <-
-  c("baguette", "bonsai", "brulee", "butcher", "C50", "caret", "Cubist", "dbarts",
-    "discrim", "earth", "lobstr", "mda", "partykit", "plsmod", "rlang", "rpart", "rules",
-    "sessioninfo", "tidymodels")
+  c("baguette", "bonsai", "brulee", "bundle", "butcher", "C50", "Cubist",
+    "caret", "dbarts", "discrim",  "earth", "klaR",
+    "lightgbm", "lobstr", "MASS", "mda", "mgcv", "naivebayes", "nnet",
+    "plsmod", "pscl", "randomForest", "ranger", "rlang", "rpart",
+    "rules", "sessioninfo", "sparsediscrim", "tidymodels",
+    "xgboost", "xrf", "rstanarm", "mixOmics")
 
 load_pkg <- function(x) {
   suppressPackageStartupMessages(library(x, character.only = TRUE))
 }
 
 load_res <- lapply(pkgs, load_pkg)
+
+# These modeling packages are in Suggests so we can create them in the tests:
+# earth, kernlab, partykit, rpart
+# The test data below are mirrored in testthat/tests/helpers.R
 
 # ------------------------------------------------------------------------------
 
@@ -21,7 +28,7 @@ tidymodels_prefer()
 
 # ------------------------------------------------------------------------------
 
-data(ames)
+data(ames, package = "modeldata")
 ames$Sale_Price <- log10(ames$Sale_Price)
 ames <-
   ames %>%
@@ -29,7 +36,7 @@ ames <-
   slice(1:100) %>%
   select(Sale_Price, Neighborhood, Longitude, Latitude)
 
-data("penguins")
+data("penguins", package = "modeldata")
 penguins <- penguins[complete.cases(penguins),]
 
 set.seed(1)
@@ -41,6 +48,9 @@ mnl_dat <-
     ~  -0.5    +  0.6 * abs(A),
     ~ ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, - 2),
     ~ -0.6 * A + 0.50 * B -  A * B)
+
+count_dat <- reg_dat
+count_dat$outcome <- rpois(nrow(reg_dat), exp(reg_dat$outcome / 10))
 
 # ------------------------------------------------------------------------------
 # bagger
@@ -260,55 +270,6 @@ exp_cls_rule_bst_c5$features_active <- var_names
 exp_cls_rule_bst_c5$mean_rule_size <- mean_size
 
 # ------------------------------------------------------------------------------
-# cforest
-
-set.seed(12)
-fit_cls_cforest <-
-  cforest(class ~ ., data = cls_dat, ntree = 3) %>%
-  butcher()
-
-# The number of terminal nodes and active predictors computed with tidy method in
-# the rules pkgs
-exp_cls_cforest <- list()
-
-terminal <-
-  purrr::map(fit_cls_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
-  map_int(length) %>%
-  sum()
-exp_cls_cforest$num_term_nodes <- terminal
-
-used <-
-  purrr::map(fit_cls_cforest$nodes, characterize:::get_party_var_index) %>%
-  unlist() %>%
-  unique()
-used <- names(fit_cls_cforest$data)[used]
-
-exp_cls_cforest$features_active <- used
-
-###
-
-set.seed(12)
-fit_reg_cforest <-
-  cforest(outcome ~ ., data = reg_dat, ntree = 3) %>%
-  butcher()
-
-exp_reg_cforest <- list()
-
-terminal <-
-  purrr::map(fit_reg_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
-  map_int(length) %>%
-  sum()
-exp_reg_cforest$num_term_nodes <- terminal
-
-used <-
-  purrr::map(fit_reg_cforest$nodes, characterize:::get_party_var_index) %>%
-  unlist() %>%
-  unique()
-used <- names(fit_reg_cforest$data)[used]
-
-exp_reg_cforest$features_active <- used
-
-# ------------------------------------------------------------------------------
 # cubist
 
 set.seed(1)
@@ -380,19 +341,6 @@ exp_reg_cb_ens$mean_rule_size <- mean_size
 exp_reg_cb_ens$num_param <- num_param
 
 # ------------------------------------------------------------------------------
-# earth
-
-set.seed(1)
-fit_reg_earth <-
-  earth(ames[, -1], ames$Sale_Price, degree = 2) %>%
-  butcher()
-
-set.seed(1)
-fit_cls_earth <-
-  earth(cls_dat[, -1], cls_dat$class, degree = 2) %>%
-  butcher()
-
-# ------------------------------------------------------------------------------
 # fda
 
 set.seed(1)
@@ -408,17 +356,45 @@ fit_cls_fda_poly <-
 # ------------------------------------------------------------------------------
 # gam
 
+set.seed(1)
+fit_reg_gam <-
+  gam(Sale_Price ~ Neighborhood + s(Longitude) + Latitude, data = ames) %>%
+  butcher()
+
+set.seed(1)
+fit_cls_gam <-
+  gam(class ~ two_factor_1 + two_factor_2 + s(non_linear_1) +
+        s(non_linear_2, non_linear_3), data = cls_dat, family = binomial) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # gen.ridge
 
+set.seed(1)
+fit_reg_gen_ridge <-
+  gen.ridge(as.matrix(reg_dat[,-1]), reg_dat$outcome) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # glm
+
+fit_reg_glm <-
+  glm(Sale_Price ~ Neighborhood + Longitude, data = ames) %>%
+  butcher()
+
+fit_cls_glm <-
+  glm(class ~ ., data = cls_dat, family = binomial) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # glmnet
 
 # ------------------------------------------------------------------------------
 # hurdle
+
+fit_reg_hurdle <-
+  hurdle(outcome ~ ., data = count_dat) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # keras.engine.sequential.Sequential
@@ -427,16 +403,47 @@ fit_cls_fda_poly <-
 # kknn
 
 # ------------------------------------------------------------------------------
-# ksvm
-
-# ------------------------------------------------------------------------------
 # lda
+
+fit_cls_lda <-
+  lda(class ~ ., data = cls_dat) %>%
+  butcher()
+
+fit_mnl_lda <-
+  lda(mnl_dat[,-3], grouping = mnl_dat$class) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # lda_diag
 
+fit_cls_lda_diag <-
+  lda_diag(class ~ ., data = cls_dat) %>%
+  butcher()
+
+fit_mnl_lda_diag <-
+  lda_diag(mnl_dat[,-3], y = mnl_dat$class) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # lgb.Booster
+
+set.seed(1)
+fit_reg_lightgbm <-
+  train_lightgbm(reg_dat[,-1], reg_dat$outcome, quiet = TRUE) %>%
+  butcher() %>%
+  bundle()
+
+set.seed(1)
+fit_cls_lightgbm <-
+  train_lightgbm(cls_dat[,-1], cls_dat$class, quiet = TRUE) %>%
+  butcher() %>%
+  bundle()
+
+set.seed(1)
+fit_mnl_lightgbm <-
+  train_lightgbm(mnl_dat[,-3], mnl_dat$class, quiet = TRUE) %>%
+  butcher() %>%
+  bundle()
 
 # ------------------------------------------------------------------------------
 # LiblineaR
@@ -444,8 +451,20 @@ fit_cls_fda_poly <-
 # ------------------------------------------------------------------------------
 # lm
 
+fit_reg_lm <-
+  lm(Sale_Price ~ Neighborhood + Longitude, data = ames) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # mda
+
+fit_cls_mda <-
+  mda::mda(class ~ ., data = cls_dat) %>%
+  butcher()
+
+fit_mnl_mda <-
+  mda::mda(class ~ ., data = mnl_dat) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # mixo_pls
@@ -462,44 +481,118 @@ fit_cls_fda_poly <-
 # ------------------------------------------------------------------------------
 # multinom
 
+fit_cls_multinom <-
+  nnet::multinom(class ~ ., data = mnl_dat, trace = FALSE) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # multnet
 
 # ------------------------------------------------------------------------------
 # naive_bayes
 
+fit_cls_naive_bayes <-
+  naive_bayes(class ~ ., data = cls_dat) %>%
+  butcher()
+
+fit_mnl_naive_bayes <-
+  naive_bayes(mnl_dat[,-3], y = mnl_dat$class) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # NaiveBayes
 
+fit_cls_NaiveBayes <-
+  klaR::NaiveBayes(class ~ ., data = cls_dat) %>%
+  butcher()
+
+fit_mnl_NaiveBayes <-
+  klaR::NaiveBayes(mnl_dat[,-3], grouping = mnl_dat$class) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # nnet
+
+fit_reg_nnet <-
+  nnet(Sale_Price ~ ., data = ames, trace = FALSE, size = 2) %>%
+  butcher()
+
+fit_cls_nnet <-
+  nnet(class ~ ., data = cls_dat, trace = FALSE, size = 2) %>%
+  butcher()
+
+fit_mnl_nnet <-
+  nnet(class ~ ., data = mnl_dat, trace = FALSE, size = 2) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # nullmodel
 
 # ------------------------------------------------------------------------------
-# party
-
-# ------------------------------------------------------------------------------
-# partynode
+# parsnip model fits
 
 # ------------------------------------------------------------------------------
 # qda
 
+fit_cls_qda <-
+  qda(class ~ ., data = cls_dat) %>%
+  butcher()
+
+fit_mnl_qda <-
+  qda(mnl_dat[,-3], grouping = mnl_dat$class) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # qda_diag
+
+fit_cls_qda_diag <-
+  qda_diag(class ~ ., data = cls_dat) %>%
+  butcher()
+
+fit_mnl_qda_diag <-
+  qda_diag(mnl_dat[,-3], y = mnl_dat$class) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # randomForest
 
+fit_reg_randomForest <-
+  randomForest(Sale_Price ~ ., data = ames, ntree = 3) %>%
+  butcher()
+
+fit_cls_randomForest <-
+  randomForest(class ~ ., data = cls_dat, ntree = 3) %>%
+  butcher()
+
+fit_mnl_randomForest <-
+  randomForest(class ~ ., data = mnl_dat, ntree = 3) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 # ranger
+
+fit_reg_ranger <-
+  ranger(Sale_Price ~ ., data = ames, num.trees = 3) %>%
+  butcher()
+
+fit_cls_ranger <-
+  ranger(class ~ ., data = cls_dat, num.trees = 3) %>%
+  butcher()
+
+fit_mnl_ranger <-
+  ranger(class ~ ., data = mnl_dat, num.trees = 3) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # rda
 
-# ------------------------------------------------------------------------------
-# rpart
+fit_cls_rda <-
+  klaR::rda(class ~ ., data = cls_dat) %>%
+  butcher()
+
+fit_mnl_rda <-
+  klaR::rda(mnl_dat[,-3], grouping = mnl_dat$class) %>%
+  butcher()
 
 # ------------------------------------------------------------------------------
 # sda
@@ -508,21 +601,66 @@ fit_cls_fda_poly <-
 # stanreg
 
 # ------------------------------------------------------------------------------
-# terms
+# fitted workflows
 
 # ------------------------------------------------------------------------------
 # xgb.Booster
 
+set.seed(1)
+fit_reg_xgboost <-
+  xgb_train(reg_dat[,-1], reg_dat$outcome) %>%
+  butcher() %>%
+  bundle()
+
+set.seed(1)
+fit_cls_xgboost <-
+  xgb_train(cls_dat[,-1], cls_dat$class) %>%
+  butcher() %>%
+  bundle()
+
+set.seed(1)
+fit_mnl_xgboost <-
+  xgb_train(mnl_dat[,-3], mnl_dat$class) %>%
+  butcher() %>%
+  bundle()
+
 # ------------------------------------------------------------------------------
 # xrf
+
+set.seed(1)
+fit_reg_xrf <-
+  xrf(Sale_Price ~ ., data = ames, family = "gaussian",
+      xgb_control = list(nrounds = 50, max_depth = 3)) %>%
+  butcher() %>%
+  bundle()
+
+set.seed(1)
+fit_cls_xrf <-
+  xrf(class ~ ., data = cls_dat, family = "binomial",
+      xgb_control = list(nrounds = 50, max_depth = 3)) %>%
+  butcher() %>%
+  bundle()
+
+set.seed(1)
+fit_mnl_xrf <-
+  xrf(class ~ ., data = mnl_dat, family = "multinomial",
+      xgb_control = list(nrounds = 50, max_depth = 3, num_class = 3)) %>%
+  butcher() %>%
+  bundle()
 
 # ------------------------------------------------------------------------------
 # zeroinfl
 
+fit_reg_zeroinfl <-
+  zeroinfl(outcome ~ predictor_06 + predictor_07 | predictor_01 + predictor_02,
+           data = count_dat) %>%
+  butcher()
+
 # ------------------------------------------------------------------------------
 
 save_names <- ls(pattern = "(^fit_)|(^exp_)")
-save(list = save_names, file = "tests/testthat/test_cases.RData", compress = TRUE)
+save(list = save_names, file = "tests/testthat/test_cases.RData",
+     compress = "bzip2")
 
 # ------------------------------------------------------------------------------
 

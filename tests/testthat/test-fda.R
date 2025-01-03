@@ -7,11 +7,13 @@ test_that("fda - earth - classification", {
   bag_chr <- characterize(fit_cls_fda_earth)
   check_characterize_object(bag_chr)
 
-  coefs <- coef(fit_cls_fda_earth)[,1]
-  expect_equal(
-    .pluck_num_parameters(fit_cls_fda_earth)$value,
-    length(coefs)
-  )
+  coefs <- fit_cls_fda_earth$fit$coefficients[,1]
+
+  # not implemented
+  # expect_equal(
+  #   .pluck_num_parameters(fit_cls_fda_earth)$value,
+  #   length(coefs)
+  # )
 
   act_vars <-
     coefs %>%

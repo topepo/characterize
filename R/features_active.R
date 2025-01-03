@@ -58,7 +58,7 @@ terms_wrapper <- function(x, ...) {
 
 has_terms <- function(x) {
   if (isS4(x)) {
-    any(methods:slotNames(x) == "terms")
+    any(methods::slotNames(x) == "terms")
   } else {
     any(names(x) == "terms")
   }

@@ -6,10 +6,12 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-2402-136X")),
     person("RStudio", role = "cph")
   )
-Description: Inspect structural characteristics of a fitted model, such as the
-    number of active features, the number of terminal notes, and so on. 
+Description: Inspect structural characteristics of a fitted model, such as
+    the number of active features, the number of terminal notes, and so
+    on.
 License: MIT + file LICENSE
-Depends: R (>= 3.6.0)
+Depends: 
+    R (>= 3.6.0)
 Imports: 
     cli,
     dplyr,
@@ -29,6 +31,7 @@ Suggests:
     Cubist,
     earth,
     ggplot2,
+    kernlab,
     knitr,
     modeldata,
     partykit,
@@ -38,9 +41,10 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     tidymodels
+VignetteBuilder: 
+    knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-VignetteBuilder: knitr
