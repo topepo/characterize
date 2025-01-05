@@ -90,10 +90,9 @@ act_vars_to_tbl <- function(x) {
 #' @export
 .pluck_features_active.ranger <- function(x, ...) {
   var_index <- sort(unique(unlist(x$forest$split.varIDs)))
-  var_index <- var_index[var_index > 0]
-  vars_used <- x$forest$independent.variable.names[var_index]
+  vars_used <- x$forest$independent.variable.names[var_index + 1]
 
-  act_vars_to_tbl(vars_used)
+  act_vars_to_tbl(sort(vars_used))
 }
 
 # ------------------------------------------------------------------------------
@@ -113,7 +112,7 @@ act_vars_to_tbl <- function(x) {
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.glmnet <- function(x, penalty = 0.001, ...) {
-  rlang::is_installed("glmnet")
+  rlang::check_installed("glmnet")
 
   index_used <- unlist(predict(x, s = penalty, type = "nonzero"))
   if (inherits(x, "multnet")) {
@@ -440,8 +439,9 @@ get_party_var_index <- function(x) {
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.randomForest <- function(x, ...) {
-  vars_used <- names(x$forest$xlevels)
-  act_vars_to_tbl(vars_used)
+  var_index <- unique(unlist(x$forest$bestvar))
+  var_nms <- names(x$forest$xlevels)[var_index]
+  act_vars_to_tbl(var_nms)
 }
 
 

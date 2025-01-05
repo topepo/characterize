@@ -217,7 +217,7 @@ characterize.xrf <- function(x, penalty = 0.001, ...) {
 # This is expensive so do it as few times as possible. Give the results a class
 # and S3 dispatch on that.
 lgb_trees <- function(x) {
-  rlang::is_installed("lightgbm")
+  rlang::check_installed("lightgbm")
   cl <- rlang::call2("lgb.model.dt.tree", .ns = "lightgbm", model = rlang::expr(x))
   dat <- rlang::eval_tidy(cl)
   # error trap for saved model

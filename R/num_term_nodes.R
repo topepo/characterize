@@ -66,6 +66,15 @@
   )
 }
 
+#' @rdname pluck_num_term_nodes
+#' @export
+.pluck_num_term_nodes.randomForest <- function(x, ...) {
+  nodes <- sum(x$forest$nodestatus == -1)
+  tibble::tibble(statistic = "num_term_nodes",
+                 value = nodes
+  )
+}
+
 ranger_nodes <- function(iter, mod) {
   rlang::check_installed("ranger")
   cl <- rlang::call2("treeInfo", .ns = "ranger", object = expr(mod), tree = expr(iter))

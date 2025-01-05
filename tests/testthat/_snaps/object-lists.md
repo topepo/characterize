@@ -74,22 +74,24 @@
       68      num_parameters                           mixo_spls
       69      num_parameters                         mixo_splsda
       70      num_parameters                            multinom
-      71      num_parameters                                nnet
-      72      num_parameters                                 xrf
-      73           num_rules                                C5.0
-      74           num_rules                              cubist
-      75           num_rules                                 xrf
-      76 num_support_vectors                                ksvm
-      77      num_term_nodes                                C5.0
-      78      num_term_nodes                              bagger
-      79      num_term_nodes                                bart
-      80      num_term_nodes                             cforest
-      81      num_term_nodes                         lgb.Booster
-      82      num_term_nodes                               party
-      83      num_term_nodes                           partynode
-      84      num_term_nodes                              ranger
-      85      num_term_nodes                               rpart
-      86      num_term_nodes                         xgb.Booster
+      71      num_parameters                             multnet
+      72      num_parameters                                nnet
+      73      num_parameters                                 xrf
+      74           num_rules                                C5.0
+      75           num_rules                              cubist
+      76           num_rules                                 xrf
+      77 num_support_vectors                                ksvm
+      78      num_term_nodes                                C5.0
+      79      num_term_nodes                              bagger
+      80      num_term_nodes                                bart
+      81      num_term_nodes                             cforest
+      82      num_term_nodes                         lgb.Booster
+      83      num_term_nodes                               party
+      84      num_term_nodes                           partynode
+      85      num_term_nodes                        randomForest
+      86      num_term_nodes                              ranger
+      87      num_term_nodes                               rpart
+      88      num_term_nodes                         xgb.Booster
 
 ---
 

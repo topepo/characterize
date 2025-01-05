@@ -2,8 +2,8 @@
 test_that("hurdle - classification", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_hurdle)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_hurdle)
+  check_characterize_object(chr_res)
 
   coefs <- unlist(fit_reg_hurdle$coefficients)
   # expect_equal(

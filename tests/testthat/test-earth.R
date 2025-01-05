@@ -11,8 +11,8 @@ test_that("earth - regression", {
     earth(ames[, -1], ames$Sale_Price, degree = 2) %>%
     butcher()
 
-  bag_chr <- characterize(fit_reg_earth)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_earth)
+  check_characterize_object(chr_res)
 
   coefs <- coef(fit_reg_earth)
   expect_equal(
@@ -52,8 +52,8 @@ test_that("earth - classification", {
     earth(cls_dat[, -1], cls_dat$class, degree = 2) %>%
     butcher()
 
-  bag_chr <- characterize(fit_cls_earth)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_earth)
+  check_characterize_object(chr_res)
 
   coefs <- coef(fit_cls_earth)
   expect_equal(

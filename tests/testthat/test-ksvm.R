@@ -10,8 +10,8 @@ test_that("ksvm - regression", {
     ksvm(Sale_Price ~ Neighborhood + Longitude, data = ames) %>%
     butcher()
 
-  bag_chr <- characterize(fit_reg_ksvm)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_ksvm)
+  check_characterize_object(chr_res)
 
   expect_equal(
     .pluck_num_support_vectors(fit_reg_ksvm)$value,
@@ -35,8 +35,8 @@ test_that("ksvm - binary classification", {
     ksvm(class ~ ., data = cls_dat, family = binomial) %>%
     butcher()
 
-  bag_chr <- characterize(fit_cls_ksvm)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_ksvm)
+  check_characterize_object(chr_res)
 
   expect_equal(
     .pluck_num_support_vectors(fit_cls_ksvm)$value,
@@ -60,8 +60,8 @@ test_that("ksvm - multinomial classification", {
     ksvm(class ~ ., data = mnl_dat, family = binomial) %>%
     butcher()
 
-  bag_chr <- characterize(fit_mnl_ksvm)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_mnl_ksvm)
+  check_characterize_object(chr_res)
 
   expect_equal(
     .pluck_num_support_vectors(fit_mnl_ksvm)$value,

@@ -1,8 +1,8 @@
 test_that("Cubist - single rule set", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_cb)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_cb)
+  check_characterize_object(chr_res)
 
   # Computed in "inst/test_objects.R"
   expect_equal(
@@ -26,8 +26,8 @@ test_that("Cubist - single rule set", {
 test_that("Cubist - ensemble", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_cb_ens)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_cb_ens)
+  check_characterize_object(chr_res)
 
   # Computed in "inst/test_objects.R"
   expect_equal(

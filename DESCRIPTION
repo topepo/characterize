@@ -27,12 +27,14 @@ Imports:
     utils,
     workflows
 Suggests: 
+    butcher,
     covr,
     Cubist,
     earth,
     ggplot2,
     kernlab,
     knitr,
+    lightgbm,
     modeldata,
     partykit,
     rmarkdown,

@@ -1,8 +1,8 @@
 test_that("BART - classification", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_dbart)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_dbart)
+  check_characterize_object(chr_res)
 
   used <- apply(fit_cls_dbart$varcount, 2, function(x) any(x > 0))
   expect_equal(
@@ -22,8 +22,8 @@ test_that("BART - classification", {
 test_that("BART - regression", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_dbart)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_dbart)
+  check_characterize_object(chr_res)
 
   used <- apply(fit_reg_dbart$varcount, 2, function(x) any(x > 0))
   expect_equal(

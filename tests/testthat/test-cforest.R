@@ -10,8 +10,8 @@ test_that("cforest - regression", {
     cforest(Sale_Price ~ ., data = ames, ntree = 5) %>%
     butcher()
 
-  bag_chr <- characterize(fit_reg_cforest)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_cforest)
+  check_characterize_object(chr_res)
 
   # TODO more
 
@@ -44,8 +44,8 @@ test_that("cforest - binary classification", {
     cforest(class ~ ., data = cls_dat, ntree = 5) %>%
     butcher()
 
-  bag_chr <- characterize(fit_cls_cforest)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_cforest)
+  check_characterize_object(chr_res)
 
   exp_cls_cforest <- list()
 
@@ -77,8 +77,8 @@ test_that("cforest - multinomial classification", {
   fit_mnl_cforest <-
     cforest(class ~ ., data = mnl_dat, ntree = 5)
 
-  bag_chr <- characterize(fit_mnl_cforest)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_mnl_cforest)
+  check_characterize_object(chr_res)
 
   # TODO more
 })

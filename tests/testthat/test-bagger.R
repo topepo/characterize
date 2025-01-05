@@ -1,8 +1,8 @@
 test_that("bagging - C5.0", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_bag_c5)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_bag_c5)
+  check_characterize_object(chr_res)
 
   # Computed in "inst/test_objects.R"
   expect_equal(
@@ -23,8 +23,8 @@ test_that("bagging - C5.0", {
 test_that("bagging - rpart - regression", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_bag_rpart)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_bag_rpart)
+  check_characterize_object(chr_res)
 
   num_nodes <- map_int(fit_reg_bag_rpart$model_df$model, rpart_term_nodes)
   expect_equal(
@@ -54,8 +54,8 @@ test_that("bagging - rpart - regression", {
 test_that("bagging - rpart - regression", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_bag_rpart)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_bag_rpart)
+  check_characterize_object(chr_res)
 
   num_nodes <- map_int(fit_reg_bag_rpart$model_df$model, rpart_term_nodes)
   expect_equal(
@@ -85,8 +85,8 @@ test_that("bagging - rpart - regression", {
 test_that("bagging - rpart - classification", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_bag_rpart)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_bag_rpart)
+  check_characterize_object(chr_res)
 
   num_nodes <- map_int(fit_cls_bag_rpart$model_df$model, rpart_term_nodes)
   expect_equal(
@@ -119,8 +119,8 @@ test_that("bagging - earth - regression", {
 
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_bag_mars)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_bag_mars)
+  check_characterize_object(chr_res)
 
   coefs <- purrr::map(fit_reg_bag_mars$model_df$model, ~ .x$fit$coefficients)
   expect_equal(
@@ -160,8 +160,8 @@ test_that("bagging - earth - classification", {
 
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_bag_mars)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_bag_mars)
+  check_characterize_object(chr_res)
 
   coefs <- purrr::map(fit_cls_bag_mars$model_df$model, ~ .x$fit$glm.coefficients)
   expect_equal(
@@ -197,8 +197,8 @@ test_that("bagging - nnet - regression", {
   # tests objects in "test_cases.RData"
   skip("not implemented in characterize yet")
 
-  bag_chr <- characterize(fit_reg_bag_nnet)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_bag_nnet)
+  check_characterize_object(chr_res)
 
   coefs <- purrr::map(fit_reg_bag_nnet$model_df$model, ~ .x$fit$wts)
   expect_equal(
@@ -223,8 +223,8 @@ test_that("bagging - nnet - classification", {
   # tests objects in "test_cases.RData"
   skip("not implemented in characterize yet")
 
-  bag_chr <- characterize(fit_cls_bag_nnet)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_bag_nnet)
+  check_characterize_object(chr_res)
 
   coefs <- purrr::map(fit_cls_bag_nnet$model_df$model, ~ .x$fit$wts)
   expect_equal(

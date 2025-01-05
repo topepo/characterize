@@ -485,6 +485,8 @@ fit_mnl_lda_diag <-
 # ------------------------------------------------------------------------------
 # lgb.Booster
 
+# TODO add exp results here
+
 set.seed(1)
 fit_reg_lightgbm <-
   train_lightgbm(reg_dat[,-1], reg_dat$outcome, quiet = TRUE) %>%
@@ -776,6 +778,8 @@ fit_mnl_ksvm_wflow <-
 # ------------------------------------------------------------------------------
 # xgb.Booster
 
+# TODO add exp results here
+
 set.seed(1)
 fit_reg_xgboost <-
   xgb_train(reg_dat[,-1], reg_dat$outcome) %>%
@@ -796,6 +800,8 @@ fit_mnl_xgboost <-
 
 # ------------------------------------------------------------------------------
 # xrf
+
+# TODO add exp results here (or maybe not?)
 
 set.seed(1)
 fit_reg_xrf <-

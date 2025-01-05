@@ -2,8 +2,8 @@ test_that("glm - regression", {
 
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_glm)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_glm)
+  check_characterize_object(chr_res)
 
   coefs <- coef(fit_reg_glm)
   # expect_equal(
@@ -31,8 +31,8 @@ test_that("glm - regression", {
 test_that("glm - classification", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_glm)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_glm)
+  check_characterize_object(chr_res)
 
   coefs <- coef(fit_cls_glm)
   # expect_equal(
