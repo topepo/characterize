@@ -1,6 +1,6 @@
 pkgs <-
   c("baguette", "bonsai", "brulee", "bundle", "butcher", "C50",
-    "caret", "Cubist", "dbarts", "discrim", "earth", "glmnet", "keras",
+    "caret", "Cubist", "dbarts", "discrim", "earth", "glmnet",
     "kknn", "klaR", "lightgbm", "lobstr", "MASS", "mda", "mgcv",
     "mixOmics", "naivebayes", "nnet", "plsmod", "pscl", "randomForest",
     "ranger", "rlang", "rpart", "rstanarm", "rules", "sda", "sessioninfo",
@@ -570,9 +570,6 @@ fit_cls_multinom <-
   butcher()
 
 # ------------------------------------------------------------------------------
-# multnet
-
-# ------------------------------------------------------------------------------
 # naive_bayes
 
 fit_cls_naive_bayes <-
@@ -646,17 +643,6 @@ exp_reg_glmnet_parsnip <-
   fit_reg_glmnet_parsnip %>%
   extract_fit_engine() %>%
   tidy()
-
-###
-
-fit_mnl_ksvm_spec <-
-  svm_poly(degree = 3) %>%
-  set_mode("classification")
-
-fit_mnl_ksvm_parsnip <-
-  fit_mnl_ksvm_spec %>%
-  fit(class ~ ., data = mnl_dat) %>%
-  butcher()
 
 # ------------------------------------------------------------------------------
 # qda
@@ -753,6 +739,11 @@ fit_mnl_glmnet_wflow <-
   fit(data = mnl_dat) %>%
   butcher()
 
+exp_mnl_glmnet_wflow <-
+  fit_mnl_glmnet_wflow %>%
+  extract_fit_engine() %>%
+  tidy()
+
 ###
 
 ames_rec <-
@@ -766,14 +757,10 @@ fit_reg_glmnet_wflow <-
   fit(data = ames) %>%
   butcher()
 
-###
-
-fit_mnl_ksvm_wflow <-
-  workflow() %>%
-  add_model(fit_mnl_ksvm_spec) %>%
-  add_variables(outcomes = c(class), predictors = c(everything())) %>%
-  fit(data = mnl_dat) %>%
-  butcher()
+exp_reg_glmnet_wflow <-
+  fit_reg_glmnet_wflow %>%
+  extract_fit_engine() %>%
+  tidy()
 
 # ------------------------------------------------------------------------------
 # xgb.Booster

@@ -114,14 +114,25 @@ act_vars_to_tbl <- function(x) {
 .pluck_features_active.glmnet <- function(x, penalty = 0.001, ...) {
   rlang::check_installed("glmnet")
 
-  index_used <- unlist(predict(x, s = penalty, type = "nonzero"))
-  if (inherits(x, "multnet")) {
-    nms <- rownames(x$beta[[1]])
-  } else {
-    nms <- rownames(x$beta)
-  }
+  coefs <- predict(x, s = penalty, type = "coefficients")
+  coefs <- as.matrix(coefs)
+  index_used <- apply(coefs, 1, function(x) any(x != 0))
+  vars_used <- names(index_used)[index_used]
+  vars_used <- vars_used[vars_used != "(Intercept)"]
+  act_vars_to_tbl(vars_used)
+}
 
-  vars_used <- nms[index_used]
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.multnet <- function(x, penalty = 0.001, ...) {
+  rlang::check_installed("glmnet")
+
+  coefs <- predict(x, s = penalty, type = "coefficients")
+  coefs <- lapply(coefs, as.matrix)
+  coefs <- do.call("rbind", coefs)
+  index_used <- coefs[,1] != 0
+  vars_used <- rownames(coefs)[index_used]
+  vars_used <- vars_used[vars_used != "(Intercept)"]
   act_vars_to_tbl(vars_used)
 }
 

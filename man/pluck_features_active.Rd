@@ -11,6 +11,7 @@
 \alias{.pluck_features_active.ranger}
 \alias{.pluck_features_active.xgb.Booster}
 \alias{.pluck_features_active.glmnet}
+\alias{.pluck_features_active.multnet}
 \alias{.pluck_features_active.tidy_cubist}
 \alias{.pluck_features_active.cubist}
 \alias{.pluck_features_active.tidy_C50}
@@ -73,6 +74,8 @@
 \method{.pluck_features_active}{xgb.Booster}(x, nrounds = x$niter, ...)
 
 \method{.pluck_features_active}{glmnet}(x, penalty = 0.001, ...)
+
+\method{.pluck_features_active}{multnet}(x, penalty = 0.001, ...)
 
 \method{.pluck_features_active}{tidy_cubist}(x, committees = max(x$committee), ...)
 
