@@ -1,8 +1,8 @@
 test_that("brulee - logistic regression", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_bru_logit)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_bru_logit)
+  check_characterize_object(chr_res)
 
   predictors <- all.vars(fit_cls_bru_logit$blueprint$terms$predictors)
   predictors <- sort(predictors)

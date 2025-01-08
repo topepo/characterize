@@ -40,6 +40,27 @@ rpart_active_vars <- function(x) {
   x$frame$var[x$frame$var != "<leaf>"]
 }
 
+terms_vars <- function(x) {
+  sort(colnames(attr(x$terms, "factors")))
+}
+
+ranger_vars <- function(x) {
+  vars <- unique(unlist(x$forest$split.varIDs))
+  used <- x$forest$independent.variable.names[vars + 1]
+  sort(used)
+}
+
+rf_vars <- function(x) {
+  var_index <- unique(unlist(x$forest$bestvar))
+  var_nms <- names(x$forest$xlevels)[var_index]
+  sort(unique(var_nms))
+}
+
+non_zero_load <- function(x) {
+  nz_x <- apply(x$loadings$X, 1, function(x) any(x != 0.0))
+  sort(rownames(x$loadings$X)[nz_x])
+}
+
 # ------------------------------------------------------------------------------
 
 if (rlang::is_installed(c("modeldata"))) {

@@ -55,9 +55,10 @@
 #' @rdname pluck_num_parameters
 #' @export
 .pluck_num_parameters.multinom <- function(x, ...) {
+
+
   tibble::tibble(statistic = "num_parameters",
-                 value = x$n[1] * (x$n[3] - 1)
-  )
+                 value = sum(x$wts != 0))
 }
 
 #' @rdname pluck_num_parameters
@@ -79,11 +80,25 @@
 #' @rdname pluck_num_parameters
 #' @export
 .pluck_num_parameters.glmnet <- function(x, penalty = 0.001, ...) {
-  rlang::is_installed("glmnet")
+  rlang::check_installed("glmnet")
   vars_used <- unlist(predict(x, s = penalty, type = "nonzero"))
 
+  int <- any(x$a0 != 0)
+
   tibble::tibble(statistic = "num_parameters",
-                 value = length(vars_used)
+                 value = length(vars_used) + int
+  )
+}
+
+#' @rdname pluck_num_parameters
+#' @export
+.pluck_num_parameters.multnet <- function(x, penalty = 0.001, ...) {
+  rlang::check_installed("glmnet")
+  coefs <- unlist(predict(x, s = penalty, type = "coefficients"))
+  coefs <- purrr::map_int(coefs, ~ sum(.x != 0))
+
+  tibble::tibble(statistic = "num_parameters",
+                 value = sum(coefs)
   )
 }
 

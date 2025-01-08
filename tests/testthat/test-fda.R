@@ -4,8 +4,8 @@ test_that("fda - earth - classification", {
 
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_fda_earth)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_fda_earth)
+  check_characterize_object(chr_res)
 
   coefs <- fit_cls_fda_earth$fit$coefficients[,1]
 

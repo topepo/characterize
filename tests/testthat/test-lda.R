@@ -2,8 +2,8 @@ test_that("lda - binary classification", {
 
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_lda)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_lda)
+  check_characterize_object(chr_res)
 
   expect_equal(
     .pluck_features_active(fit_cls_lda)$value[[1]],
@@ -23,8 +23,8 @@ test_that("lda - multinomial classification", {
 
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_mnl_lda)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_mnl_lda)
+  check_characterize_object(chr_res)
 
   expect_equal(
     .pluck_features_active(fit_mnl_lda)$value[[1]],

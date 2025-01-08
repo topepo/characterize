@@ -10,6 +10,7 @@
 \alias{.pluck_num_term_nodes.tidy_C50}
 \alias{.pluck_num_term_nodes.C5.0}
 \alias{.pluck_num_term_nodes.ranger}
+\alias{.pluck_num_term_nodes.randomForest}
 \alias{.pluck_num_term_nodes.xgb.Booster}
 \alias{.pluck_num_term_nodes.partynode}
 \alias{.pluck_num_term_nodes.party}
@@ -35,6 +36,8 @@
 \method{.pluck_num_term_nodes}{C5.0}(x, trials = x$trials["Actual"], ...)
 
 \method{.pluck_num_term_nodes}{ranger}(x, ...)
+
+\method{.pluck_num_term_nodes}{randomForest}(x, ...)
 
 \method{.pluck_num_term_nodes}{xgb.Booster}(x, nrounds = x$niter, ...)
 

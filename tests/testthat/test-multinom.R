@@ -1,16 +1,19 @@
-library(testthat)
-library(rlang)
+test_that("nnet - mutinomial classification", {
 
+  # tests objects in "test_cases.RData"
 
-test_that("multinom", {
-  skip_if_not_installed("nnet")
-  skip("refactoring")
+  chr_res <- characterize(fit_mnl_nnet)
+  check_characterize_object(chr_res)
 
-  load(test_path("test_cases.RData"))
+  act_vars <- terms_vars(fit_mnl_nnet)
 
-  expect_snapshot(characterize(mtn_mod))
   expect_equal(
-    .pluck_num_parameters(mtn_mod)$value,
-    length(mtn_mod$fit$wts[mtn_mod$fit$wts != 0])
+    .pluck_num_features_input(fit_mnl_nnet)$value,
+    length(act_vars)
+  )
+
+  expect_equal(
+    .pluck_num_parameters(fit_mnl_nnet)$value,
+    sum(fit_mnl_nnet$wts != 0)
   )
 })

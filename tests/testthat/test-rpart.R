@@ -10,8 +10,8 @@ test_that("rpart - regression", {
     rpart(Sale_Price ~ ., data = ames) %>%
     butcher()
 
-  bag_chr <- characterize(fit_reg_rpart)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_rpart)
+  check_characterize_object(chr_res)
 
   # TODO more
 })
@@ -28,8 +28,8 @@ test_that("rpart - binary classification", {
     rpart(class ~ ., data = cls_dat) %>%
     butcher()
 
-  bag_chr <- characterize(fit_cls_rpart)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_rpart)
+  check_characterize_object(chr_res)
 
   # TODO more
 })
@@ -46,8 +46,8 @@ test_that("rpart - multinomial classification", {
     rpart(class ~ ., data = mnl_dat) %>%
     butcher()
 
-  bag_chr <- characterize(fit_mnl_rpart)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_mnl_rpart)
+  check_characterize_object(chr_res)
 
   # TODO more
 })

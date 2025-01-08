@@ -34,6 +34,7 @@ Suggests:
     ggplot2,
     kernlab,
     knitr,
+    lightgbm,
     modeldata,
     partykit,
     rmarkdown,

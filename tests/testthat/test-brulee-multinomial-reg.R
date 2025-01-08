@@ -1,8 +1,8 @@
 test_that("brulee - multinomial regression", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_bru_multi)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_bru_multi)
+  check_characterize_object(chr_res)
 
   predictors <- all.vars(fit_cls_bru_multi$blueprint$terms$predictors)
   predictors <- sort(predictors)

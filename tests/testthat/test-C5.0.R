@@ -1,8 +1,8 @@
 test_that("C5.0 - single classification tree", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_tree_c5)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_tree_c5)
+  check_characterize_object(chr_res)
 
   # Computed in "inst/test_objects.R"
   expect_equal(
@@ -22,8 +22,8 @@ test_that("C5.0 - single classification tree", {
 test_that("C5.0 - single rule set", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_rule_c5)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_rule_c5)
+  check_characterize_object(chr_res)
 
   # Computed in "inst/test_objects.R"
   expect_equal(
@@ -43,8 +43,8 @@ test_that("C5.0 - single rule set", {
 test_that("C5.0 - boosted trees", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_tree_bst_c5)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_tree_bst_c5)
+  check_characterize_object(chr_res)
 
   # Computed in "inst/test_objects.R"
   expect_equal(
@@ -64,8 +64,8 @@ test_that("C5.0 - boosted trees", {
 test_that("C5.0 - boosted rule set", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_cls_rule_bst_c5)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_rule_bst_c5)
+  check_characterize_object(chr_res)
 
   # Computed in "inst/test_objects.R"
   expect_equal(

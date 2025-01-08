@@ -10,8 +10,8 @@ test_that("ctree - regression", {
     ctree(Sale_Price ~ ., data = ames) %>%
     butcher()
 
-  bag_chr <- characterize(fit_reg_ctree)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_ctree)
+  check_characterize_object(chr_res)
 
   # TODO more
 })
@@ -28,8 +28,8 @@ test_that("ctree - binary classification", {
     ctree(class ~ ., data = cls_dat) %>%
     butcher()
 
-  bag_chr <- characterize(fit_cls_ctree)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_cls_ctree)
+  check_characterize_object(chr_res)
 
   # TODO more
 })
@@ -45,8 +45,8 @@ test_that("ctree - multinomial classification", {
   fit_mnl_ctree <-
     ctree(class ~ ., data = mnl_dat)
 
-  bag_chr <- characterize(fit_mnl_ctree)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_mnl_ctree)
+  check_characterize_object(chr_res)
 
   # TODO more
 })

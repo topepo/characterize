@@ -2,8 +2,8 @@
 test_that("zeroinfl - classification", {
   # tests objects in "test_cases.RData"
 
-  bag_chr <- characterize(fit_reg_zeroinfl)
-  check_characterize_object(bag_chr)
+  chr_res <- characterize(fit_reg_zeroinfl)
+  check_characterize_object(chr_res)
 
   coefs <- unlist(fit_reg_zeroinfl$coefficients)
   # expect_equal(
