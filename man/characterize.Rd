@@ -3,11 +3,12 @@
 \name{characterize}
 \alias{characterize}
 \alias{characterize.default}
+\alias{characterize.bundle}
 \alias{characterize.model_fit}
 \alias{characterize.workflow}
 \alias{characterize.glmnet}
-\alias{characterize.cubist}
 \alias{characterize.tidy_cubist}
+\alias{characterize.cubist}
 \alias{characterize.tidy_C50}
 \alias{characterize.C5.0}
 \alias{characterize.xgb.Booster}
@@ -21,13 +22,13 @@ characterize(x, ...)
 
 \method{characterize}{default}(x, ...)
 
+\method{characterize}{bundle}(x, ...)
+
 \method{characterize}{model_fit}(x, ...)
 
 \method{characterize}{workflow}(x, ...)
 
 \method{characterize}{glmnet}(x, penalty = 0.001, ...)
-
-\method{characterize}{cubist}(x, committees = NULL, ...)
 
 \method{characterize}{tidy_cubist}(x, committees = NULL, ...)
 

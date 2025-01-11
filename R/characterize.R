@@ -55,6 +55,15 @@ characterize.default <- function(x, ...) {
 
 #' @rdname characterize
 #' @export
+characterize.bundle <- function(x, ...) {
+  rlang::check_installed("bundle")
+  x <- bundle::unbundle(x)
+  characterize(x, ...)
+}
+
+
+#' @rdname characterize
+#' @export
 characterize.model_fit <- function(x, ...) {
   characterize(parsnip::extract_fit_engine(x), ...)
 }
@@ -73,6 +82,7 @@ characterize.workflow <- function(x, ...) {
 #' @rdname characterize
 #' @export
 characterize.glmnet <- function(x, penalty = 0.001, ...) {
+  check_single_value(penalty)
   dplyr::bind_rows(
     .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, penalty = penalty),
@@ -94,24 +104,8 @@ make_tidy_cubist <- function(x, ...) {
 
 #' @rdname characterize
 #' @export
-characterize.cubist <- function(x, committees = NULL, ...) {
-  if (is.null(committees)) {
-    committees <- x$committees
-  }
-  x <- make_tidy_cubist(x)
-  dplyr::bind_rows(
-    .pluck_num_features_input(x, ...),
-    .pluck_num_features_active(x, committees = committees),
-    .pluck_num_parameters(x, committees = committees),
-    .pluck_num_rules(x, committees = committees),
-    .pluck_mean_rule_size(x, committees = committees)
-  ) %>%
-    yardstick_like()
-}
-
-#' @rdname characterize
-#' @export
 characterize.tidy_cubist <- function(x, committees = NULL, ...) {
+  check_single_value(committees)
   if (is.null(committees)) {
     committees <- max(x$committee)
   }
@@ -152,6 +146,7 @@ make_tidy_c5 <- function(x, ...) {
 #' @rdname characterize
 #' @export
 characterize.tidy_C50 <- function(x, trials = max(x$trials), ...) {
+  check_single_value(trials)
   x <- dplyr::filter(x, trial <= !!trials)
   dplyr::bind_rows(
     .pluck_num_features_input(x, ...),
@@ -166,6 +161,7 @@ characterize.tidy_C50 <- function(x, trials = max(x$trials), ...) {
 #' @rdname characterize
 #' @export
 characterize.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+  check_single_value(trials)
   characterize(make_tidy_c5(x), trials = trials)
 }
 
@@ -176,6 +172,7 @@ characterize.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
 #' @rdname characterize
 #' @export
 characterize.xgb.Booster <- function(x, nrounds = x$niter, ...) {
+  check_single_value(nrounds)
   dplyr::bind_rows(
     .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, nrounds = nrounds),
@@ -198,6 +195,7 @@ make_tidy_xrf <- function(x, penalty = 0.001, ...) {
 #' @rdname characterize
 #' @export
 characterize.tidy_xrf <- function(x, penalty = 0.001, ...) {
+  check_single_value(penalty)
   dplyr::bind_rows(
     .pluck_num_features_input(x, ...),
     .pluck_num_features_active(x, penalty = penalty),
@@ -210,6 +208,7 @@ characterize.tidy_xrf <- function(x, penalty = 0.001, ...) {
 #' @rdname characterize
 #' @export
 characterize.xrf <- function(x, penalty = 0.001, ...) {
+  check_single_value(penalty)
   characterize(make_tidy_xrf(x, penalty = penalty))
 }
 
@@ -233,6 +232,7 @@ lgb_trees <- function(x) {
 #' @rdname characterize
 #' @export
 characterize.lgb.Booster <- function(x, trees = NULL, ...) {
+  check_single_value(trees)
   if (is.null(trees)) {
     trees <- x$params$num_iterations
   }
@@ -249,5 +249,20 @@ characterize.lgb.Booster <- function(x, trees = NULL, ...) {
 #' @rdname characterize
 #' @export
 characterize.fda <- function(x, ...) {
-  characterize(x$fit)
+  characterize(x$fit, ...)
+}
+
+# ------------------------------------------------------------------------------
+
+check_single_value <- function(x, call = rlang::caller_env()) {
+  arg <- match.call()$x
+  if (is.null(x)) {
+    return(invisible(NULL))
+  }
+  if (length(x) > 1) {
+    cli::cli_abort("Argument {.arg {arg}} should be a single value. For multiple
+                    values of {.arg {arg}}, please use {.fn multi_characterize}.",
+                   call = call)
+  }
+  invisible(NULL)
 }
