@@ -13,15 +13,12 @@ test_that("cforest - regression", {
   chr_res <- characterize(fit_reg_cforest)
   check_characterize_object(chr_res)
 
-  # TODO more
+  input_vars <- terms_vars(fit_reg_cforest)
 
-  exp_reg_cforest <- list()
-
-  terminal <-
-    purrr::map(fit_reg_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
-    map_int(length) %>%
-    sum()
-  exp_reg_cforest$num_term_nodes <- terminal
+  expect_equal(
+    .pluck_num_features_input(fit_reg_cforest)$value,
+    length(input_vars)
+  )
 
   used <-
     purrr::map(fit_reg_cforest$nodes, characterize:::get_party_var_index) %>%
@@ -29,7 +26,24 @@ test_that("cforest - regression", {
     unique()
   used <- names(fit_reg_cforest$data)[used]
 
-  exp_reg_cforest$features_active <- used
+  expect_equal(
+    .pluck_features_active(fit_reg_cforest)$value[[1]],
+    sort(unique(used))
+  )
+  expect_equal(
+    .pluck_num_features_active(fit_reg_cforest)$value,
+    length(unique(used))
+  )
+
+  terminal <-
+    purrr::map(fit_reg_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
+    map_int(length) %>%
+    sum()
+
+  expect_equal(
+    .pluck_num_term_nodes(fit_reg_cforest)$value,
+    terminal
+  )
 })
 
 test_that("cforest - binary classification", {
@@ -47,13 +61,13 @@ test_that("cforest - binary classification", {
   chr_res <- characterize(fit_cls_cforest)
   check_characterize_object(chr_res)
 
-  exp_cls_cforest <- list()
 
-  terminal <-
-    purrr::map(fit_cls_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
-    map_int(length) %>%
-    sum()
-  exp_cls_cforest$num_term_nodes <- terminal
+  input_vars <- terms_vars(fit_cls_cforest)
+
+  expect_equal(
+    .pluck_num_features_input(fit_cls_cforest)$value,
+    length(input_vars)
+  )
 
   used <-
     purrr::map(fit_cls_cforest$nodes, characterize:::get_party_var_index) %>%
@@ -61,9 +75,24 @@ test_that("cforest - binary classification", {
     unique()
   used <- names(fit_cls_cforest$data)[used]
 
-  exp_cls_cforest$features_active <- used
+  expect_equal(
+    .pluck_features_active(fit_cls_cforest)$value[[1]],
+    sort(unique(used))
+  )
+  expect_equal(
+    .pluck_num_features_active(fit_cls_cforest)$value,
+    length(unique(used))
+  )
 
-  # TODO more
+  terminal <-
+    purrr::map(fit_cls_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
+    map_int(length) %>%
+    sum()
+
+  expect_equal(
+    .pluck_num_term_nodes(fit_cls_cforest)$value,
+    terminal
+  )
 })
 
 test_that("cforest - multinomial classification", {
@@ -80,6 +109,37 @@ test_that("cforest - multinomial classification", {
   chr_res <- characterize(fit_mnl_cforest)
   check_characterize_object(chr_res)
 
-  # TODO more
+
+  input_vars <- terms_vars(fit_mnl_cforest)
+
+  expect_equal(
+    .pluck_num_features_input(fit_mnl_cforest)$value,
+    length(input_vars)
+  )
+
+  used <-
+    purrr::map(fit_mnl_cforest$nodes, characterize:::get_party_var_index) %>%
+    unlist() %>%
+    unique()
+  used <- names(fit_mnl_cforest$data)[used]
+
+  expect_equal(
+    .pluck_features_active(fit_mnl_cforest)$value[[1]],
+    sort(unique(used))
+  )
+  expect_equal(
+    .pluck_num_features_active(fit_mnl_cforest)$value,
+    length(unique(used))
+  )
+
+  terminal <-
+    purrr::map(fit_mnl_cforest$nodes, ~ nodeids(.x, terminal = TRUE)) %>%
+    map_int(length) %>%
+    sum()
+
+  expect_equal(
+    .pluck_num_term_nodes(fit_mnl_cforest)$value,
+    terminal
+  )
 })
 
