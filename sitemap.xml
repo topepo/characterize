@@ -1,72 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Using_characterize_with_tidymodels.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/characterize.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/list_characteristics.html</loc>
-  </url>
-  <url>
-    <loc>/reference/multi_characterize.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_features_active.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_features_input.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_mean_rule_size.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_num_features_active.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_num_features_input.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_num_parameters.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_num_rules.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_num_support_vectors.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pluck_num_term_nodes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/reexports.html</loc>
-  </url>
-  <url>
-    <loc>/reference/retain_characteristics.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/Using_characterize_with_tidymodels.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/characterize.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/list_characteristics.html</loc></url>
+<url><loc>/reference/multi_characterize.html</loc></url>
+<url><loc>/reference/pluck_features_active.html</loc></url>
+<url><loc>/reference/pluck_features_input.html</loc></url>
+<url><loc>/reference/pluck_mean_rule_size.html</loc></url>
+<url><loc>/reference/pluck_num_features_active.html</loc></url>
+<url><loc>/reference/pluck_num_features_input.html</loc></url>
+<url><loc>/reference/pluck_num_parameters.html</loc></url>
+<url><loc>/reference/pluck_num_rules.html</loc></url>
+<url><loc>/reference/pluck_num_support_vectors.html</loc></url>
+<url><loc>/reference/pluck_num_term_nodes.html</loc></url>
+<url><loc>/reference/reexports.html</loc></url>
+<url><loc>/reference/retain_characteristics.html</loc></url>
 </urlset>
+
