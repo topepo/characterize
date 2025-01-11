@@ -1,4 +1,5 @@
 test_that("glmnet - via parsnip - regression", {
+  skip_if_not_installed("glmnet")
 
   # tests objects in "test_cases.RData"
 
@@ -96,6 +97,7 @@ test_that("glmnet - via parsnip - regression", {
 
 
 test_that("glmnet - via parsnip - multinomial classification", {
+  skip_if_not_installed("glmnet")
 
   # tests objects in "test_cases.RData"
 

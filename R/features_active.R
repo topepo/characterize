@@ -104,7 +104,7 @@ act_vars_to_tbl <- function(x) {
     "xgb.importance",
     .ns = "xgboost",
     model = expr(x),
-    trees = seq.int(0, nrounds - 1)
+    trees = seq.int(0, nrounds)
   )
   vars_used <- rlang::eval_tidy(cl)
   act_vars_to_tbl(unique(vars_used$Feature))

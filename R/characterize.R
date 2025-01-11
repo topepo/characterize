@@ -171,6 +171,7 @@ characterize.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
 
 # ------------------------------------------------------------------------------
 
+# TODO: check for single value; use muti otherwise
 
 #' @rdname characterize
 #' @export

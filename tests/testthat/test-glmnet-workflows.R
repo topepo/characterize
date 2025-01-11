@@ -1,4 +1,5 @@
 test_that("glmnet - via workflows - regression", {
+  skip_if_not_installed("glmnet")
 
   # tests objects in "test_cases.RData"
 
@@ -96,6 +97,7 @@ test_that("glmnet - via workflows - regression", {
 
 
 test_that("glmnet - via workflows - multinomial classification", {
+  skip_if_not_installed("glmnet")
 
   # tests objects in "test_cases.RData"
 
