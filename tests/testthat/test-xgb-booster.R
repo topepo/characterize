@@ -86,7 +86,7 @@ test_that("xgb.Booster - multiclass classification", {
     length(act_vars)
   )
 
-  # TODO this isn't correct
+  # TODO this isn't correct; maybe multiple entries per node with multiclass
   # expect_equal(
   #   .pluck_num_term_nodes(fit_mnl_xgboost)$value,
   #   sum(tree_splits$Feature == "Leaf")
