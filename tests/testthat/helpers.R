@@ -7,13 +7,12 @@ suppressPackageStartupMessages(library(tibble))
 suppressPackageStartupMessages(library(characterize))
 
 check_characterize_object <- function(x) {
-  ptype <-
-    tibble(
+  ptype <- tibble(
     .metric = character(0),
     .estimator = character(0),
     .estimate = numeric(0)
   )
-  expect_equal(x[0,], ptype)
+  expect_equal(x[0, ], ptype)
   expect_true(all(x$.estimator == "model"))
   expect_s3_class(x, c("tbl_df", "tbl", "data.frame"))
   invisible(NULL)
@@ -64,28 +63,26 @@ non_zero_load <- function(x) {
 # ------------------------------------------------------------------------------
 
 if (rlang::is_installed(c("modeldata"))) {
-
   # Make test data sets that mirror those in inst/test_objects.R
   data(ames, package = "modeldata")
   ames$Sale_Price <- log10(ames$Sale_Price)
-  ames <-
-    ames %>%
+  ames <- ames %>%
     dplyr::mutate(Sale_Price <- log10(Sale_Price)) %>%
     dplyr::slice(1:100) %>%
     dplyr::select(Sale_Price, Neighborhood, Longitude, Latitude)
 
   data("penguins", package = "modeldata")
-  penguins <- penguins[complete.cases(penguins),]
+  penguins <- penguins[complete.cases(penguins), ]
 
   set.seed(1)
   cls_dat <- modeldata::sim_classification(50)
   reg_dat <- modeldata::sim_regression(50)
-  mnl_dat <-
-    modeldata::sim_multinomial(
-      100,
-      ~  -0.5    +  0.6 * abs(A),
-      ~ ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, - 2),
-      ~ -0.6 * A + 0.50 * B -  A * B)
+  mnl_dat <- modeldata::sim_multinomial(
+    100,
+    ~-0.5 + 0.6 * abs(A),
+    ~ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, -2),
+    ~-0.6 * A + 0.50 * B - A * B
+  )
 
   count_dat <- reg_dat
   count_dat$outcome <- rpois(nrow(reg_dat), exp(reg_dat$outcome / 10))
