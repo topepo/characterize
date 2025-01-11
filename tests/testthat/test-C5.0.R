@@ -1,65 +1,83 @@
-library(testthat)
-library(rlang)
+test_that("C5.0 - single classification tree", {
+  # tests objects in "test_cases.RData"
 
+  chr_res <- characterize(fit_cls_tree_c5)
+  check_characterize_object(chr_res)
 
-test_that("C5.0", {
-  skip_if_not_installed("C50")
-  skip_if_not_installed("rules")
-
-
-  library(rules)
-  load(test_path("test_cases.RData"))
-
-  # single tree
-  expect_snapshot(characterize(c5_mod))
+  # Computed in "inst/test_objects.R"
   expect_equal(
-    .pluck_num_features_active(c5_mod)$value,
-    exp_act_feat_c5
-  )
-  tidy_c5_mod <- tidy(c5_mod)
-  expect_equal(
-    .pluck_num_term_nodes(c5_mod)$value,
-    nrow(tidy_c5_mod)
+    .pluck_num_features_active(fit_cls_tree_c5)$value,
+    exp_cls_tree_c5$num_features_active
   )
   expect_equal(
-    .pluck_mean_rule_size(c5_mod)$value,
-    mean(characterize:::rule_size(tidy_c5_mod$rule))
+    .pluck_features_active(fit_cls_tree_c5)$value[[1]],
+    exp_cls_tree_c5$features_active
   )
+  expect_equal(
+    .pluck_num_term_nodes(fit_cls_tree_c5)$value,
+    exp_cls_tree_c5$num_term_nodes
+  )
+})
 
-  # single rule sets
-  expect_snapshot(characterize(c5_rules_mod))
-  expect_equal(
-    .pluck_num_features_active(c5_rules_mod)$value,
-    exp_act_feat_c5_rules
-  )
-  tidy_c5_rules_mod <- tidy(c5_rules_mod)
-  expect_equal(
-    .pluck_mean_rule_size(c5_rules_mod)$value,
-    mean(characterize:::rule_size(tidy_c5_rules_mod$rule))
-  )
+test_that("C5.0 - single rule set", {
+  # tests objects in "test_cases.RData"
 
-  # boosted trees
-  expect_snapshot(characterize(c5_boost_mod))
-  expect_equal(
-    .pluck_num_features_active(c5_boost_mod)$value,
-    exp_act_feat_c5_boost
-  )
-  tidy_c5_boost_mod <- tidy(c5_boost_mod)
-  expect_equal(
-    .pluck_mean_rule_size(c5_boost_mod)$value,
-    mean(characterize:::rule_size(tidy_c5_boost_mod$rule))
-  )
+  chr_res <- characterize(fit_cls_rule_c5)
+  check_characterize_object(chr_res)
 
-  # boosted rules
-  expect_snapshot(characterize(c5_rules_boost_mod))
+  # Computed in "inst/test_objects.R"
   expect_equal(
-    .pluck_num_features_active(c5_rules_boost_mod)$value,
-    exp_act_feat_c5_rules_boost
+    .pluck_num_features_active(fit_cls_rule_c5)$value,
+    exp_cls_rule_c5$num_features_active
   )
-  tidy_c5_rules_boost_mod <- tidy(c5_rules_boost_mod)
   expect_equal(
-    .pluck_mean_rule_size(c5_rules_boost_mod)$value,
-    mean(characterize:::rule_size(tidy_c5_rules_boost_mod$rule))
+    .pluck_features_active(fit_cls_rule_c5)$value[[1]],
+    exp_cls_rule_c5$features_active
   )
+  expect_equal(
+    .pluck_num_rules(fit_cls_rule_c5)$value,
+    exp_cls_rule_c5$num_rules
+  )
+})
 
+test_that("C5.0 - boosted trees", {
+  # tests objects in "test_cases.RData"
+
+  chr_res <- characterize(fit_cls_tree_bst_c5)
+  check_characterize_object(chr_res)
+
+  # Computed in "inst/test_objects.R"
+  expect_equal(
+    .pluck_num_features_active(fit_cls_tree_bst_c5)$value,
+    exp_cls_tree_bst_c5$num_features_active
+  )
+  expect_equal(
+    .pluck_features_active(fit_cls_tree_bst_c5)$value[[1]],
+    exp_cls_tree_bst_c5$features_active
+  )
+  expect_equal(
+    .pluck_num_term_nodes(fit_cls_tree_bst_c5)$value,
+    exp_cls_tree_bst_c5$num_term_nodes
+  )
+})
+
+test_that("C5.0 - boosted rule set", {
+  # tests objects in "test_cases.RData"
+
+  chr_res <- characterize(fit_cls_rule_bst_c5)
+  check_characterize_object(chr_res)
+
+  # Computed in "inst/test_objects.R"
+  expect_equal(
+    .pluck_num_features_active(fit_cls_rule_bst_c5)$value,
+    exp_cls_rule_bst_c5$num_features_active
+  )
+  expect_equal(
+    .pluck_features_active(fit_cls_rule_bst_c5)$value[[1]],
+    exp_cls_rule_bst_c5$features_active
+  )
+  expect_equal(
+    .pluck_num_rules(fit_cls_rule_bst_c5)$value,
+    exp_cls_rule_bst_c5$num_rules
+  )
 })

@@ -58,7 +58,7 @@ terms_wrapper <- function(x, ...) {
 
 has_terms <- function(x) {
   if (isS4(x)) {
-    any(methods:slotNames(x) == "terms")
+    any(methods::slotNames(x) == "terms")
   } else {
     any(names(x) == "terms")
   }
@@ -70,8 +70,7 @@ no_int_coefs <- function(x) {
 }
 
 act_vars_to_tbl <- function(x) {
-  tibble::tibble(statistic = "features_active",
-                 value = list(sort(unique(x))))
+  tibble::tibble(statistic = "features_active", value = list(sort(unique(x))))
 }
 
 # ------------------------------------------------------------------------------
@@ -90,10 +89,9 @@ act_vars_to_tbl <- function(x) {
 #' @export
 .pluck_features_active.ranger <- function(x, ...) {
   var_index <- sort(unique(unlist(x$forest$split.varIDs)))
-  var_index <- var_index[var_index > 0]
-  vars_used <- x$forest$independent.variable.names[var_index]
+  vars_used <- x$forest$independent.variable.names[var_index + 1]
 
-  act_vars_to_tbl(vars_used)
+  act_vars_to_tbl(sort(vars_used))
 }
 
 # ------------------------------------------------------------------------------
@@ -102,10 +100,14 @@ act_vars_to_tbl <- function(x) {
 #' @export
 .pluck_features_active.xgb.Booster <- function(x, nrounds = x$niter, ...) {
   rlang::check_installed("xgboost")
-  cl <- rlang::call2("xgb.importance", .ns = "xgboost", model = expr(x),
-                     trees = seq.int(0, nrounds - 1))
+  cl <- rlang::call2(
+    "xgb.importance",
+    .ns = "xgboost",
+    model = expr(x),
+    trees = seq.int(0, nrounds)
+  )
   vars_used <- rlang::eval_tidy(cl)
-  act_vars_to_tbl(vars_used)
+  act_vars_to_tbl(unique(vars_used$Feature))
 }
 
 # ------------------------------------------------------------------------------
@@ -113,16 +115,27 @@ act_vars_to_tbl <- function(x) {
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.glmnet <- function(x, penalty = 0.001, ...) {
-  rlang::is_installed("glmnet")
+  rlang::check_installed("glmnet")
 
-  index_used <- unlist(predict(x, s = penalty, type = "nonzero"))
-  if (inherits(x, "multnet")) {
-    nms <- rownames(x$beta[[1]])
-  } else {
-    nms <- rownames(x$beta)
-  }
+  coefs <- predict(x, s = penalty, type = "coefficients")
+  coefs <- as.matrix(coefs)
+  index_used <- apply(coefs, 1, function(x) any(x != 0))
+  vars_used <- names(index_used)[index_used]
+  vars_used <- vars_used[vars_used != "(Intercept)"]
+  act_vars_to_tbl(vars_used)
+}
 
-  vars_used <- nms[index_used]
+#' @rdname pluck_features_active
+#' @export
+.pluck_features_active.multnet <- function(x, penalty = 0.001, ...) {
+  rlang::check_installed("glmnet")
+
+  coefs <- predict(x, s = penalty, type = "coefficients")
+  coefs <- lapply(coefs, as.matrix)
+  coefs <- do.call("rbind", coefs)
+  index_used <- coefs[, 1] != 0
+  vars_used <- rownames(coefs)[index_used]
+  vars_used <- vars_used[vars_used != "(Intercept)"]
   act_vars_to_tbl(vars_used)
 }
 
@@ -132,8 +145,7 @@ cubist_vars <- function(committees, x) {
   if (!inherits(x, "tidy_cubist")) {
     x <- make_tidy_cubist(x)
   }
-  x <-
-    dplyr::filter(x, committee <= committees) %>%
+  x <- dplyr::filter(x, committee <= committees) %>%
     dplyr::mutate(
       rule_vars = purrr::map(rule, get_rule_vars)
     ) %>%
@@ -145,7 +157,6 @@ cubist_vars <- function(committees, x) {
   res <- res[res != "(Intercept)"]
   res
 }
-
 
 get_rule_vars <- function(x) {
   if (x == "<no conditions>") {
@@ -159,7 +170,11 @@ get_rule_vars <- function(x) {
 
 #' @rdname pluck_features_active
 #' @export
-.pluck_features_active.tidy_cubist <- function(x, committees = max(x$committee), ...) {
+.pluck_features_active.tidy_cubist <- function(
+  x,
+  committees = max(x$committee),
+  ...
+) {
   terms <- cubist_vars(committees, x)
   act_vars_to_tbl(terms)
 }
@@ -172,13 +187,11 @@ get_rule_vars <- function(x) {
 
 # ------------------------------------------------------------------------------
 
-
 c5_vars <- function(iter, x) {
   if (!inherits(x, "tidy_C50")) {
     x <- make_tidy_c5(x)
   }
-  x <-
-    x %>%
+  x <- x %>%
     dplyr::filter(trial <= iter) %>%
     dplyr::mutate(
       rule_vars = purrr::map(rule, get_rule_vars)
@@ -199,7 +212,7 @@ c5_vars <- function(iter, x) {
 
 #' @rdname pluck_features_active
 #' @export
-.pluck_features_active.C5.0 <- function(x, trials =  x$trials["Actual"], ...) {
+.pluck_features_active.C5.0 <- function(x, trials = x$trials["Actual"], ...) {
   .pluck_features_active(make_tidy_c5(x), trials = trials)
 }
 
@@ -211,8 +224,9 @@ c5_vars <- function(iter, x) {
   rlang::check_installed("earth")
   cl <- rlang::call2("evimp", .ns = "earth", object = expr(x), trim = TRUE)
   ev <- rlang::eval_tidy(cl)
-  ev <- ev[ ev[,"nsubsets"] > 0, ]
+  ev <- ev[ev[, "nsubsets"] > 0, ]
   vars_used <- rownames(ev)
+  vars_used <- vars_used[!grepl("-unused$", vars_used)]
   act_vars_to_tbl(vars_used)
 }
 
@@ -269,12 +283,14 @@ get_party_var_index <- function(x) {
   rlang::check_installed("partykit")
   cl <- rlang::call2("nodeids", .ns = "partykit", obj = expr(x))
   nodes <- rlang::eval_tidy(cl)
-  cl <-
-    rlang::call2(
-      "nodeapply", .ns = "partykit",
-      obj = expr(x), ids = expr(nodes),
-      function(x) x$split$varid, by_node = TRUE
-    )
+  cl <- rlang::call2(
+    "nodeapply",
+    .ns = "partykit",
+    obj = expr(x),
+    ids = expr(nodes),
+    function(x) x$split$varid,
+    by_node = TRUE
+  )
   var_index <- rlang::eval_tidy(cl)
   var_index <- unlist(var_index)
   var_index <- unique(var_index)
@@ -299,13 +315,12 @@ get_party_var_index <- function(x) {
   act_vars_to_tbl(var_names)
 }
 
-
 # ------------------------------------------------------------------------------
 
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.tidy_xrf <- function(x, ...) {
-  vars_used <- purrr::map(x$rule, ~ all.vars(rlang::parse_expr(.x)))
+  vars_used <- purrr::map(x$rule, ~all.vars(rlang::parse_expr(.x)))
   act_vars_to_tbl(unlist(vars_used))
 }
 
@@ -315,18 +330,15 @@ get_party_var_index <- function(x) {
   .pluck_features_active(make_tidy_xrf(x, penalty = penalty), penalty = penalty)
 }
 
-
 # ------------------------------------------------------------------------------
 
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.bagger <- function(x, ...) {
-  res <-
-    purrr::map_dfr(x$model_df$model, ~ .pluck_features_active(.x$fit)) %>%
+  res <- purrr::map_dfr(x$model_df$model, ~.pluck_features_active(.x$fit)) %>%
     tidyr::unnest(value)
   act_vars_to_tbl(res$value)
 }
-
 
 # ------------------------------------------------------------------------------
 
@@ -337,10 +349,13 @@ get_party_var_index <- function(x) {
   act_vars_to_tbl(dat$split_feature)
 }
 
-
 #' @rdname pluck_features_active
 #' @export
-.pluck_features_active.lgb.Booster <- function(x, trees = x$params$num_iterations, ...) {
+.pluck_features_active.lgb.Booster <- function(
+  x,
+  trees = x$params$num_iterations,
+  ...
+) {
   .pluck_features_active(lgb_trees(x), trees = trees)
 }
 
@@ -362,7 +377,6 @@ get_party_var_index <- function(x) {
 .pluck_features_active.lm <- function(x, ...) {
   vars_used <- no_int_coefs(x$coef)
   act_vars_to_tbl(unlist(vars_used))
-
 }
 
 #' @rdname pluck_features_active
@@ -383,8 +397,7 @@ get_party_var_index <- function(x) {
 #' @export
 .pluck_features_active.hurdle <- function(x, ...) {
   # different terms for different components
-  vars_used <-
-    purrr::map(x$coefficients, no_int_coefs) %>%
+  vars_used <- purrr::map(x$coefficients, no_int_coefs) %>%
     unlist()
   act_vars_to_tbl(vars_used)
 }
@@ -398,13 +411,12 @@ get_party_var_index <- function(x) {
 .pluck_features_active.gam <- function(x, ...) {
   vars_used <- no_int_coefs(x$coefficients)
   act_vars_to_tbl(vars_used)
-
 }
 
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.lda <- function(x, ...) {
-  vars_used <- colames(x$means)
+  vars_used <- colnames(x$means)
   act_vars_to_tbl(vars_used)
 }
 
@@ -420,7 +432,6 @@ get_party_var_index <- function(x) {
   vars_used <- colnames(x$xmeans)
   act_vars_to_tbl(vars_used)
 }
-
 
 #' @rdname pluck_features_active
 #' @export
@@ -439,10 +450,10 @@ get_party_var_index <- function(x) {
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.randomForest <- function(x, ...) {
-  vars_used <- names(x$forest$xlevels)
-  act_vars_to_tbl(vars_used)
+  var_index <- unique(unlist(x$forest$bestvar))
+  var_nms <- names(x$forest$xlevels)[var_index]
+  act_vars_to_tbl(var_nms)
 }
-
 
 #' @rdname pluck_features_active
 #' @export
@@ -468,7 +479,6 @@ get_party_var_index <- function(x) {
   vars_used <- vars_used[vars_used != "Bias"]
   act_vars_to_tbl(vars_used)
 }
-
 
 #' @rdname pluck_features_active
 #' @export
@@ -497,25 +507,19 @@ get_party_var_index <- function(x) {
 
 #' @rdname pluck_features_active
 #' @export
-.pluck_features_active.brulee_logistic_reg <-
-  .pluck_features_active.brulee_multinomial_reg
-
+.pluck_features_active.brulee_logistic_reg <- .pluck_features_active.brulee_multinomial_reg
 
 #' @rdname pluck_features_active
 #' @export
-.pluck_features_active.brulee_linear_reg <-
-  .pluck_features_active.brulee_multinomial_reg
-
+.pluck_features_active.brulee_linear_reg <- .pluck_features_active.brulee_multinomial_reg
 
 #' @rdname pluck_features_active
 #' @export
-.pluck_features_active.brulee_mlp <-
-  .pluck_features_active.brulee_multinomial_reg
+.pluck_features_active.brulee_mlp <- .pluck_features_active.brulee_multinomial_reg
 
 #' @rdname pluck_features_active
 #' @export
 .pluck_features_active.sda <- function(x, ...) {
-  vars_used <- names(x$betas)
+  vars_used <- names(x$beta)
   act_vars_to_tbl(vars_used)
 }
-

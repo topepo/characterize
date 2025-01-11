@@ -66,6 +66,15 @@
   )
 }
 
+#' @rdname pluck_num_term_nodes
+#' @export
+.pluck_num_term_nodes.randomForest <- function(x, ...) {
+  nodes <- sum(x$forest$nodestatus == -1)
+  tibble::tibble(statistic = "num_term_nodes",
+                 value = nodes
+  )
+}
+
 ranger_nodes <- function(iter, mod) {
   rlang::check_installed("ranger")
   cl <- rlang::call2("treeInfo", .ns = "ranger", object = expr(mod), tree = expr(iter))
@@ -79,7 +88,7 @@ ranger_nodes <- function(iter, mod) {
 .pluck_num_term_nodes.xgb.Booster <- function(x, nrounds = x$niter, ...) {
   rlang::check_installed("xgboost")
   cl <- rlang::call2("xgb.model.dt.tree", .ns = "xgboost", model = expr(x),
-                     trees = seq.int(0, nrounds - 1))
+                     trees = seq.int(0, nrounds))
   nodes <- rlang::eval_tidy(cl)
   tibble::tibble(statistic = "num_term_nodes",
                  value = sum(nodes$Feature == "Leaf")

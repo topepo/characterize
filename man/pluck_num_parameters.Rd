@@ -12,6 +12,7 @@
 \alias{.pluck_num_parameters.nnet}
 \alias{.pluck_num_parameters.brulee_mlp}
 \alias{.pluck_num_parameters.glmnet}
+\alias{.pluck_num_parameters.multnet}
 \alias{.pluck_num_parameters.earth}
 \alias{.pluck_num_parameters.mixo_spls}
 \alias{.pluck_num_parameters.mixo_pls}
@@ -41,6 +42,8 @@
 \method{.pluck_num_parameters}{brulee_mlp}(x, ...)
 
 \method{.pluck_num_parameters}{glmnet}(x, penalty = 0.001, ...)
+
+\method{.pluck_num_parameters}{multnet}(x, penalty = 0.001, ...)
 
 \method{.pluck_num_parameters}{earth}(x, ...)
 

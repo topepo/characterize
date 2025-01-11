@@ -1,55 +1,49 @@
-library(testthat)
-library(rlang)
+test_that("Cubist - single rule set", {
+  # tests objects in "test_cases.RData"
 
-test_that("cubist", {
-  skip_if_not_installed("rules")
-  skip_if_not_installed("Cubist")
+  chr_res <- characterize(fit_reg_cb)
+  check_characterize_object(chr_res)
 
-  load(test_path("test_cases.RData"))
-
-  expect_snapshot(characterize(cubist_mod))
-
+  # Computed in "inst/test_objects.R"
   expect_equal(
-    .pluck_num_features_active(cubist_mod)$value,
-    nrow(cubist_mod$fit$usage)
+    .pluck_num_features_active(fit_reg_cb)$value,
+    exp_reg_cb$num_features_active
   )
-
   expect_equal(
-    .pluck_num_parameters(cubist_mod)$value,
-    exp_num_prm_cb_2
+    .pluck_features_active(fit_reg_cb)$value[[1]],
+    exp_reg_cb$features_active
   )
-
   expect_equal(
-    .pluck_num_rules(cubist_mod)$value,
-    exp_num_rules_cb_2
+    .pluck_num_rules(fit_reg_cb)$value,
+    exp_reg_cb$num_rules
   )
-
   expect_equal(
-    .pluck_mean_rule_size(cubist_mod)$value,
-    exp_rule_size_cb_2
+    .pluck_mean_rule_size(fit_reg_cb)$value,
+    exp_reg_cb$mean_rule_size
   )
+})
 
-  expect_snapshot(characterize(cubist_mod, committees = 1))
+test_that("Cubist - ensemble", {
+  # tests objects in "test_cases.RData"
 
+  chr_res <- characterize(fit_reg_cb_ens)
+  check_characterize_object(chr_res)
+
+  # Computed in "inst/test_objects.R"
   expect_equal(
-    .pluck_num_features_active(cubist_mod, committees = 1)$value,
-    nrow(cubist_mod$fit$usage)
+    .pluck_num_features_active(fit_reg_cb_ens)$value,
+    exp_reg_cb_ens$num_features_active
   )
-
   expect_equal(
-    .pluck_num_parameters(cubist_mod, committees = 1)$value,
-    exp_num_prm_cb_1
+    .pluck_features_active(fit_reg_cb_ens)$value[[1]],
+    exp_reg_cb_ens$features_active
   )
-
   expect_equal(
-    .pluck_num_rules(cubist_mod, committees = 1)$value,
-    exp_num_rules_cb_1
+    .pluck_num_rules(fit_reg_cb_ens)$value,
+    exp_reg_cb_ens$num_rules
   )
-
   expect_equal(
-    .pluck_mean_rule_size(cubist_mod, committees = 1)$value,
-    exp_rule_size_cb_1
+    .pluck_mean_rule_size(fit_reg_cb_ens)$value,
+    exp_reg_cb_ens$mean_rule_size
   )
-
-
 })

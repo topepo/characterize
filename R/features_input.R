@@ -16,7 +16,11 @@
 #' @export
 .pluck_features_input.default <- function(x, ...) {
   if (has_terms(x)) {
-    res <- .pluck_features_input(x$terms)
+    if (isS4(x)) {
+      res <- .pluck_features_input(x@terms)
+    } else {
+      res <- .pluck_features_input(x$terms)
+    }
   } else if (has_blueprint(x)) {
     res <- .pluck_features_input(x$blueprint)
   } else{
