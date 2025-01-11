@@ -4,6 +4,10 @@ test_that("glmnet - regression", {
 
   chr_res <- characterize(fit_reg_glmnet, penalty = 0.1)
   check_characterize_object(chr_res)
+  expect_snapshot(error = TRUE,
+                  characterize(fit_reg_glmnet, penalty = 1:2)
+  )
+
 
   no_int <- exp_reg_glmnet %>% filter(!grepl("Intercept", term))
   num_terms <- no_int %>% count(lambda)

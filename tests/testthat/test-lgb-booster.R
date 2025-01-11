@@ -8,6 +8,9 @@ test_that("lgb.Booster - regression", {
 
   chr_res <- characterize(fit_reg_lightgbm)
   check_characterize_object(chr_res)
+  expect_snapshot(error = TRUE,
+                  characterize(fit_reg_lightgbm, trees = 1:2)
+  )
 
   tree_data <- lgb_trees(fit_reg_lightgbm)
 

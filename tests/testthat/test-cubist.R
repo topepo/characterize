@@ -4,6 +4,10 @@ test_that("Cubist - single rule set", {
   chr_res <- characterize(fit_reg_cb)
   check_characterize_object(chr_res)
 
+  expect_snapshot(error = TRUE,
+                  characterize(fit_reg_cb, committees = 1:2)
+  )
+
   # Computed in "inst/test_objects.R"
   expect_equal(
     .pluck_num_features_active(fit_reg_cb)$value,
@@ -45,5 +49,15 @@ test_that("Cubist - ensemble", {
   expect_equal(
     .pluck_mean_rule_size(fit_reg_cb_ens)$value,
     exp_reg_cb_ens$mean_rule_size
+  )
+})
+
+test_that("Cubist - empty rule", {
+  skip_if_not_installed("Cubist")
+  suppressPackageStartupMessages(library(Cubist))
+  cb_mod <- cubist(mtcars[,-1], mtcars$mpg)
+  expect_equal(
+    .pluck_mean_rule_size(cb_mod)$value,
+    0L
   )
 })

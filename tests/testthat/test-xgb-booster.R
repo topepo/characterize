@@ -4,10 +4,15 @@ test_that("xgb.Booster - regression", {
 
   # tests objects in "test_cases.RData"
 
+  chr_res <- characterize(fit_reg_xgboost)
+
   fit_reg_xgboost <- bundle::unbundle(fit_reg_xgboost)
 
   chr_res <- characterize(fit_reg_xgboost)
   check_characterize_object(chr_res)
+  expect_snapshot(error = TRUE,
+                  characterize(fit_reg_xgboost, nrounds = 1:2)
+  )
 
   tree_data <- xgboost::xgb.importance(model = fit_reg_xgboost)
   tree_splits <- xgboost::xgb.model.dt.tree(model = fit_reg_xgboost)
