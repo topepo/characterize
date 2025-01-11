@@ -30,6 +30,9 @@
 # ------------------------------------------------------------------------------
 
 rule_size <- function(x) {
+  if (identical(x, "<no conditions>")) {
+    return(0L)
+  }
   amp_ind <- gregexpr("&", x, fixed = TRUE)
   num_amp <- purrr::map_int(amp_ind, ~ sum(.x > 0)) + 1L
   num_amp
