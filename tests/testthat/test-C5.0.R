@@ -3,6 +3,10 @@ test_that("C5.0 - single classification tree", {
 
   chr_res <- characterize(fit_cls_tree_c5)
   check_characterize_object(chr_res)
+  expect_snapshot(error = TRUE,
+                  characterize(fit_cls_tree_c5, trials = 1:2)
+  )
+
 
   # Computed in "inst/test_objects.R"
   expect_equal(
