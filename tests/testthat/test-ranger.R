@@ -1,4 +1,6 @@
 test_that("ranger - regression", {
+  skip_if_not_installed("ranger")
+  suppressPackageStartupMessages(library(ranger))
 
   # tests objects in "test_cases.RData"
 
@@ -22,6 +24,8 @@ test_that("ranger - regression", {
 })
 
 test_that("ranger - binary classification", {
+  skip_if_not_installed("ranger")
+  suppressPackageStartupMessages(library(ranger))
 
   # tests objects in "test_cases.RData"
 
@@ -45,6 +49,8 @@ test_that("ranger - binary classification", {
 })
 
 test_that("ranger - multinomial classification", {
+  skip_if_not_installed("ranger")
+  suppressPackageStartupMessages(library(ranger))
 
   # tests objects in "test_cases.RData"
 

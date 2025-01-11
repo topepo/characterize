@@ -4,7 +4,7 @@ test_that("lgb.Booster - regression", {
 
   # tests objects in "test_cases.RData"
 
-  fit_reg_lightgbm <- unbundle(fit_reg_lightgbm)
+  fit_reg_lightgbm <- bundle::unbundle(fit_reg_lightgbm)
 
   chr_res <- characterize(fit_reg_lightgbm)
   check_characterize_object(chr_res)
@@ -34,7 +34,7 @@ test_that("lgb.Booster - binary classification", {
 
   # tests objects in "test_cases.RData"
 
-  fit_cls_lightgbm <- unbundle(fit_cls_lightgbm)
+  fit_cls_lightgbm <- bundle::unbundle(fit_cls_lightgbm)
 
   chr_res <- characterize(fit_cls_lightgbm)
   check_characterize_object(chr_res)
@@ -64,7 +64,7 @@ test_that("lgb.Booster - multiclass classification", {
 
   # tests objects in "test_cases.RData"
 
-  fit_mnl_lightgbm <- unbundle(fit_mnl_lightgbm)
+  fit_mnl_lightgbm <- bundle::unbundle(fit_mnl_lightgbm)
 
   chr_res <- characterize(fit_mnl_lightgbm)
   check_characterize_object(chr_res)
