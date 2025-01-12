@@ -61,7 +61,6 @@ characterize.bundle <- function(x, ...) {
   characterize(x, ...)
 }
 
-
 #' @rdname characterize
 #' @export
 characterize.model_fit <- function(x, ...) {
