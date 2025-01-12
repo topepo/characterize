@@ -298,3 +298,28 @@ test_that("glmnet - multinomial classification", {
 })
 
 
+test_that("glmnet - multi_characterize", {
+  skip_if_not_installed("bundle")
+  skip_if_not_installed("glmnet")
+
+  # tests objects in "test_cases.RData"
+
+  vals <- c(0.001, 0.01, 0.1)
+
+  res <- multi_characterize(fit_mnl_glmnet)
+  expect_s3_class(res, "tbl_df")
+  expect_equal(nrow(res), 3L)
+  expect_named(res, c("penalty", "results"))
+
+  res <- multi_characterize(fit_mnl_glmnet, penalty = vals)
+  expect_s3_class(res, "tbl_df")
+  expect_equal(nrow(res), 3L)
+  expect_named(res, c("penalty", "results"))
+
+  for (i in seq_along(vals)) {
+    expt <- characterize(fit_mnl_glmnet, penalty = vals[i])
+    expect_equal(res$results[[i]], expt)
+    expect_equal(res$penalty[i], vals[i])
+  }
+})
+

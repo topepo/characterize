@@ -255,6 +255,10 @@ set.seed(1)
 fit_cls_tree_c5 <- C5.0(class ~ ., data = cls_dat, trials = 1) %>%
   butcher()
 
+set.seed(1)
+fit_cls_tree_c5_3 <- C5.0(class ~ ., data = cls_dat, trials = 3) %>%
+  butcher()
+
 # The number of terminal nodes and active predictors computed with tidy method in
 # the rules pkgs
 
@@ -342,6 +346,10 @@ exp_cls_rule_bst_c5$mean_rule_size <- mean_size
 
 set.seed(1)
 fit_reg_cb <- cubist(ames[, -1], ames$Sale_Price, committees = 1) %>%
+  butcher()
+
+set.seed(1)
+fit_reg_cb_10 <- cubist(ames[, -1], ames$Sale_Price, committees = 10) %>%
   butcher()
 
 # The number of terminal nodes and active predictors computed with tidy method in

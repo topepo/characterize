@@ -3,6 +3,7 @@
 \name{multi_characterize}
 \alias{multi_characterize}
 \alias{multi_characterize.default}
+\alias{multi_characterize.bundle}
 \alias{multi_characterize.workflow}
 \alias{multi_characterize.model_fit}
 \alias{multi_characterize._elnet}
@@ -24,6 +25,8 @@
 multi_characterize(object, ...)
 
 \method{multi_characterize}{default}(object, ...)
+
+\method{multi_characterize}{bundle}(object, ...)
 
 \method{multi_characterize}{workflow}(object, ...)
 

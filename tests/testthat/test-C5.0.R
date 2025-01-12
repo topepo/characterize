@@ -85,3 +85,26 @@ test_that("C5.0 - boosted rule set", {
     exp_cls_rule_bst_c5$num_rules
   )
 })
+
+test_that("C5.0 - multi_characterize", {
+  # tests objects in "test_cases.RData"
+
+  vals <- 1:3
+
+  res <- multi_characterize(fit_cls_tree_c5_3)
+  expect_s3_class(res, "tbl_df")
+  expect_equal(nrow(res), 1L)
+  expect_named(res, c("trials", "results"))
+
+  res <- multi_characterize(fit_cls_tree_c5_3, trials = vals)
+  expect_s3_class(res, "tbl_df")
+  expect_equal(nrow(res), 3L)
+  expect_named(res, c("trials", "results"))
+
+  for (i in seq_along(vals)) {
+    expt <- characterize(fit_cls_tree_c5_3, trials = vals[i])
+    expect_equal(res$results[[i]], expt)
+    expect_equal(res$trials[i], vals[i])
+  }
+})
+

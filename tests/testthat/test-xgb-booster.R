@@ -97,3 +97,38 @@ test_that("xgb.Booster - multiclass classification", {
   #   sum(tree_splits$Feature == "Leaf")
   # )
 })
+
+test_that("xgb.Booster - multi_characterize", {
+  skip_if_not_installed("bundle")
+  skip_if_not_installed("xgboost")
+  # With xgboost 1.7.8.1, this code seg faults when run non-interactively. The
+  # message is "address 0xa0, cause 'invalid permissions'"
+  skip_if(!interactive(), message = "xgboost 1.7.8.1 seg faults interactively")
+
+  # tests objects in "test_cases.RData"
+
+  vals <- c(1, 2, 10)
+
+  res <- multi_characterize(fit_mnl_xgboost)
+  expect_s3_class(res, "tbl_df")
+  expect_equal(nrow(res), 1L)
+  expect_named(res, c("nrounds", "results"))
+
+  res <- multi_characterize(fit_mnl_xgboost, nrounds = vals)
+  expect_s3_class(res, "tbl_df")
+  expect_equal(nrow(res), 3L)
+  expect_named(res, c("nrounds", "results"))
+  #
+  fit_mnl_xgboost <- bundle::unbundle(fit_mnl_xgboost)
+
+  res <- multi_characterize(fit_mnl_xgboost, nrounds = vals)
+    expect_s3_class(res, "tbl_df")
+    expect_equal(nrow(res), 3L)
+    expect_named(res, c("nrounds", "results"))
+
+    for (i in seq_along(vals)) {
+      expt <- characterize(fit_mnl_xgboost, nrounds = vals[i])
+      expect_equal(res$results[[i]], expt)
+      expect_equal(res$nrounds[i], vals[i])
+    }
+})

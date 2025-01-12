@@ -39,3 +39,15 @@ test_that("BART - regression", {
     sum(sum(apply(fit_reg_dbart$varcount, 1, sum) - 1))
   )
 })
+
+
+test_that("BART - regression", {
+  # tests objects in "test_cases.RData"
+
+  # test for failed models
+  bad_mod <- fit_reg_dbart
+  class(bad_mod) <- c("try-error", class(bad_mod))
+  expect_snapshot_warning(bad_res <- multi_characterize(bad_mod))
+  expect_null(bad_res)
+})
+

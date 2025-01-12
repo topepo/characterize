@@ -73,6 +73,14 @@ multi_characterize.default <- function(object, ...) {
   tibble::tibble(results = list(res))
 }
 
+#' @rdname multi_characterize
+#' @export
+multi_characterize.bundle <- function(object, ...) {
+  rlang::check_installed("bundle")
+  object <- bundle::unbundle(object)
+  multi_characterize(object, ...)
+}
+
 
 #' @rdname multi_characterize
 #' @export
